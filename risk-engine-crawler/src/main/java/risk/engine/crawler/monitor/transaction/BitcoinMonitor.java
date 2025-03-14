@@ -1,4 +1,4 @@
-package risk.engine.crawler.monitor.log;
+package risk.engine.crawler.monitor.transaction;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -171,8 +171,4 @@ public class BitcoinMonitor {
         BigDecimal feeBtc = totalInputBtc.subtract(totalOutputBtc);
         System.out.println("矿工费:" + feeBtc + " 聪BTC");
     }
-
-//    public static void main(String[] args) {
-//        new BitcoinMonitor().start();
-//    }
 }

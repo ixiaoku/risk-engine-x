@@ -152,7 +152,6 @@ public class SolanaFullMonitor {
                     "}";
             Request request = new Request.Builder()
                     .url(SOLANA_RPC)
-                    .post(okhttp3.RequestBody.create(requestStr, okhttp3.MediaType.get("application/json")))
                     .build();
 
             Response response = client.newCall(request).execute();

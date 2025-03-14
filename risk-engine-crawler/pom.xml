@@ -44,11 +44,10 @@
             <version>2.15.2</version>
         </dependency>
 
-        <!-- HTTP 客户端 -->
         <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>4.12.0</version>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+            <version>4.9.7</version>
         </dependency>
 
         <dependency>
@@ -64,6 +63,13 @@
         <dependency>
             <groupId>risk.engine.dto</groupId>
             <artifactId>risk-engine-dto</artifactId>
+        </dependency>
+
+        <!-- HTTP 客户端 -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.12.0</version>
         </dependency>
 
         <dependency>
