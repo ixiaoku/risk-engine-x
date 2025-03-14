@@ -34,7 +34,7 @@
     </if>
   </select>
 
-  <select id="selectByIncidentCode" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+  <select id="selectByIncidentCode" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
     from incident

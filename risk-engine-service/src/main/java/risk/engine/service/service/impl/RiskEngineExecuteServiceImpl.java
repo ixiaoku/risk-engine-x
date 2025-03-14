@@ -5,6 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import risk.engine.db.entity.Incident;
 import risk.engine.db.entity.Rule;
+import risk.engine.dto.enums.DecisionResultEnum;
 import risk.engine.dto.enums.IncidentStatusEnum;
 import risk.engine.dto.enums.RuleStatusEnum;
 import risk.engine.dto.param.RiskEngineParam;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * 引擎执行主逻辑
  * @Author: X
  * @Date: 2025/3/14 12:16
  * @Version: 1.0
@@ -36,6 +38,9 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
     @Resource
     private IEngineResultService engineResultService;
 
+    @Resource
+    private InitServiceImpl initService;
+
     /**
      * 引擎执行 主逻辑
      * @param riskEngineParam 业务参数
@@ -43,30 +48,44 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
      */
     @Override
     public RiskEngineExecuteResult execute(RiskEngineParam riskEngineParam) {
+        initService.initRule();
         RiskEngineExecuteResult result = new RiskEngineExecuteResult();
-        result.setDecisionResult("1");
+        result.setDecisionResult(DecisionResultEnum.SUCCESS.getCode());
         //查询事件
         Incident incident = incidentService.selectByIncidentCode(riskEngineParam.getIncidentCode());
         if (incident == null) {
-            log.error("Incident not found");
+            log.error("Incident not found {}", riskEngineParam.getIncidentCode());
             return result;
         }
         //校验事件状态
         if (!IncidentStatusEnum.ONLINE.getCode().equals(incident.getStatus())) {
-            log.error("Incident status is not ONLINE");
+            log.error("Incident status is not ONLINE {}", riskEngineParam.getIncidentCode());
+            return result;
         }
         //查询事件下的策略
         List<Rule> ruleList = ruleService.selectByIncidentCode(incident.getIncidentCode());
         if (CollectionUtils.isEmpty(ruleList)) {
-            log.info("Rule not found");
+            log.error("Rule not found {}", riskEngineParam.getIncidentCode());
+            return result;
         }
         //上线策略
         List<Rule> onlineRuleList = ruleList.stream().filter(rule -> rule.getStatus().equals(RuleStatusEnum.ONLINE.getCode())).distinct().collect(Collectors.toList());
+        onlineRuleList.forEach(rule -> {
+
+        });
         //模拟策略
         List<Rule> mockRuleList = ruleList.stream().filter(rule -> rule.getStatus().equals(RuleStatusEnum.MOCK.getCode())).distinct().collect(Collectors.toList());
-
-
         return null;
+    }
+
+    /**
+     *
+     * @param script
+     * @param requestPayload
+     * @return
+     */
+    private boolean doScript(String script, String requestPayload) {
+        return false;
     }
 
     @Override

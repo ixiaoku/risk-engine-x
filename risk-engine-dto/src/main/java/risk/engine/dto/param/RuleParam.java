@@ -1,21 +1,14 @@
-package risk.engine.db.entity;
+package risk.engine.dto.param;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 /**
- * 规则
  * @Author: X
- * @Date: 2025/3/12 19:35
+ * @Date: 2025/3/14 16:57
  * @Version: 1.0
  */
 @Data
-public class Rule {
-    /**
-     * 主键id
-     */
-    private Long id;
+public class RuleParam {
 
     /**
      * 事件code
@@ -78,11 +71,6 @@ public class Rule {
     private String penaltyAction;
 
     /**
-     * 版本
-     */
-    private String version;
-
-    /**
      * 责任人
      */
     private String responsiblePerson;
@@ -91,15 +79,5 @@ public class Rule {
      * 操作人
      */
     private String operator;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-
-    /**
-     * 修改时间
-     */
-    private LocalDateTime updateTime;
 
 }

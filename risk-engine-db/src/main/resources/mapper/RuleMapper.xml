@@ -14,28 +14,30 @@
     <result column="penalty_action" jdbcType="VARCHAR" property="penaltyAction" />
     <result column="version" jdbcType="VARCHAR" property="version" />
     <result column="responsible_person" jdbcType="VARCHAR" property="responsiblePerson" />
-    <result column="operator" jdbcType="VARCHAR" property="operator" />
+      <result column="expression" jdbcType="VARCHAR" property="operator" />
+      <result column="operator" jdbcType="VARCHAR" property="operator" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="risk.engine.db.entity.Rule">
-    <result column="condition_script" jdbcType="LONGVARCHAR" property="conditionScript" />
+      <result column="condition_script" jdbcType="LONGVARCHAR" property="conditionScript" />
+      <result column="json_script" jdbcType="LONGVARCHAR" property="jsonScript" />
   </resultMap>
 
   <sql id="Base_Column_List">
     id, incident_code, rule_code, rule_name, status, score, decision_result, expiry_time,
     label, penalty_action, version, responsible_person, operator, create_time, update_time,
-    condition_script
+    condition_script, json_script, expression
   </sql>
 
-  <select id="selectByRuleCode" parameterType="risk.engine.db.entity.Rule" resultMap="BaseResultMap">
+  <select id="selectByRuleCode" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from rule
     where rule_code = #{ruleCode,jdbcType=VARCHAR} limit 1
   </select>
 
-    <select id="selectByIncidentCode" parameterType="risk.engine.db.entity.Rule" resultMap="BaseResultMap">
+    <select id="selectByIncidentCode" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
         from rule
@@ -66,13 +68,13 @@
                       decision_result, expiry_time, label,
                       penalty_action, version, responsible_person,
                       operator, create_time, update_time,
-                      condition_script)
+                      condition_script, json_script, expression)
     values (#{id,jdbcType=BIGINT}, #{incidentCode,jdbcType=VARCHAR}, #{ruleCode,jdbcType=VARCHAR},
             #{ruleName,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{score,jdbcType=INTEGER},
             #{decisionResult,jdbcType=VARCHAR}, #{expiryTime,jdbcType=INTEGER}, #{label,jdbcType=VARCHAR},
             #{penaltyAction,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{responsiblePerson,jdbcType=VARCHAR},
             #{operator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
-            #{conditionScript,jdbcType=LONGVARCHAR})
+            #{conditionScript,jdbcType=LONGVARCHAR}, #{jsonScript,jdbcType=LONGVARCHAR}, #{expression,jdbcType=VARCHAR})
   </insert>
 
   <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.Rule">
@@ -89,6 +91,8 @@
         version = #{version,jdbcType=VARCHAR},
         responsible_person = #{responsiblePerson,jdbcType=VARCHAR},
         operator = #{operator,jdbcType=VARCHAR},
+        json_script = #{jsonScript,jdbcType=LONGVARCHAR},
+        expression = #{expression,jdbcType=VARCHAR},
         create_time = #{createTime,jdbcType=TIMESTAMP},
         update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
