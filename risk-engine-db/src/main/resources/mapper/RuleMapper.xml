@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="risk.engine.db.dao.RuleMapper">
+  <resultMap id="BaseResultMap" type="risk.engine.db.entity.Rule">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="incident_code" jdbcType="VARCHAR" property="incidentCode" />
+    <result column="rule_code" jdbcType="VARCHAR" property="ruleCode" />
+    <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="score" jdbcType="INTEGER" property="score" />
+    <result column="decision_result" jdbcType="VARCHAR" property="decisionResult" />
+    <result column="expiry_time" jdbcType="INTEGER" property="expiryTime" />
+    <result column="label" jdbcType="VARCHAR" property="label" />
+    <result column="penalty_action" jdbcType="VARCHAR" property="penaltyAction" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="responsible_person" jdbcType="VARCHAR" property="responsiblePerson" />
+    <result column="operator" jdbcType="VARCHAR" property="operator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="risk.engine.db.entity.Rule">
+    <result column="condition_script" jdbcType="LONGVARCHAR" property="conditionScript" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, incident_code, rule_code, rule_name, status, score, decision_result, expiry_time,
+    label, penalty_action, version, responsible_person, operator, create_time, update_time
+  </sql>
+
+  <select id="selectByExample" parameterType="risk.engine.db.entity.Rule" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from rule
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from rule
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="risk.engine.db.entity.Rule">
+    insert into rule (id, incident_code, rule_code,
+                      rule_name, status, score,
+                      decision_result, expiry_time, label,
+                      penalty_action, version, responsible_person,
+                      operator, create_time, update_time,
+                      condition_script)
+    values (#{id,jdbcType=BIGINT}, #{incidentCode,jdbcType=VARCHAR}, #{ruleCode,jdbcType=VARCHAR},
+            #{ruleName,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{score,jdbcType=INTEGER},
+            #{decisionResult,jdbcType=VARCHAR}, #{expiryTime,jdbcType=INTEGER}, #{label,jdbcType=VARCHAR},
+            #{penaltyAction,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{responsiblePerson,jdbcType=VARCHAR},
+            #{operator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
+            #{conditionScript,jdbcType=LONGVARCHAR})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.Rule">
+    update rule
+    set incident_code = #{incidentCode,jdbcType=VARCHAR},
+        rule_code = #{ruleCode,jdbcType=VARCHAR},
+        rule_name = #{ruleName,jdbcType=VARCHAR},
+        status = #{status,jdbcType=INTEGER},
+        score = #{score,jdbcType=INTEGER},
+        decision_result = #{decisionResult,jdbcType=VARCHAR},
+        expiry_time = #{expiryTime,jdbcType=INTEGER},
+        label = #{label,jdbcType=VARCHAR},
+        penalty_action = #{penaltyAction,jdbcType=VARCHAR},
+        version = #{version,jdbcType=VARCHAR},
+        responsible_person = #{responsiblePerson,jdbcType=VARCHAR},
+        operator = #{operator,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

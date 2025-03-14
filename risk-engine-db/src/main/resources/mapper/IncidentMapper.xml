@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="risk.engine.db.dao.IncidentMapper">
+  <resultMap id="BaseResultMap" type="risk.engine.db.entity.Incident">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="incident_code" jdbcType="VARCHAR" property="incidentCode" />
+    <result column="incident_name" jdbcType="VARCHAR" property="incidentName" />
+    <result column="decision_result" jdbcType="VARCHAR" property="decisionResult" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="responsible_person" jdbcType="VARCHAR" property="responsiblePerson" />
+    <result column="operator" jdbcType="VARCHAR" property="operator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="risk.engine.db.entity.Incident">
+    <result column="request_payload" jdbcType="LONGVARCHAR" property="requestPayload" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, incident_code, incident_name, decision_result, status, responsible_person, operator,
+    create_time, update_time
+  </sql>
+  <select id="selectByExample" parameterType="risk.engine.db.entity.Incident" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from incident
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    from incident
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from incident
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="risk.engine.db.entity.Incident">
+    insert into incident (id, incident_code, incident_name, 
+      decision_result, status, responsible_person, 
+      operator, create_time, update_time, 
+      request_payload)
+    values (#{id,jdbcType=BIGINT}, #{incidentCode,jdbcType=VARCHAR}, #{incidentName,jdbcType=VARCHAR}, 
+      #{decisionResult,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{responsiblePerson,jdbcType=VARCHAR}, 
+      #{operator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{requestPayload,jdbcType=LONGVARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.Incident">
+    update incident
+    set incident_code = #{incidentCode,jdbcType=VARCHAR},
+      incident_name = #{incidentName,jdbcType=VARCHAR},
+      decision_result = #{decisionResult,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      responsible_person = #{responsiblePerson,jdbcType=VARCHAR},
+      operator = #{operator,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+</mapper>
