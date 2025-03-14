@@ -1,9 +1,9 @@
 package risk.engine.db.dao;
 
-import java.util.List;
-
 import org.apache.ibatis.annotations.Mapper;
 import risk.engine.db.entity.EngineResult;
+
+import java.util.List;
 
 /**
  * 引擎执行结果
@@ -22,5 +22,4 @@ public interface EngineResultMapper {
 
     EngineResult selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKey(EngineResult record);
 }

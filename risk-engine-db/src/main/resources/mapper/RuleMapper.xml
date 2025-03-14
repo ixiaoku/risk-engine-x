@@ -14,20 +14,18 @@
     <result column="penalty_action" jdbcType="VARCHAR" property="penaltyAction" />
     <result column="version" jdbcType="VARCHAR" property="version" />
     <result column="responsible_person" jdbcType="VARCHAR" property="responsiblePerson" />
-      <result column="expression" jdbcType="VARCHAR" property="operator" />
+      <result column="logic_script" jdbcType="VARCHAR" property="logicScript" />
       <result column="operator" jdbcType="VARCHAR" property="operator" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-  </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="risk.engine.db.entity.Rule">
-      <result column="condition_script" jdbcType="LONGVARCHAR" property="conditionScript" />
+      <result column="groovy_script" jdbcType="LONGVARCHAR" property="groovyScript" />
       <result column="json_script" jdbcType="LONGVARCHAR" property="jsonScript" />
   </resultMap>
 
   <sql id="Base_Column_List">
     id, incident_code, rule_code, rule_name, status, score, decision_result, expiry_time,
     label, penalty_action, version, responsible_person, operator, create_time, update_time,
-    condition_script, json_script, expression
+    groovy_script, json_script, logic_script
   </sql>
 
   <select id="selectByRuleCode" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -68,13 +66,13 @@
                       decision_result, expiry_time, label,
                       penalty_action, version, responsible_person,
                       operator, create_time, update_time,
-                      condition_script, json_script, expression)
+                      groovy_script, json_script, logic_script)
     values (#{id,jdbcType=BIGINT}, #{incidentCode,jdbcType=VARCHAR}, #{ruleCode,jdbcType=VARCHAR},
             #{ruleName,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{score,jdbcType=INTEGER},
             #{decisionResult,jdbcType=VARCHAR}, #{expiryTime,jdbcType=INTEGER}, #{label,jdbcType=VARCHAR},
             #{penaltyAction,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{responsiblePerson,jdbcType=VARCHAR},
             #{operator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
-            #{conditionScript,jdbcType=LONGVARCHAR}, #{jsonScript,jdbcType=LONGVARCHAR}, #{expression,jdbcType=VARCHAR})
+            #{groovyScript,jdbcType=LONGVARCHAR}, #{jsonScript,jdbcType=LONGVARCHAR}, #{logicScript,jdbcType=VARCHAR})
   </insert>
 
   <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.Rule">

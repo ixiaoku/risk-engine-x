@@ -35,9 +35,9 @@ public class RuleController {
         rule.setRuleName(ruleParam.getRuleName());
         rule.setStatus(ruleParam.getStatus());
         rule.setScore(ruleParam.getScore());
-        rule.setConditionScript(ruleParam.getConditionScript());
+        rule.setGroovyScript(ruleParam.getConditionScript());
         rule.setJsonScript(ruleParam.getJsonScript());
-        rule.setExpression(ruleParam.getExpression());
+        rule.setLogicScript(ruleParam.getExpression());
         rule.setDecisionResult(ruleParam.getDecisionResult());
         rule.setExpiryTime(ruleParam.getExpiryTime());
         rule.setLabel(ruleParam.getLabel());

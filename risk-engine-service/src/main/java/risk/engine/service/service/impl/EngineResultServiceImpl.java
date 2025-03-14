@@ -39,8 +39,4 @@ public class EngineResultServiceImpl implements IEngineResultService {
         return engineResultMapper.selectByPrimaryKey(id);
     }
 
-    @Override
-    public boolean updateByPrimaryKey(EngineResult record) {
-        return engineResultMapper.updateByPrimaryKey(record) > 0;
-    }
 }

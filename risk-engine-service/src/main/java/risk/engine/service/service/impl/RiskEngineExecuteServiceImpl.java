@@ -1,8 +1,13 @@
 package risk.engine.service.service.impl;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import risk.engine.common.grovvy.GroovyShellUtil;
+import risk.engine.db.entity.EngineResult;
 import risk.engine.db.entity.Incident;
 import risk.engine.db.entity.Rule;
 import risk.engine.dto.enums.DecisionResultEnum;
@@ -16,7 +21,11 @@ import risk.engine.service.service.IRiskEngineExecuteService;
 import risk.engine.service.service.IRuleService;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -48,7 +57,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
      */
     @Override
     public RiskEngineExecuteResult execute(RiskEngineParam riskEngineParam) {
-        initService.initRule();
+        //初始化引擎结果 默认通过
         RiskEngineExecuteResult result = new RiskEngineExecuteResult();
         result.setDecisionResult(DecisionResultEnum.SUCCESS.getCode());
         //查询事件
@@ -68,24 +77,64 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             log.error("Rule not found {}", riskEngineParam.getIncidentCode());
             return result;
         }
-        //上线策略
-        List<Rule> onlineRuleList = ruleList.stream().filter(rule -> rule.getStatus().equals(RuleStatusEnum.ONLINE.getCode())).distinct().collect(Collectors.toList());
-        onlineRuleList.forEach(rule -> {
+        JSONObject paramMap = JSON.parseObject(riskEngineParam.getRequestPayload());
+        //上线规则 分数降序
+        List<Rule> onlineRuleList = ruleList.stream()
+                .filter(rule -> rule.getStatus().equals(RuleStatusEnum.ONLINE.getCode()))
+                .sorted(Comparator.comparingInt(Rule::getScore).reversed())
+                .collect(Collectors.toList());
+        List<Rule> hitOnlineRuleList = getHitRuleList(paramMap, onlineRuleList);
+        //模拟规则 分数降序
+        List<Rule> mockRuleList = ruleList.stream()
+                .filter(rule -> rule.getStatus().equals(RuleStatusEnum.MOCK.getCode()))
+                .sorted(Comparator.comparingInt(Rule::getScore).reversed())
+                .collect(Collectors.toList());
+        List<Rule> hitMockRuleList = getHitRuleList(paramMap, mockRuleList);
+        //返回分数最高的命中策略 先返回上线的然后再看模拟的
+        Rule hitRule = new Rule();
+        if(CollectionUtils.isNotEmpty(hitOnlineRuleList)) {
+            hitRule = hitOnlineRuleList.get(0);
+            result.setDecisionResult(hitRule.getDecisionResult());
+            log.info("命中上线规则：{}", hitRule.getRuleName());
+        } else if(CollectionUtils.isNotEmpty(hitMockRuleList)) {
+            hitRule = hitOnlineRuleList.get(0);
+            result.setDecisionResult(hitRule.getDecisionResult());
+            log.info("命中模拟规则：{}", hitRule.getRuleName());
+        }
+        insertEngineResult(riskEngineParam, incident.getIncidentName(), hitRule, hitOnlineRuleList, hitMockRuleList);
+        return result;
+    }
 
-        });
-        //模拟策略
-        List<Rule> mockRuleList = ruleList.stream().filter(rule -> rule.getStatus().equals(RuleStatusEnum.MOCK.getCode())).distinct().collect(Collectors.toList());
-        return null;
+    private void insertEngineResult(RiskEngineParam riskEngineParam, String incidentName, Rule hitRule, List<Rule> hitOnlineRuleList, List<Rule> hitMOckRuleList) {
+        EngineResult engineResult = new EngineResult();
+        engineResult.setFlowNo(riskEngineParam.getFlowNo());
+        engineResult.setRiskFlowNo(riskEngineParam.getIncidentCode() + ":" + UUID.randomUUID());
+        engineResult.setRequestPayload(riskEngineParam.getRequestPayload());
+        engineResult.setIncidentCode(riskEngineParam.getIncidentCode());
+        engineResult.setIncidentName(incidentName);
+        if (!Objects.isNull(hitRule)) {
+            engineResult.setRuleCode(hitRule.getRuleCode());
+            engineResult.setRuleName(hitRule.getRuleName());
+            engineResult.setRuleStatus(hitRule.getStatus());
+            engineResult.setRuleScore(hitRule.getScore());
+            engineResult.setRuleDecisionResult(hitRule.getDecisionResult());
+            engineResult.setRuleLabel(hitRule.getLabel());
+            engineResult.setRulePenaltyAction(hitRule.getPenaltyAction());
+            engineResult.setRuleVersion(hitRule.getVersion());
+        }
+        engineResult.setCreateTime(LocalDateTime.now());
+        engineResult.setHitMockRules(new Gson().toJson(hitMOckRuleList));
+        engineResult.setHitOnlineRules(new Gson().toJson(hitOnlineRuleList));
+        engineResultService.insert(engineResult);
     }
 
     /**
-     *
-     * @param script
-     * @param requestPayload
-     * @return
+     * @param paramMap 请求参数map
+     * @param ruleList 规则集合
+     * @return 获取命中规则集合
      */
-    private boolean doScript(String script, String requestPayload) {
-        return false;
+    private List<Rule> getHitRuleList(JSONObject paramMap, List<Rule> ruleList) {
+        return ruleList.stream().filter(rule -> GroovyShellUtil.runGroovy(rule.getGroovyScript(), paramMap)).collect(Collectors.toList());
     }
 
     @Override

@@ -10,6 +10,7 @@ import risk.engine.dto.enums.FieldTypeEnum;
 import risk.engine.dto.enums.IncidentStatusEnum;
 import risk.engine.dto.enums.OperationSymbolEnum;
 import risk.engine.dto.enums.RuleStatusEnum;
+import risk.engine.service.handler.GroovyExpressionParser;
 import risk.engine.service.service.IIncidentService;
 import risk.engine.service.service.IRuleService;
 
@@ -56,11 +57,11 @@ public class InitServiceImpl {
     public void initRule() {
         Rule rule = new Rule();
         rule.setIncidentCode("ChainTransfer");
-        rule.setRuleCode("ChainTransferD");
-        rule.setRuleName("链上转账D策略");
-        rule.setStatus(RuleStatusEnum.ONLINE.getCode());
+        rule.setRuleCode("ChainTransferB");
+        rule.setRuleName("链上转账上线规则B");
+        rule.setStatus(RuleStatusEnum.MOCK.getCode());
         rule.setScore(88);
-        rule.setConditionScript("amount>1 && fromAddress==3Q8StmtPCgxNeeeM6Ue9errkDgZ9SiLHE4");
+        rule.setGroovyScript("amount>1 && fromAddress==3Q8StmtPCgxNeeeM6Ue9errkDgZ9SiLHE4");
         rule.setDecisionResult("0");
         rule.setExpiryTime(0);
         rule.setLabel("普通转账");
@@ -68,23 +69,10 @@ public class InitServiceImpl {
         rule.setVersion(UUID.randomUUID().toString());
         rule.setResponsiblePerson("cherry.wang");
         rule.setOperator("cherry.wang");
-
-        RuleExpressionDTO ruleExpressionDTO = new RuleExpressionDTO();
-        ruleExpressionDTO.setAttributeCode("fromAddress");
-        ruleExpressionDTO.setOperationSymbol(OperationSymbolEnum.EQUAL_TO.getCode());
-        ruleExpressionDTO.setAttributeValue("3Q8StmtPCgxNeeeM6Ue9errkDgZ9SiLHE4");
-        ruleExpressionDTO.setAttributeType(FieldTypeEnum.STRING.getCode());
-        ruleExpressionDTO.setSerialNumber(1);
-        RuleExpressionDTO expressionDTO = new RuleExpressionDTO();
-        expressionDTO.setAttributeCode("amount");
-        expressionDTO.setOperationSymbol(OperationSymbolEnum.GREATER_THAN.getCode());
-        expressionDTO.setAttributeValue("5");
-        expressionDTO.setAttributeType(FieldTypeEnum.BIG_DECIMAL.getCode());
-        expressionDTO.setSerialNumber(2);
-        List<RuleExpressionDTO> expressionList = new ArrayList<>();
-        expressionList.add(ruleExpressionDTO);
-        rule.setJsonScript(new Gson().toJson(expressionList));
-        rule.setExpression("1&&2");
+        rule.setJsonScript(new Gson().toJson(getRuleExpressionDTOList()));
+        rule.setLogicScript("1&&2||(3&&4)");
+        String conditionScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), rule.getJsonScript());
+        rule.setGroovyScript(conditionScript);
         rule.setCreateTime(LocalDateTime.now());
         rule.setUpdateTime(LocalDateTime.now());
         ruleService.insert(rule);
@@ -102,6 +90,43 @@ public class InitServiceImpl {
         chainTransferDTO.setCoin("BTC");
         chainTransferDTO.setFee(new BigDecimal("0.01845659"));
         return chainTransferDTO;
+    }
+
+    public List<RuleExpressionDTO> getRuleExpressionDTOList() {
+        RuleExpressionDTO expressionDTO1 = new RuleExpressionDTO();
+        expressionDTO1.setAttributeCode("fromAddress");
+        expressionDTO1.setOperationSymbol(OperationSymbolEnum.EQUAL_TO.getCode());
+        expressionDTO1.setAttributeValue("3Q8StmtPCgxNeeeM6Ue9errkDgZ9SiLHE4");
+        expressionDTO1.setAttributeType(FieldTypeEnum.STRING.getCode());
+        expressionDTO1.setSerialNumber(1);
+
+        RuleExpressionDTO expressionDTO2 = new RuleExpressionDTO();
+        expressionDTO2.setAttributeCode("amount");
+        expressionDTO2.setOperationSymbol(OperationSymbolEnum.GREATER_THAN.getCode());
+        expressionDTO2.setAttributeValue("5");
+        expressionDTO2.setAttributeType(FieldTypeEnum.BIG_DECIMAL.getCode());
+        expressionDTO2.setSerialNumber(2);
+
+        RuleExpressionDTO expressionDTO3 = new RuleExpressionDTO();
+        expressionDTO3.setAttributeCode("toAddress");
+        expressionDTO3.setOperationSymbol(OperationSymbolEnum.EQUAL_TO.getCode());
+        expressionDTO3.setAttributeValue("17qeFe3L7h5CMM1PS7cyjB32E9TT6RQeX6");
+        expressionDTO3.setAttributeType(FieldTypeEnum.STRING.getCode());
+        expressionDTO3.setSerialNumber(3);
+
+        RuleExpressionDTO expressionDTO4 = new RuleExpressionDTO();
+        expressionDTO4.setAttributeCode("uAmount");
+        expressionDTO4.setOperationSymbol(OperationSymbolEnum.GREATER_THAN.getCode());
+        expressionDTO4.setAttributeValue("5");
+        expressionDTO4.setAttributeType(FieldTypeEnum.BIG_DECIMAL.getCode());
+        expressionDTO4.setSerialNumber(4);
+
+        List<RuleExpressionDTO> expressionList = new ArrayList<>();
+        expressionList.add(expressionDTO1);
+        expressionList.add(expressionDTO2);
+        expressionList.add(expressionDTO3);
+        expressionList.add(expressionDTO4);
+        return expressionList;
     }
 
 }

@@ -29,7 +29,7 @@ public class RiskEngineController {
     @PostMapping("/engine")
     public RiskEngineExecuteResult execute(@RequestBody RiskEngineParam riskEngineParam) throws Exception {
 
-        log.info("RiskEngineController execute：{}", new Gson().toJson(riskEngineParam));
+        log.info("RiskEngineController execute request：{}", new Gson().toJson(riskEngineParam));
         //不为空校验
         ValidatorUtils.EmptyThrowException()
                 .validateException(riskEngineParam.getFlowNo());

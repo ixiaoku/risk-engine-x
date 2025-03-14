@@ -2,7 +2,7 @@ package risk.engine.db.entity;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 引擎执行结果
@@ -83,8 +83,18 @@ public class EngineResult {
     private String ruleVersion;
 
     /**
+     * 命中上线策略集合
+     */
+    private String hitOnlineRules;
+
+    /**
+     * 命中模拟策略集合
+     */
+    private String hitMockRules;
+
+    /**
      * 创建时间
      */
-    private Date createTime;
+    private LocalDateTime createTime;
 
 }

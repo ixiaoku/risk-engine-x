@@ -19,6 +19,4 @@ public interface IEngineResultService {
 
     EngineResult selectByPrimaryKey(Long id);
 
-    boolean updateByPrimaryKey(EngineResult record);
-
 }

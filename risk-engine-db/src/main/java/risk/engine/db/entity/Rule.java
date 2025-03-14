@@ -45,7 +45,7 @@ public class Rule {
     /**
      * groovy可执行的表达式
      */
-    private String conditionScript;
+    private String groovyScript;
 
     /**
      * json结构特征
@@ -53,9 +53,9 @@ public class Rule {
     private String jsonScript;
 
     /**
-     * 配置的表达式 1 && 2 || 3
+     * 配置的逻辑表达式 1 && 2 || 3
      */
-    private String expression;
+    private String logicScript;
 
     /**
      * 决策结果
