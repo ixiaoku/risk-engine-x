@@ -16,6 +16,7 @@
     <module>risk-engine-crawler</module>
     <module>risk-control-analysis</module>
       <module>risk-engine-service</module>
+    <module>risk-engine-dto</module>
   </modules>
 
   <parent>
@@ -39,6 +40,8 @@
     <org.projectlombok.version>1.18.30</org.projectlombok.version>
     <commons-collections4.version>4.4</commons-collections4.version>
     <mybatis.version>2.2.2</mybatis.version>
+    <guava.version>33.2.0-jre</guava.version>
+    <gson.version>2.11.0</gson.version>
   </properties>
 
   <dependencyManagement>
@@ -65,6 +68,12 @@
       <dependency>
         <groupId>risk.engine.crawler</groupId>
         <artifactId>risk-engine-crawler</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>risk.engine.dto</groupId>
+        <artifactId>risk-engine-dto</artifactId>
         <version>${project.version}</version>
       </dependency>
 
@@ -170,6 +179,20 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-collections4</artifactId>
         <version>${commons-collections4.version}</version>
+      </dependency>
+
+      <!-- Guava 是 Google 提供的工具库 -->
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+
+      <!-- Gson 解析 -->
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>${gson.version}</version>
       </dependency>
 
     </dependencies>

@@ -20,6 +20,8 @@ public interface IncidentMapper {
 
     List<Incident> selectByExample(Incident incident);
 
+    Incident selectByIncidentCode(String incidentCode);
+
     Incident selectByPrimaryKey(Long id);
 
     int updateByPrimaryKey(Incident record);

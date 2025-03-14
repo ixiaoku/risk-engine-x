@@ -36,6 +36,11 @@ public class IIncidentServiceImpl implements IIncidentService {
     }
 
     @Override
+    public Incident selectByIncidentCode(String incidentCode) {
+        return incidentMapper.selectByIncidentCode(incidentCode);
+    }
+
+    @Override
     public Incident selectByPrimaryKey(Long id) {
         return incidentMapper.selectByPrimaryKey(id);
     }

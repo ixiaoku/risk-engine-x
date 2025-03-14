@@ -34,7 +34,7 @@ public class Incident {
     private String decisionResult;
 
     /**
-     * 事件状态
+     * 事件状态 状态（0：删除，1：上线，2：下线）
      */
     private Integer status;
 

@@ -20,6 +20,10 @@ public interface RuleMapper {
 
     List<Rule> selectByExample(Rule example);
 
+    Rule selectByRuleCode(String incidentCode);
+
+    List<Rule> selectByIncidentCode(String incidentCode);
+
     Rule selectByPrimaryKey(Long id);
 
     int updateByPrimaryKey(Rule record);

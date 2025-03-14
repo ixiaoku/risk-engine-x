@@ -24,14 +24,36 @@
 
   <sql id="Base_Column_List">
     id, incident_code, rule_code, rule_name, status, score, decision_result, expiry_time,
-    label, penalty_action, version, responsible_person, operator, create_time, update_time
+    label, penalty_action, version, responsible_person, operator, create_time, update_time,
+    condition_script
   </sql>
 
-  <select id="selectByExample" parameterType="risk.engine.db.entity.Rule" resultMap="BaseResultMap">
+  <select id="selectByRuleCode" parameterType="risk.engine.db.entity.Rule" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from rule
+    where rule_code = #{ruleCode,jdbcType=VARCHAR} limit 1
   </select>
+
+    <select id="selectByIncidentCode" parameterType="risk.engine.db.entity.Rule" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from rule
+        where incident_code = #{incidentCode,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByExample" parameterType="risk.engine.db.entity.Rule" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from rule
+        where 1 == 1
+        <if test="incidentCode != null">
+            and incident_code = #{incidentCode,jdbcType=VARCHAR}
+        </if>
+        <if test="status != null">
+            and status = #{status,jdbcType=VARCHAR}
+        </if>
+    </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from rule

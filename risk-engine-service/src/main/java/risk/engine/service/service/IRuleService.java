@@ -17,6 +17,10 @@ public interface IRuleService {
 
     List<Rule> selectByExample(Rule example);
 
+    Rule selectByRuleCode(String incidentCode);
+
+    List<Rule> selectByIncidentCode(String incidentCode);
+
     Rule selectByPrimaryKey(Long id);
 
     boolean updateByPrimaryKey(Rule record);

@@ -17,6 +17,8 @@ public interface IIncidentService {
 
     List<Incident> selectByExample(Incident incident);
 
+    Incident selectByIncidentCode(String incidentCode);
+
     Incident selectByPrimaryKey(Long id);
 
     boolean updateByPrimaryKey(Incident record);

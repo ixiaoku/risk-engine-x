@@ -33,7 +33,7 @@ public class Rule {
     private String ruleName;
 
     /**
-     * 规则状态
+     * 规则状态 状态（0：删除，1：上线，2：下线，3：模拟）
      */
     private Integer status;
 

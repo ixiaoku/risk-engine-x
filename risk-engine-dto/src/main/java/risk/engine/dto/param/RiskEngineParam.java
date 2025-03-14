@@ -1,14 +1,15 @@
-package risk.engine.common.dto;
+package risk.engine.dto.param;
 
 import lombok.Data;
+import lombok.NonNull;
 
 /**
  * @Author: X
- * @Date: 2025/3/12 20:17
+ * @Date: 2025/3/12 20:42
  * @Version: 1.0
  */
 @Data
-public class RiskExecuteEngineDTO {
+public class RiskEngineParam {
 
     /**
      * 唯一id

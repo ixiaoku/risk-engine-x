@@ -1,15 +1,15 @@
 package risk.engine.rest.controller;
 
+import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import risk.engine.common.param.RiskEngineParam;
+import risk.engine.dto.param.RiskEngineParam;
+import risk.engine.dto.result.RiskEngineExecuteResult;
 import risk.engine.common.valid.ValidatorUtils;
-import risk.engine.db.entity.Rule;
-import risk.engine.service.service.IEngineResultService;
-import risk.engine.service.service.IIncidentService;
-import risk.engine.service.service.IRuleService;
+import risk.engine.service.service.IRiskEngineExecuteService;
 
 import javax.annotation.Resource;
 
@@ -18,22 +18,18 @@ import javax.annotation.Resource;
  * @Date: 2025/3/9 21:03
  * @Version: 1.0
  */
+@Slf4j
 @RestController
 @RequestMapping("/risk")
 public class RiskEngineController {
 
     @Resource
-    private IRuleService ruleService;
-
-    @Resource
-    private IIncidentService incidentService;
-
-    @Resource
-    private IEngineResultService engineResultService;
+    private IRiskEngineExecuteService executeService;
 
     @PostMapping("/engine")
-    public void execute(@RequestBody RiskEngineParam riskEngineParam) throws Exception {
+    public RiskEngineExecuteResult execute(@RequestBody RiskEngineParam riskEngineParam) throws Exception {
 
+        log.info("RiskEngineController execute：{}", new Gson().toJson(riskEngineParam));
         //不为空校验
         ValidatorUtils.EmptyThrowException()
                 .validateException(riskEngineParam.getFlowNo());
@@ -41,8 +37,7 @@ public class RiskEngineController {
                 .validateException(riskEngineParam.getIncidentCode());
         ValidatorUtils.EmptyThrowException()
                 .validateException(riskEngineParam.getRequestPayload());
-        System.out.println("请求成功" + riskEngineParam.getFlowNo());
-        Rule rule = ruleService.selectByPrimaryKey(1L);
+        return executeService.execute(riskEngineParam);
     }
 
 }

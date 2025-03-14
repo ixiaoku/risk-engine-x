@@ -19,7 +19,6 @@ public class RuleServiceImpl implements IRuleService {
     @Resource
     private RuleMapper ruleMapper;
 
-
     @Override
     public boolean deleteByPrimaryKey(Long id) {
         return ruleMapper.deleteByPrimaryKey(id) > 0;
@@ -33,6 +32,16 @@ public class RuleServiceImpl implements IRuleService {
     @Override
     public List<Rule> selectByExample(Rule example) {
         return ruleMapper.selectByExample(example);
+    }
+
+    @Override
+    public Rule selectByRuleCode(String incidentCode) {
+        return ruleMapper.selectByRuleCode(incidentCode);
+    }
+
+    @Override
+    public List<Rule> selectByIncidentCode(String incidentCode) {
+        return ruleMapper.selectByIncidentCode(incidentCode);
     }
 
     @Override

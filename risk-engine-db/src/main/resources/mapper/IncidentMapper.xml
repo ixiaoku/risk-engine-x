@@ -18,26 +18,34 @@
 
   <sql id="Base_Column_List">
     id, incident_code, incident_name, decision_result, status, responsible_person, operator,
-    create_time, update_time
+    create_time, update_time, request_payload
   </sql>
+
   <select id="selectByExample" parameterType="risk.engine.db.entity.Incident" resultMap="BaseResultMap">
     select
-    <if test="distinct">
-      distinct
-    </if>
     <include refid="Base_Column_List" />
     from incident
+    where 1 == 1
+    <if test="incident_code != null">
+      and incident_code = #{incidentCode,jdbcType=VARCHAR}
+    </if>
+    <if test="status != null">
+      and status = #{status,jdbcType=INTEGER}
+    </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+
+  <select id="selectByIncidentCode" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
     from incident
-    where id = #{id,jdbcType=BIGINT}
+    where incident_code = #{incidentCode,jdbcType=VARCHAR} limit 1
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from incident
     where id = #{id,jdbcType=BIGINT}
   </delete>
+
   <insert id="insert" parameterType="risk.engine.db.entity.Incident">
     insert into incident (id, incident_code, incident_name, 
       decision_result, status, responsible_person, 
@@ -48,6 +56,7 @@
       #{operator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{requestPayload,jdbcType=LONGVARCHAR})
   </insert>
+
   <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.Incident">
     update incident
     set incident_code = #{incidentCode,jdbcType=VARCHAR},
