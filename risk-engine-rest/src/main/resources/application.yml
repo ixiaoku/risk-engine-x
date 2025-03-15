@@ -8,9 +8,28 @@ spring:
     password:
     timeout: 2000ms
     database: 1  #默认有16个db(集群模式用hash槽代替)，这里配置具体使用的db，默认是0
+  rocketmq:
+    name-server: 106.55.233.79:9876
+    consumer:
+      group: consumer-group-test1
+    producer:
+      group: producer-test-group1
+      send-message-timeout: 3000
+#  kafka:
+#    bootstrap-servers: 106.55.233.79:9092
+#    producer:
+#      retries: 3
+#      acks: all
+#      batch-size: 16384
+#      buffer-memory: 33554432
+#    consumer:
+#      group-id: test-group
+#      enable-auto-commit: true
+#      auto-offset-reset: earliest
 server:
   port: 8088
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: risk.engine.db.entity
+
