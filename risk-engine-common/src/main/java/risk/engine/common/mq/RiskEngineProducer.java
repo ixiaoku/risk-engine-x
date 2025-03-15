@@ -1,4 +1,4 @@
-package risk.engine.rest.mq;
+package risk.engine.common.mq;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;

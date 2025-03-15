@@ -3,7 +3,7 @@ package risk.engine.service.handler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import risk.engine.common.grovvy.GroovyShellUtil;
-import risk.engine.dto.dto.RuleExpressionDTO;
+import risk.engine.dto.dto.engine.RuleExpressionDTO;
 import risk.engine.dto.enums.FieldTypeEnum;
 import risk.engine.dto.enums.OperationSymbolEnum;
 import risk.engine.common.grovvy.ExpressionParser;

@@ -1,4 +1,4 @@
-package risk.engine.dto.dto;
+package risk.engine.dto.dto.block;
 
 import lombok.Data;
 

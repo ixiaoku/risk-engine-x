@@ -7,6 +7,7 @@
     <file url="file://$PROJECT_DIR$/risk-engine-crawler/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/risk-engine-db/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/risk-engine-dto/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/risk-engine-job/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/risk-engine-rest/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/risk-engine-rest/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/risk-engine-service/src/main/java" charset="UTF-8" />

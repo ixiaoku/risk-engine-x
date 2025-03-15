@@ -9,7 +9,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.stereotype.Component;
 import risk.engine.db.entity.BlockchainBlock;
-import risk.engine.dto.dto.BlockchainBlockDTO;
+import risk.engine.dto.dto.block.BlockchainBlockDTO;
 import risk.engine.service.service.IBlockchainBlockService;
 
 import javax.annotation.Resource;

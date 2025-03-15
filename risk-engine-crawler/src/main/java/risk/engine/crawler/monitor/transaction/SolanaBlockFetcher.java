@@ -7,7 +7,7 @@ import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import risk.engine.common.util.OkHttpUtil;
-import risk.engine.dto.dto.SolanaBlockDTO;
+import risk.engine.dto.dto.block.SolanaBlockDTO;
 
 import java.io.IOException;
 

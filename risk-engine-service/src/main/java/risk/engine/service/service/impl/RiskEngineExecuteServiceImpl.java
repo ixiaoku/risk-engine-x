@@ -2,20 +2,22 @@ package risk.engine.service.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import risk.engine.common.grovvy.GroovyShellUtil;
-import risk.engine.db.entity.EngineResult;
+import risk.engine.common.mq.RiskEngineProducer;
 import risk.engine.db.entity.Incident;
 import risk.engine.db.entity.Rule;
+import risk.engine.dto.dto.engine.HitRuleDTO;
+import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;
 import risk.engine.dto.enums.DecisionResultEnum;
 import risk.engine.dto.enums.IncidentStatusEnum;
 import risk.engine.dto.enums.RuleStatusEnum;
 import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.dto.result.RiskEngineExecuteResult;
-import risk.engine.service.service.IEngineResultService;
+import risk.engine.service.handler.RiskEngineConsumer;
 import risk.engine.service.service.IIncidentService;
 import risk.engine.service.service.IRiskEngineExecuteService;
 import risk.engine.service.service.IRuleService;
@@ -26,6 +28,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -45,10 +48,12 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
     private IIncidentService incidentService;
 
     @Resource
-    private IEngineResultService engineResultService;
+    private RiskEngineProducer riskEngineProducer;
 
     @Resource
-    private InitServiceImpl initService;
+    private RiskEngineConsumer engineConsumer;
+    @Autowired
+    private RiskEngineConsumer riskEngineConsumer;
 
     /**
      * 引擎执行 主逻辑
@@ -92,40 +97,82 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
         List<Rule> hitMockRuleList = getHitRuleList(paramMap, mockRuleList);
         //返回分数最高的命中策略 先返回上线的然后再看模拟的
         Rule hitRule = new Rule();
-        if(CollectionUtils.isNotEmpty(hitOnlineRuleList)) {
+        if (CollectionUtils.isNotEmpty(hitOnlineRuleList)) {
             hitRule = hitOnlineRuleList.get(0);
             result.setDecisionResult(hitRule.getDecisionResult());
             log.info("命中上线规则：{}", hitRule.getRuleName());
-        } else if(CollectionUtils.isNotEmpty(hitMockRuleList)) {
+        } else if (CollectionUtils.isNotEmpty(hitMockRuleList)) {
             hitRule = hitOnlineRuleList.get(0);
             result.setDecisionResult(hitRule.getDecisionResult());
             log.info("命中模拟规则：{}", hitRule.getRuleName());
         }
-        insertEngineResult(riskEngineParam, incident.getIncidentName(), hitRule, hitOnlineRuleList, hitMockRuleList);
+        Rule finalHitRule = hitRule;
+        RiskExecuteEngineDTO executeEngineDTO = getRiskExecuteEngineDTO(riskEngineParam, incident.getIncidentName(), finalHitRule, hitOnlineRuleList, hitMockRuleList);
+        //异步保存数据和发送mq消息 规则熔断
+        CompletableFuture.runAsync(() -> {
+            // 异步发消息 分消费者组监听 1mysql保存引擎执行结果并且同步es 2执行处罚 加名单以及调三方接口
+            //riskEngineProducer.sendMessage("test_topic1", new Gson().toJson(executeEngineDTO));
+            //搞了好长时间云服务器 mq有问题 搞不好 先这样写
+            riskEngineConsumer.save(executeEngineDTO);
+        }).exceptionally(ex -> {
+            log.error("引擎执行 异步任务失败: {}, 异常: {}", riskEngineParam.getIncidentCode(), ex.getMessage(), ex);
+            //处理失败逻辑 发送告警消息
+            return null;
+        });
         return result;
     }
 
-    private void insertEngineResult(RiskEngineParam riskEngineParam, String incidentName, Rule hitRule, List<Rule> hitOnlineRuleList, List<Rule> hitMOckRuleList) {
-        EngineResult engineResult = new EngineResult();
-        engineResult.setFlowNo(riskEngineParam.getFlowNo());
-        engineResult.setRiskFlowNo(riskEngineParam.getIncidentCode() + ":" + UUID.randomUUID());
-        engineResult.setRequestPayload(riskEngineParam.getRequestPayload());
-        engineResult.setIncidentCode(riskEngineParam.getIncidentCode());
-        engineResult.setIncidentName(incidentName);
+    /**
+     * 处理数据
+     * @param riskEngineParam 业务参数
+     * @param incidentName 事件名称
+     * @param hitRule 命中规则
+     * @param hitOnlineRuleList 命中上线规则
+     * @param hitMOckRuleList 命中模拟规则
+     * @return 结果
+     */
+    private RiskExecuteEngineDTO getRiskExecuteEngineDTO(RiskEngineParam riskEngineParam, String incidentName, Rule hitRule, List<Rule> hitOnlineRuleList, List<Rule> hitMOckRuleList) {
+        RiskExecuteEngineDTO executeEngineDTO = new RiskExecuteEngineDTO();
+        executeEngineDTO.setFlowNo(riskEngineParam.getFlowNo());
+        executeEngineDTO.setRiskFlowNo(riskEngineParam.getIncidentCode() + ":" + UUID.randomUUID());
+        executeEngineDTO.setRequestPayload(riskEngineParam.getRequestPayload());
+        executeEngineDTO.setIncidentCode(riskEngineParam.getIncidentCode());
+        executeEngineDTO.setIncidentName(incidentName);
         if (!Objects.isNull(hitRule)) {
-            engineResult.setRuleCode(hitRule.getRuleCode());
-            engineResult.setRuleName(hitRule.getRuleName());
-            engineResult.setRuleStatus(hitRule.getStatus());
-            engineResult.setRuleScore(hitRule.getScore());
-            engineResult.setRuleDecisionResult(hitRule.getDecisionResult());
-            engineResult.setRuleLabel(hitRule.getLabel());
-            engineResult.setRulePenaltyAction(hitRule.getPenaltyAction());
-            engineResult.setRuleVersion(hitRule.getVersion());
+            executeEngineDTO.setRuleCode(hitRule.getRuleCode());
+            executeEngineDTO.setRuleName(hitRule.getRuleName());
+            executeEngineDTO.setRuleStatus(hitRule.getStatus());
+            executeEngineDTO.setRuleScore(hitRule.getScore());
+            executeEngineDTO.setRuleDecisionResult(hitRule.getDecisionResult());
+            executeEngineDTO.setRuleLabel(hitRule.getLabel());
+            executeEngineDTO.setRulePenaltyAction(hitRule.getPenaltyAction());
+            executeEngineDTO.setRuleVersion(hitRule.getVersion());
         }
-        engineResult.setCreateTime(LocalDateTime.now());
-        engineResult.setHitMockRules(new Gson().toJson(hitMOckRuleList));
-        engineResult.setHitOnlineRules(new Gson().toJson(hitOnlineRuleList));
-        engineResultService.insert(engineResult);
+        executeEngineDTO.setCreateTime(LocalDateTime.now());
+        List<HitRuleDTO> hitMockRules = getHitRuleDTOList(RuleStatusEnum.MOCK.getCode(), hitMOckRuleList);
+        executeEngineDTO.setHitMockRules(hitMockRules);
+        List<HitRuleDTO> hitOnlineRules = getHitRuleDTOList(RuleStatusEnum.ONLINE.getCode(), hitMOckRuleList);
+        executeEngineDTO.setHitOnlineRules(hitOnlineRules);
+        return executeEngineDTO;
+    }
+
+    /**
+     * 获取命中规则
+     * @param status 状态
+     * @param ruleList 规则集合
+     * @return 结果
+     */
+    private List<HitRuleDTO> getHitRuleDTOList(Integer status, List<Rule> ruleList) {
+        return ruleList.stream()
+                .filter(e-> Objects.equals(e.getStatus(), status))
+                .map(rule -> {
+                    HitRuleDTO hitRuleDTO = new HitRuleDTO();
+                    hitRuleDTO.setRuleCode(rule.getRuleCode());
+                    hitRuleDTO.setRuleName(rule.getRuleName());
+                    hitRuleDTO.setRuleStatus(rule.getStatus());
+                    hitRuleDTO.setRuleScore(rule.getScore());
+                    return hitRuleDTO;
+                }).collect(Collectors.toList());
     }
 
     /**
