@@ -1,4 +1,4 @@
-package risk.engine.rest;
+package risk.engine.job;
 
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
@@ -13,14 +13,14 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @Slf4j
 @SpringBootApplication()
-@ComponentScan(basePackages = {"risk.engine.rest", "risk.engine.service", "risk.engine.db", "risk.engine.common", "risk.engine.crawler"})
+@ComponentScan(basePackages = {"risk.engine.job", "risk.engine.service", "risk.engine.db", "risk.engine.common", "risk.engine.crawler"})
 @MapperScan("risk.engine.db.dao")
-public class RiskEngineApplication {
+public class RiskEngineJobApplication {
 
     public static void main(String[] args) {
         try {
-            SpringApplication.run(RiskEngineApplication.class, args);
-            log.info("HELLO WORLD ----->>> 服务rest启动成功 -------->>> SUCCESS" );
+            SpringApplication.run(RiskEngineJobApplication.class, args);
+            log.info("HELLO WORLD ----->>> 服务job启动成功 -------->>> SUCCESS" );
         } catch (Exception e) {
             log.error("服务启动报错信息：{}", e.getMessage(), e);
             throw e;
