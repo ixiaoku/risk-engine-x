@@ -1,10 +1,11 @@
 package risk.engine.job.task;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import risk.engine.crawler.monitor.transfer.EthereumFetcherHandler;
+import risk.engine.crawler.monitor.transfer.SolanaBlockFetcherHandler;
 import risk.engine.db.entity.TransferRecord;
 import risk.engine.dto.dto.block.ChainTransferDTO;
 import risk.engine.service.service.ITransferRecordService;
@@ -22,19 +23,24 @@ import java.util.List;
 public class SolanaAnalysisTask implements Job {
 
     @Resource
-    private EthereumFetcherHandler ethereumFetcherHandler;
+    private SolanaBlockFetcherHandler fetcherHandler;
 
     @Resource
-    private ITransferRecordService transactionTransferRecordService;
+    private ITransferRecordService transferRecordService;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        log.info("Quartz 定时抓取BTC链上数据...");
+        log.info("Quartz 定时抓取Solana链上数据...");
+        crawlerSolBlock();
+    }
+
+    private void crawlerSolBlock() {
         try {
-            List<ChainTransferDTO> chainTransferDTOList = ethereumFetcherHandler.getTransactions();
-            if (chainTransferDTOList == null || chainTransferDTOList.isEmpty()) {
+            List<ChainTransferDTO> chainTransferDTOList = fetcherHandler.crawlerSolana();
+            if (CollectionUtils.isEmpty(chainTransferDTOList)) {
                 return;
             }
+            log.info("EthereumAnalysisTask 一分钟一次定时抓取Solana 链上数据 size: {}", chainTransferDTOList.size());
             chainTransferDTOList.forEach(chainTransferDTO -> {
                 TransferRecord transferRecord = new TransferRecord();
                 transferRecord.setSendAddress(chainTransferDTO.getSendAddress());
@@ -49,9 +55,10 @@ public class SolanaAnalysisTask implements Job {
                 transferRecord.setTransferTime(chainTransferDTO.getTransferTime());
                 transferRecord.setCreatedTime(chainTransferDTO.getCreatedTime());
                 transferRecord.setStatus(chainTransferDTO.getStatus());
-                transactionTransferRecordService.insert(transferRecord);
+                transferRecordService.insert(transferRecord);
             });
         } catch (IOException e) {
+            log.error("错误信息：{}" ,e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
