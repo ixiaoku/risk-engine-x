@@ -2,7 +2,7 @@ package risk.engine.db.entity;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 名单数据
@@ -25,15 +25,15 @@ public class ListData {
 
     private String listValue;
 
-    private Boolean status;
+    private Integer status;
 
-    private Boolean listType;
+    private Integer listType;
 
     private String operator;
 
-    private Date createTime;
+    private LocalDateTime createTime;
 
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     private String listDesc;
 

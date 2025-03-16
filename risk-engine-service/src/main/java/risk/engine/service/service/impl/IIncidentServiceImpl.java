@@ -2,14 +2,19 @@ package risk.engine.service.service.impl;
 
 import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import risk.engine.db.dao.IncidentMapper;
+import risk.engine.db.dao.IndicatorMapper;
 import risk.engine.db.entity.Incident;
+import risk.engine.db.entity.Indicator;
+import risk.engine.dto.enums.IndictorSourceEnum;
 import risk.engine.dto.param.IncidentParam;
 import risk.engine.service.service.IIncidentService;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author: X
@@ -22,6 +27,8 @@ public class IIncidentServiceImpl implements IIncidentService {
     @Resource
     private IncidentMapper incidentMapper;
 
+    @Resource
+    private IndicatorMapper indicatorMapper;
 
     @Override
     public boolean deleteByPrimaryKey(Long id) {
@@ -29,6 +36,7 @@ public class IIncidentServiceImpl implements IIncidentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean insert(IncidentParam incidentParam) {
         Incident incident = new Incident();
         incident.setIncidentCode(incidentParam.getIncidentCode());
@@ -40,6 +48,24 @@ public class IIncidentServiceImpl implements IIncidentService {
         incident.setCreateTime(LocalDateTime.now());
         incident.setUpdateTime(LocalDateTime.now());
         incident.setRequestPayload(new Gson().toJson(incidentParam.getIndicators()));
+
+        //保存指标
+        List<Indicator> indicatorList = incidentParam.getIndicators().stream()
+                .map(indicatorDTO -> {
+                    Indicator indicator = new Indicator();
+                    indicator.setIncidentCode(indicatorDTO.getIndicatorCode());
+                    indicator.setIndicatorName(indicatorDTO.getIndicatorName());
+                    indicator.setIndicatorValue(indicatorDTO.getIndicatorValue());
+                    indicator.setIndicatorDesc(indicatorDTO.getIndicatorDesc());
+                    indicator.setIndicatorSource(IndictorSourceEnum.ATTRIBUTE.getCode());
+                    indicator.setIndicatorType(indicatorDTO.getIndicatorType());
+                    indicator.setOperator(incidentParam.getOperator());
+                    indicator.setCreateTime(LocalDateTime.now());
+                    indicator.setUpdateTime(LocalDateTime.now());
+                    return indicator;
+                }).collect(Collectors.toList());
+        indicatorList.forEach(indicator -> indicatorMapper.insert(indicator));
+        //保存事件
         return incidentMapper.insert(incident) > 0;
     }
 

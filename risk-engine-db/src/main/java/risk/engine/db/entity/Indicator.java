@@ -20,8 +20,6 @@ public class Indicator {
      */
     private String incidentCode;
 
-    private String indicatorCode;
-
     private String indicatorName;
 
     private String indicatorValue;

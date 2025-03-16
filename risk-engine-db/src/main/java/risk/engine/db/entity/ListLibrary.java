@@ -19,9 +19,9 @@ public class ListLibrary {
 
     private String listLibraryName;
 
-    private Boolean status;
+    private Integer status;
 
-    private Boolean listCategory;
+    private Integer listCategory;
 
     private String operator;
 
@@ -29,6 +29,6 @@ public class ListLibrary {
 
     private LocalDateTime updateTime;
 
-    private String listLibrary;
+    private String listLibraryDesc;
 
 }

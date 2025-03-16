@@ -6,10 +6,7 @@ import risk.engine.db.dao.IncidentMapper;
 import risk.engine.db.entity.*;
 import risk.engine.dto.dto.block.ChainTransferDTO;
 import risk.engine.dto.dto.rule.RuleIndicatorDTO;
-import risk.engine.dto.enums.FieldTypeEnum;
-import risk.engine.dto.enums.IncidentStatusEnum;
-import risk.engine.dto.enums.OperationSymbolEnum;
-import risk.engine.dto.enums.RuleStatusEnum;
+import risk.engine.dto.enums.*;
 import risk.engine.service.handler.GroovyExpressionParser;
 import risk.engine.service.service.*;
 
@@ -17,7 +14,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -148,7 +144,6 @@ public class InitServiceImpl {
         Indicator indicator = new Indicator();
         indicator.setId(0L);
         indicator.setIncidentCode("1");
-        indicator.setIndicatorCode("1");
         indicator.setIndicatorName("1");
         indicator.setIndicatorValue("1");
         indicator.setIndicatorDesc("1");
@@ -162,32 +157,32 @@ public class InitServiceImpl {
 
     private void insertListDataLibrary() {
         ListLibrary listDataLibrary = new ListLibrary();
-        listDataLibrary.setId(0L);
-        listDataLibrary.setListLibraryCode("1");
-        listDataLibrary.setListLibraryName("1");
-        listDataLibrary.setStatus(false);
-        listDataLibrary.setListCategory(false);
-        listDataLibrary.setOperator("1");
+        listDataLibrary.setListLibraryCode("white_address_lib");
+        listDataLibrary.setListLibraryName("白名单地址库");
+        listDataLibrary.setStatus(1);
+        listDataLibrary.setListCategory(1);
+        listDataLibrary.setOperator("cherry.li");
         listDataLibrary.setCreateTime(LocalDateTime.now());
         listDataLibrary.setUpdateTime(LocalDateTime.now());
-        listDataLibrary.setListLibrary("1");
+        listDataLibrary.setListLibraryDesc("这是一个白名单库 安全放行");
         listLibraryService.insert(listDataLibrary);
+        System.out.println(new Gson().toJson(listDataLibrary));
     }
 
     private void insertListData() {
         ListData listData = new ListData();
-        listData.setId(0L);
-        listData.setListLibraryCode("1");
-        listData.setListLibraryName("1");
-        listData.setListName("1");
-        listData.setListCode("1");
-        listData.setListValue("1");
-        listData.setStatus(false);
-        listData.setListType(false);
-        listData.setOperator("1");
-        listData.setCreateTime(new Date());
-        listData.setUpdateTime(new Date());
-        listData.setListDesc("1");
+        listData.setListLibraryCode("high_black_address_lib");
+        listData.setListLibraryName("高频黑名单地址库");
+        listData.setListName("交易地址2");
+        listData.setListCode("eth_transfer_code_02");
+        listData.setListValue("0x59bd104a9ec7057d3a8fb8fc71148ec5c08c0bae");
+        listData.setStatus(1);
+        listData.setListType(ListTypeEnum.ADDRESS.getCode());
+        listData.setOperator("cherry.li");
+        listData.setCreateTime(LocalDateTime.now());
+        listData.setUpdateTime(LocalDateTime.now());
+        listData.setListDesc("这是一条名单数据");
+        System.out.println(new Gson().toJson(listData));
         listDataService.insert(listData);
     }
 
@@ -232,7 +227,7 @@ public class InitServiceImpl {
     public void init() {
         //insertIndicator();
         //insertListDataLibrary();
-        //insertListData();
+        insertListData();
         //insertPenalty();
         //insertPenaltyAction();
     }

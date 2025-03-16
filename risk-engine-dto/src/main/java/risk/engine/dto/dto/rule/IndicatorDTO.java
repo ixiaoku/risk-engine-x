@@ -26,4 +26,14 @@ public class IndicatorDTO {
      */
     private Integer indicatorType;
 
+    /**
+     * 特征描述
+     */
+    private String indicatorDesc;
+
+    /**
+     * 特征示例值
+     */
+    private String indicatorValue;
+
 }
