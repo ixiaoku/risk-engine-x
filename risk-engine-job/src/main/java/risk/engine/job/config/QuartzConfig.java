@@ -17,8 +17,10 @@ public class QuartzConfig {
     @Bean
     public JobDetail fetchBlockchainJobDetail() {
         return JobBuilder.newJob(BitcoinAnalysisTask.class)
-                .withIdentity("fetchBlockchainJob")  // 任务名称
-                .storeDurably()  // 任务存储到数据库
+                .withIdentity("fetchBitcoinChainJob")
+                .withIdentity("fetchEthChainJob")
+                .withIdentity("fetchEthereumChainJob")
+                .storeDurably()
                 .build();
     }
 
@@ -26,7 +28,9 @@ public class QuartzConfig {
     public Trigger fetchBlockchainJobTrigger(JobDetail fetchBlockchainJobDetail) {
         return TriggerBuilder.newTrigger()
                 .forJob(fetchBlockchainJobDetail)
-                .withIdentity("fetchBlockchainTrigger")
+                .withIdentity("fetchBitcoinChainTrigger")
+                .withIdentity("fetchEthereumChainTrigger")
+                .withIdentity("fetchSolanaChainTrigger")
                 .withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * * * ?"))  // 每 1 分钟执行一次
                 .build();
     }

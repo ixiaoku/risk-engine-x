@@ -24,17 +24,17 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from transaction_transfer_record
+    from transfer_record
     where id = #{id,jdbcType=BIGINT}
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from transaction_transfer_record
+    delete from transfer_record
     where id = #{id,jdbcType=BIGINT}
   </delete>
 
   <insert id="insert" parameterType="risk.engine.db.entity.TransferRecord">
-    insert into transaction_transfer_record (id, send_address, receive_address, 
+    insert into transfer_record (id, send_address, receive_address, 
       amount, u_amount, hash, 
       height, chain, token, 
       fee, transfer_time, created_time, 
@@ -47,7 +47,7 @@
   </insert>
 
   <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.TransferRecord">
-    update transaction_transfer_record
+    update transfer_record
     set
       status = #{status,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}

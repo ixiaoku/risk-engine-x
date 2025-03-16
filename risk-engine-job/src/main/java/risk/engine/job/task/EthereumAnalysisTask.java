@@ -19,7 +19,7 @@ import java.util.List;
  * @Version: 1.0
  */
 @Slf4j
-public class BitcoinAnalysisTask implements Job {
+public class EthereumAnalysisTask implements Job {
 
     @Resource
     private EthereumFetcherHandler ethereumFetcherHandler;
