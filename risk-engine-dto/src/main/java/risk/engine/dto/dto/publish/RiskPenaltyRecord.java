@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * @Version: 1.0
  */
 @Data
-public class RiskPenalty {
+public class RiskPenaltyRecord {
 
     /**
      * 处置code
@@ -37,16 +37,14 @@ public class RiskPenalty {
      */
     private String penaltyJson;
 
-    private String operator;
+    /**
+     * 处置时间
+     */
+    private LocalDateTime penalty_time;
 
     /**
      * 创建时间
      */
     private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
 
 }
