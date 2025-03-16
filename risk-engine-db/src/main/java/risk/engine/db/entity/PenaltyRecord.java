@@ -15,7 +15,7 @@ public class PenaltyRecord {
 
     private Long id;
 
-    private String flowno;
+    private String flowNo;
 
     private String ruleCode;
 
@@ -34,6 +34,10 @@ public class PenaltyRecord {
     private String penaltyReason;
 
     private String penaltyResult;
+
+    private String penaltyDescription;
+
+    private String penaltyJson;
 
     private Boolean status;
 

@@ -1,4 +1,4 @@
-package risk.engine.dto.dto.engine;
+package risk.engine.dto.dto.rule;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import lombok.Data;
  * @Version: 1.0
  */
 @Data
-public class RuleExpressionDTO {
+public class RuleIndicatorDTO {
 
     /**
      * 1开始
@@ -18,23 +18,23 @@ public class RuleExpressionDTO {
     /**
      * 特征code
      */
-    private String attributeCode;
+    private String indicatorCode;
 
     /**
      * 特征值
      */
-    private String attributeValue;
+    private String indicatorValue;
 
     /**
      * 特征名称
      */
-    private String attributeName;
+    private String indicatorName;
 
     /**
      * 特征数据类型
      * @see risk.engine.dto.enums.FieldTypeEnum
      */
-    private Integer attributeType;
+    private Integer indicatorType;
 
     /**
      * 操作符

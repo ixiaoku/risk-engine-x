@@ -1,6 +1,7 @@
 package risk.engine.dto.dto.engine;
 
 import lombok.Data;
+import risk.engine.dto.dto.rule.HitRuleDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;

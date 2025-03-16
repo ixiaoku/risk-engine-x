@@ -8,8 +8,6 @@ public interface ListLibraryMapper {
 
     int insert(ListLibrary record);
 
-    int insertSelective(ListLibrary record);
-
     ListLibrary selectByPrimaryKey(Long id);
 
     int updateByPrimaryKey(ListLibrary record);

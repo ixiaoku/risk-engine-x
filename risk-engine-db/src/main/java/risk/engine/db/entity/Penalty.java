@@ -25,6 +25,10 @@ public class Penalty {
 
     private String operator;
 
+    private String penaltyDescription;
+
+    private String penaltyJson;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;

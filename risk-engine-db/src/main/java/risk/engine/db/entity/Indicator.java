@@ -2,7 +2,7 @@ package risk.engine.db.entity;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 指标
@@ -28,14 +28,14 @@ public class Indicator {
 
     private String indicatorDesc;
 
-    private Byte indicatorSource;
+    private Integer indicatorSource;
 
-    private Byte indicatorType;
+    private Integer indicatorType;
 
     private String operator;
 
-    private Date createTime;
+    private LocalDateTime createTime;
 
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
 }

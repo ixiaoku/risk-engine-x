@@ -2,7 +2,7 @@ package risk.engine.db.entity;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 名单库
@@ -25,9 +25,9 @@ public class ListLibrary {
 
     private String operator;
 
-    private Date createTime;
+    private LocalDateTime createTime;
 
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     private String listLibrary;
 

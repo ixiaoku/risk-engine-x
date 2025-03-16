@@ -2,22 +2,21 @@ package risk.engine.service.service.impl;
 
 import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
-import risk.engine.db.entity.Incident;
-import risk.engine.db.entity.Rule;
+import risk.engine.db.entity.*;
 import risk.engine.dto.dto.block.ChainTransferDTO;
-import risk.engine.dto.dto.engine.RuleExpressionDTO;
+import risk.engine.dto.dto.rule.RuleIndicatorDTO;
 import risk.engine.dto.enums.FieldTypeEnum;
 import risk.engine.dto.enums.IncidentStatusEnum;
 import risk.engine.dto.enums.OperationSymbolEnum;
 import risk.engine.dto.enums.RuleStatusEnum;
 import risk.engine.service.handler.GroovyExpressionParser;
-import risk.engine.service.service.IIncidentService;
-import risk.engine.service.service.IRuleService;
+import risk.engine.service.service.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +33,21 @@ public class InitServiceImpl {
 
     @Resource
     private IIncidentService incidentService;
+
+    @Resource
+    private IIndicatorService indicatorService;
+
+    @Resource
+    private IListLibraryService listLibraryService;
+
+    @Resource
+    private IListDataService listDataService;
+
+    @Resource
+    private IPenaltyService penaltyService;
+
+    @Resource
+    private IPenaltyRecordService penaltyRecordService;
 
     /**
      * 事件初始化
@@ -92,41 +106,134 @@ public class InitServiceImpl {
         return chainTransferDTO;
     }
 
-    public List<RuleExpressionDTO> getRuleExpressionDTOList() {
-        RuleExpressionDTO expressionDTO1 = new RuleExpressionDTO();
-        expressionDTO1.setAttributeCode("fromAddress");
+    public List<RuleIndicatorDTO> getRuleExpressionDTOList() {
+        RuleIndicatorDTO expressionDTO1 = new RuleIndicatorDTO();
+        expressionDTO1.setIndicatorCode("fromAddress");
         expressionDTO1.setOperationSymbol(OperationSymbolEnum.EQUAL_TO.getCode());
-        expressionDTO1.setAttributeValue("3Q8StmtPCgxNeeeM6Ue9errkDgZ9SiLHE4");
-        expressionDTO1.setAttributeType(FieldTypeEnum.STRING.getCode());
+        expressionDTO1.setIndicatorValue("3Q8StmtPCgxNeeeM6Ue9errkDgZ9SiLHE4");
+        expressionDTO1.setIndicatorType(FieldTypeEnum.STRING.getCode());
         expressionDTO1.setSerialNumber(1);
 
-        RuleExpressionDTO expressionDTO2 = new RuleExpressionDTO();
-        expressionDTO2.setAttributeCode("amount");
+        RuleIndicatorDTO expressionDTO2 = new RuleIndicatorDTO();
+        expressionDTO2.setIndicatorCode("amount");
         expressionDTO2.setOperationSymbol(OperationSymbolEnum.GREATER_THAN.getCode());
-        expressionDTO2.setAttributeValue("5");
-        expressionDTO2.setAttributeType(FieldTypeEnum.BIG_DECIMAL.getCode());
+        expressionDTO2.setIndicatorValue("5");
+        expressionDTO2.setIndicatorType(FieldTypeEnum.BIG_DECIMAL.getCode());
         expressionDTO2.setSerialNumber(2);
 
-        RuleExpressionDTO expressionDTO3 = new RuleExpressionDTO();
-        expressionDTO3.setAttributeCode("toAddress");
+        RuleIndicatorDTO expressionDTO3 = new RuleIndicatorDTO();
+        expressionDTO3.setIndicatorCode("toAddress");
         expressionDTO3.setOperationSymbol(OperationSymbolEnum.EQUAL_TO.getCode());
-        expressionDTO3.setAttributeValue("17qeFe3L7h5CMM1PS7cyjB32E9TT6RQeX6");
-        expressionDTO3.setAttributeType(FieldTypeEnum.STRING.getCode());
+        expressionDTO3.setIndicatorValue("17qeFe3L7h5CMM1PS7cyjB32E9TT6RQeX6");
+        expressionDTO3.setIndicatorType(FieldTypeEnum.STRING.getCode());
         expressionDTO3.setSerialNumber(3);
 
-        RuleExpressionDTO expressionDTO4 = new RuleExpressionDTO();
-        expressionDTO4.setAttributeCode("uAmount");
+        RuleIndicatorDTO expressionDTO4 = new RuleIndicatorDTO();
+        expressionDTO4.setIndicatorCode("uAmount");
         expressionDTO4.setOperationSymbol(OperationSymbolEnum.GREATER_THAN.getCode());
-        expressionDTO4.setAttributeValue("5");
-        expressionDTO4.setAttributeType(FieldTypeEnum.BIG_DECIMAL.getCode());
+        expressionDTO4.setIndicatorValue("5");
+        expressionDTO4.setIndicatorType(FieldTypeEnum.BIG_DECIMAL.getCode());
         expressionDTO4.setSerialNumber(4);
 
-        List<RuleExpressionDTO> expressionList = new ArrayList<>();
+        List<RuleIndicatorDTO> expressionList = new ArrayList<>();
         expressionList.add(expressionDTO1);
         expressionList.add(expressionDTO2);
         expressionList.add(expressionDTO3);
         expressionList.add(expressionDTO4);
         return expressionList;
+    }
+
+    private void insertIndicator() {
+        Indicator indicator = new Indicator();
+        indicator.setId(0L);
+        indicator.setIncidentCode("1");
+        indicator.setIndicatorCode("1");
+        indicator.setIndicatorName("1");
+        indicator.setIndicatorValue("1");
+        indicator.setIndicatorDesc("1");
+        indicator.setIndicatorSource(0);
+        indicator.setIndicatorType(0);
+        indicator.setOperator("1");
+        indicator.setCreateTime(LocalDateTime.now());
+        indicator.setUpdateTime(LocalDateTime.now());
+        indicatorService.insert(indicator);
+    }
+
+    private void insertListDataLibrary() {
+        ListLibrary listDataLibrary = new ListLibrary();
+        listDataLibrary.setId(0L);
+        listDataLibrary.setListLibraryCode("1");
+        listDataLibrary.setListLibraryName("1");
+        listDataLibrary.setStatus(false);
+        listDataLibrary.setListCategory(false);
+        listDataLibrary.setOperator("1");
+        listDataLibrary.setCreateTime(LocalDateTime.now());
+        listDataLibrary.setUpdateTime(LocalDateTime.now());
+        listDataLibrary.setListLibrary("1");
+        listLibraryService.insert(listDataLibrary);
+    }
+
+    private void insertListData() {
+        ListData listData = new ListData();
+        listData.setId(0L);
+        listData.setListLibraryCode("1");
+        listData.setListLibraryName("1");
+        listData.setListName("1");
+        listData.setListCode("1");
+        listData.setListValue("1");
+        listData.setStatus(false);
+        listData.setListType(false);
+        listData.setOperator("1");
+        listData.setCreateTime(new Date());
+        listData.setUpdateTime(new Date());
+        listData.setListDesc("1");
+        listDataService.insert(listData);
+    }
+
+    private void insertPenalty() {
+        Penalty penalty = new Penalty();
+        penalty.setId(0L);
+        penalty.setPenaltyCode("2");
+        penalty.setPenaltyName("1");
+        penalty.setPenaltyDef("1");
+        penalty.setStatus(0);
+        penalty.setOperator("1");
+        penalty.setPenaltyDescription("qq");
+        penalty.setPenaltyJson("qq");
+        penalty.setCreateTime(LocalDateTime.now());
+        penalty.setUpdateTime(LocalDateTime.now());
+        penaltyService.insert(penalty);
+    }
+
+    private void insertPenaltyAction() {
+        PenaltyRecord penaltyRecord = new PenaltyRecord();
+        penaltyRecord.setId(0L);
+        penaltyRecord.setFlowNo("1");
+        penaltyRecord.setRuleCode("1");
+        penaltyRecord.setRuleName("1");
+        penaltyRecord.setIncidentCode("1");
+        penaltyRecord.setIncidentName("1");
+        penaltyRecord.setPenaltyCode("1");
+        penaltyRecord.setPenaltyName("1");
+        penaltyRecord.setPenaltyDef("1");
+        penaltyRecord.setPenaltyReason("1");
+        penaltyRecord.setPenaltyResult("1");
+        penaltyRecord.setStatus(false);
+        penaltyRecord.setRetry(0);
+        penaltyRecord.setPenaltyDescription("qq");
+        penaltyRecord.setPenaltyJson("qq");
+        penaltyRecord.setPenaltyTime(LocalDateTime.now());
+        penaltyRecord.setCreateTime(LocalDateTime.now());
+        penaltyRecord.setUpdateTime(LocalDateTime.now());
+        penaltyRecordService.insert(penaltyRecord);
+    }
+
+    public void init() {
+        //insertIndicator();
+        //insertListDataLibrary();
+        //insertListData();
+        //insertPenalty();
+        //insertPenaltyAction();
     }
 
 }

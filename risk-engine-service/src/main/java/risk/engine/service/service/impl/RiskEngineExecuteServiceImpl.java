@@ -4,20 +4,18 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import risk.engine.common.grovvy.GroovyShellUtil;
-import risk.engine.common.mq.RiskEngineProducer;
 import risk.engine.db.entity.Incident;
 import risk.engine.db.entity.Rule;
-import risk.engine.dto.dto.engine.HitRuleDTO;
+import risk.engine.dto.dto.rule.HitRuleDTO;
 import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;
 import risk.engine.dto.enums.DecisionResultEnum;
 import risk.engine.dto.enums.IncidentStatusEnum;
 import risk.engine.dto.enums.RuleStatusEnum;
 import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.dto.result.RiskEngineExecuteResult;
-import risk.engine.service.handler.RiskEngineConsumer;
+import risk.engine.service.handler.RiskEngineHandler;
 import risk.engine.service.service.IIncidentService;
 import risk.engine.service.service.IRiskEngineExecuteService;
 import risk.engine.service.service.IRuleService;
@@ -48,12 +46,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
     private IIncidentService incidentService;
 
     @Resource
-    private RiskEngineProducer riskEngineProducer;
-
-    @Resource
-    private RiskEngineConsumer engineConsumer;
-    @Autowired
-    private RiskEngineConsumer riskEngineConsumer;
+    private RiskEngineHandler riskEngineConsumer;
 
     /**
      * 引擎执行 主逻辑

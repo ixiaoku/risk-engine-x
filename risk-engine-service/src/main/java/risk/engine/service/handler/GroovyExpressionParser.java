@@ -3,7 +3,7 @@ package risk.engine.service.handler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import risk.engine.common.grovvy.GroovyShellUtil;
-import risk.engine.dto.dto.engine.RuleExpressionDTO;
+import risk.engine.dto.dto.rule.RuleIndicatorDTO;
 import risk.engine.dto.enums.FieldTypeEnum;
 import risk.engine.dto.enums.OperationSymbolEnum;
 import risk.engine.common.grovvy.ExpressionParser;
@@ -29,11 +29,11 @@ public class GroovyExpressionParser {
     public static String parseToGroovyExpression(String logicString, String jsonScript) {
         // 解析 JSON
         Gson gson = new Gson();
-        List<RuleExpressionDTO> conditions = gson.fromJson(jsonScript, new TypeToken<List<RuleExpressionDTO>>(){}.getType());
+        List<RuleIndicatorDTO> conditions = gson.fromJson(jsonScript, new TypeToken<List<RuleIndicatorDTO>>(){}.getType());
 
         // 构建条件映射
         Map<Integer, String> conditionMap = new HashMap<>();
-        for (RuleExpressionDTO condition : conditions) {
+        for (RuleIndicatorDTO condition : conditions) {
             String expr = buildConditionExpression(condition);
             conditionMap.put(condition.getSerialNumber(), expr);
         }
@@ -48,13 +48,13 @@ public class GroovyExpressionParser {
      * @param expressionDTO 特征
      * @return 返回特征表达式
      */
-    private static String buildConditionExpression(RuleExpressionDTO expressionDTO) {
-        String attributeCode = expressionDTO.getAttributeCode();
-        String attributeValue = expressionDTO.getAttributeValue();
+    private static String buildConditionExpression(RuleIndicatorDTO expressionDTO) {
+        String attributeCode = expressionDTO.getIndicatorCode();
+        String attributeValue = expressionDTO.getIndicatorValue();
         //操作逻辑符号
         String operator = OperationSymbolEnum.getOperationSymbolEnumByCode(expressionDTO.getOperationSymbol()).getName();
         //特征类型
-        boolean isString = Objects.equals(expressionDTO.getAttributeType(), FieldTypeEnum.STRING.getCode());
+        boolean isString = Objects.equals(expressionDTO.getIndicatorType(), FieldTypeEnum.STRING.getCode());
         String value = isString ? "'" + attributeValue + "'" : attributeValue;
         return attributeCode + " " + operator + " " + value;
     }
