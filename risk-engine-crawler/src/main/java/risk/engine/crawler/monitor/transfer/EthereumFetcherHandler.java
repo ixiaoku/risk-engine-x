@@ -1,5 +1,6 @@
 package risk.engine.crawler.monitor.transfer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.EthBlock;
@@ -22,17 +23,18 @@ import java.util.List;
  * @Date: 2025/3/9 22:45
  * @Version: 1.0
  */
+@Slf4j
 @Component
-public class EthereumFetcherHandler {
+public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
 
     private static final String INFURA_URL = "https://mainnet.infura.io/v3/98f9c8a03d054a7aa9972559460db851";
     private static final Web3j web3j = Web3j.build(new HttpService(INFURA_URL));
 
-
+    @Override
     public List<ChainTransferDTO> getTransactions() throws IOException {
         // 1. 获取最新区块高度
         BigInteger latestBlockNumber = web3j.ethBlockNumber().send().getBlockNumber();
-        System.out.println("最新区块高度: " + latestBlockNumber);
+        log.info("Ethereum链 最新区块高度: {}", latestBlockNumber);
 
         // 2. 通过区块高度获取区块信息
         EthBlock ethBlock = web3j

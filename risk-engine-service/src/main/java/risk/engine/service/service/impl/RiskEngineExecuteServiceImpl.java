@@ -46,7 +46,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
     private IIncidentService incidentService;
 
     @Resource
-    private RiskEngineHandler riskEngineConsumer;
+    private RiskEngineHandler engineResultHandler;
 
     /**
      * 引擎执行 主逻辑
@@ -106,10 +106,10 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             // 异步发消息 分消费者组监听 1mysql保存引擎执行结果并且同步es 2执行处罚 加名单以及调三方接口
             //riskEngineProducer.sendMessage("test_topic1", new Gson().toJson(executeEngineDTO));
             //搞了好长时间云服务器 mq有问题 搞不好 先这样写
-            riskEngineConsumer.save(executeEngineDTO);
+            engineResultHandler.saveDataAndPenalty(executeEngineDTO);
         }).exceptionally(ex -> {
             log.error("引擎执行 异步任务失败: {}, 异常: {}", riskEngineParam.getIncidentCode(), ex.getMessage(), ex);
-            //处理失败逻辑 发送告警消息
+            //处理失败逻辑 发送告警消息 本来是打算目前mq发送失败 然后写消息表再重试 有时间再加吧
             return null;
         });
         return result;

@@ -15,11 +15,11 @@ public class SolanaBlockDTO {
     /**
      * 区块高度
      */
-    private long blockHeight;
+    private Long blockHeight;
     /**
      * 时间戳
      */
-    private long blockTime;
+    private Long blockTime;
     /**
      * 区块哈希
      */
