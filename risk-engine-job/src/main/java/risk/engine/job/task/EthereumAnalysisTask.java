@@ -29,7 +29,7 @@ public class EthereumAnalysisTask implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
-        log.info("Quartz 定时抓取链上数据...");
+        log.info("Quartz 定时抓取Ethereum链上数据...");
         crawlerEthereumChain(ethereumFetcherHandler);
     }
 

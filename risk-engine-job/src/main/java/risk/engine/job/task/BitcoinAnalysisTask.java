@@ -25,7 +25,7 @@ public class BitcoinAnalysisTask implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        //log.info("Quartz 定时抓取Ethereum链上数据...");
+        log.info("Quartz 定时抓取Bitcoin链上数据...");
         //EthereumAnalysisTask.c(ethereumFetcherHandler, transactionTransferRecordService);
     }
 }

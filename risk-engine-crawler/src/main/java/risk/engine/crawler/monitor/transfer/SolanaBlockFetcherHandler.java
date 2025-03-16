@@ -24,7 +24,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class SolanaBlockFetcherHandler {
+public class SolanaBlockFetcherHandler implements ICrawlerBlockChainHandler{
 
     private static final String RPC_URL = "https://api.devnet.solana.com";
 
@@ -32,7 +32,7 @@ public class SolanaBlockFetcherHandler {
 
     private static final Gson gson = new Gson();
 
-    public List<ChainTransferDTO> crawlerSolana() throws IOException {
+    public List<ChainTransferDTO> getTransactions() throws IOException {
         //抓取最新slot
         long latestSlot = getLatestSlot();
         if (latestSlot == -1) {
@@ -135,13 +135,13 @@ public class SolanaBlockFetcherHandler {
             ChainTransferDTO chainTransferDTO = new ChainTransferDTO();
             chainTransferDTO.setSendAddress(from);
             chainTransferDTO.setReceiveAddress(to);
-            chainTransferDTO.setAmount(new BigDecimal(amount).divide(new BigDecimal("1000000000.0"), 8));
+            chainTransferDTO.setAmount(new BigDecimal(amount).divide(new BigDecimal("1000000000.0"), 2));
             chainTransferDTO.setUAmount(new BigDecimal("0"));
             chainTransferDTO.setHash(signatures.get(0).getAsString());
             chainTransferDTO.setHeight(solanaBlockDTO != null ? solanaBlockDTO.getBlockHeight().intValue() : 0);
             chainTransferDTO.setChain("Solana");
             chainTransferDTO.setToken("SOL");
-            chainTransferDTO.setFee(new BigDecimal(fee).divide(new BigDecimal("1000000000.0"), 8));
+            chainTransferDTO.setFee(new BigDecimal(fee).divide(new BigDecimal("1000000000.0"), 2));
             chainTransferDTO.setTransferTime(0L);
             chainTransferDTO.setCreatedTime(LocalDateTime.now());
             chainTransferDTO.setStatus(0);

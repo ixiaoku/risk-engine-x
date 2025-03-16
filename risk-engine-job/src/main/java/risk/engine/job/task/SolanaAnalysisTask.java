@@ -36,11 +36,11 @@ public class SolanaAnalysisTask implements Job {
 
     private void crawlerSolBlock() {
         try {
-            List<ChainTransferDTO> chainTransferDTOList = fetcherHandler.crawlerSolana();
+            List<ChainTransferDTO> chainTransferDTOList = fetcherHandler.getTransactions();
             if (CollectionUtils.isEmpty(chainTransferDTOList)) {
                 return;
             }
-            log.info("EthereumAnalysisTask 一分钟一次定时抓取Solana 链上数据 size: {}", chainTransferDTOList.size());
+            log.info("SolanaAnalysisTask 一分钟一次定时抓取Solana 链上数据 size: {}", chainTransferDTOList.size());
             chainTransferDTOList.forEach(chainTransferDTO -> {
                 TransferRecord transferRecord = new TransferRecord();
                 transferRecord.setSendAddress(chainTransferDTO.getSendAddress());

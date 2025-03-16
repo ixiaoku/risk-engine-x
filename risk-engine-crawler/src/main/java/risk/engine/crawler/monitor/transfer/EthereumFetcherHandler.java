@@ -25,12 +25,12 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class EthereumFetcherHandler {
+public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
 
     private static final String INFURA_URL = "https://mainnet.infura.io/v3/98f9c8a03d054a7aa9972559460db851";
     private static final Web3j web3j = Web3j.build(new HttpService(INFURA_URL));
 
-
+    @Override
     public List<ChainTransferDTO> getTransactions() throws IOException {
         // 1. 获取最新区块高度
         BigInteger latestBlockNumber = web3j.ethBlockNumber().send().getBlockNumber();
