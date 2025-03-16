@@ -2,6 +2,7 @@ package risk.engine.service.service.impl;
 
 import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
+import risk.engine.db.dao.IncidentMapper;
 import risk.engine.db.entity.*;
 import risk.engine.dto.dto.block.ChainTransferDTO;
 import risk.engine.dto.dto.rule.RuleIndicatorDTO;
@@ -32,7 +33,7 @@ public class InitServiceImpl {
     private IRuleService ruleService;
 
     @Resource
-    private IIncidentService incidentService;
+    private IncidentMapper incidentMapper;
 
     @Resource
     private IIndicatorService indicatorService;
@@ -65,7 +66,7 @@ public class InitServiceImpl {
         ChainTransferDTO chainTransferDTO = getChainTransferDTO();
         entity.setRequestPayload(new Gson().toJson(chainTransferDTO));
         System.out.println(new Gson().toJson(chainTransferDTO));
-        incidentService.insert(entity);
+        incidentMapper.insert(entity);
     }
 
     public void initRule() {

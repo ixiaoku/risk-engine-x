@@ -36,9 +36,20 @@ public class RiskEngineHandler {
      * 保存数据
      * @param executeEngineDTO 参数
      */
-    public void save(RiskExecuteEngineDTO executeEngineDTO) {
+    public void saveDataAndPenalty(RiskExecuteEngineDTO executeEngineDTO) {
         engineResultService.insert(getEngineResult(executeEngineDTO));
         insertEsEngineResult(executeEngineDTO);
+        doPenalty(executeEngineDTO);
+    }
+
+    /**
+     * 处罚
+     * @param executeEngineDTO 参数
+     */
+    private void doPenalty(RiskExecuteEngineDTO executeEngineDTO) {
+
+
+
     }
 
     /**

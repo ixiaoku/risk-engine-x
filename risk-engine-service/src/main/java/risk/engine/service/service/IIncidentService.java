@@ -1,6 +1,7 @@
 package risk.engine.service.service;
 
 import risk.engine.db.entity.Incident;
+import risk.engine.dto.param.IncidentParam;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface IIncidentService {
 
     boolean deleteByPrimaryKey(Long id);
 
-    boolean insert(Incident record);
+    boolean insert(IncidentParam incidentParam);
 
     List<Incident> selectByExample(Incident incident);
 
