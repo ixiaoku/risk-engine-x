@@ -5,9 +5,9 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import risk.engine.crawler.monitor.transfer.EthereumFetcherHandler;
-import risk.engine.db.entity.TransactionTransferRecord;
+import risk.engine.db.entity.TransferRecord;
 import risk.engine.dto.dto.block.ChainTransferDTO;
-import risk.engine.service.service.ITransactionTransferRecordService;
+import risk.engine.service.service.ITransferRecordService;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class BitcoinAnalysisTask implements Job {
     private EthereumFetcherHandler ethereumFetcherHandler;
 
     @Resource
-    private ITransactionTransferRecordService transactionTransferRecordService;
+    private ITransferRecordService transactionTransferRecordService;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -36,7 +36,7 @@ public class BitcoinAnalysisTask implements Job {
                 return;
             }
             chainTransferDTOList.forEach(chainTransferDTO -> {
-                TransactionTransferRecord transferRecord = new TransactionTransferRecord();
+                TransferRecord transferRecord = new TransferRecord();
                 transferRecord.setSendAddress(chainTransferDTO.getSendAddress());
                 transferRecord.setReceiveAddress(chainTransferDTO.getReceiveAddress());
                 transferRecord.setAmount(chainTransferDTO.getAmount());

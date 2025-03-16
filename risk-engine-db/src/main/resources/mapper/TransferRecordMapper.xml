@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="risk.engine.db.dao.TransferRecordMapper">
+  <resultMap id="BaseResultMap" type="risk.engine.db.entity.TransferRecord">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="send_address" jdbcType="VARCHAR" property="sendAddress" />
+    <result column="receive_address" jdbcType="VARCHAR" property="receiveAddress" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="u_amount" jdbcType="DECIMAL" property="uAmount" />
+    <result column="hash" jdbcType="VARCHAR" property="hash" />
+    <result column="height" jdbcType="INTEGER" property="height" />
+    <result column="chain" jdbcType="VARCHAR" property="chain" />
+    <result column="token" jdbcType="VARCHAR" property="token" />
+    <result column="fee" jdbcType="DECIMAL" property="fee" />
+    <result column="transfer_time" jdbcType="BIGINT" property="transferTime" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, send_address, receive_address, amount, u_amount, hash, height, chain, token,
+    fee, transfer_time, created_time, status
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from transaction_transfer_record
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from transaction_transfer_record
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="risk.engine.db.entity.TransferRecord">
+    insert into transaction_transfer_record (id, send_address, receive_address, 
+      amount, u_amount, hash, 
+      height, chain, token, 
+      fee, transfer_time, created_time, 
+      status)
+    values (#{id,jdbcType=BIGINT}, #{sendAddress,jdbcType=VARCHAR}, #{receiveAddress,jdbcType=VARCHAR}, 
+      #{amount,jdbcType=DECIMAL}, #{uAmount,jdbcType=DECIMAL}, #{hash,jdbcType=VARCHAR}, 
+      #{height,jdbcType=INTEGER}, #{chain,jdbcType=VARCHAR}, #{token,jdbcType=VARCHAR}, 
+      #{fee,jdbcType=DECIMAL}, #{transferTime,jdbcType=BIGINT}, #{createdTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=INTEGER})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.TransferRecord">
+    update transaction_transfer_record
+    set
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+</mapper>

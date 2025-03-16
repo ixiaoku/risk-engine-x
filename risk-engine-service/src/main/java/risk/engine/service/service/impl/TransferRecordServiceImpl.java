@@ -1,9 +1,9 @@
 package risk.engine.service.service.impl;
 
 import org.springframework.stereotype.Service;
-import risk.engine.db.dao.TransactionTransferRecordMapper;
-import risk.engine.db.entity.TransactionTransferRecord;
-import risk.engine.service.service.ITransactionTransferRecordService;
+import risk.engine.db.dao.TransferRecordMapper;
+import risk.engine.db.entity.TransferRecord;
+import risk.engine.service.service.ITransferRecordService;
 
 import javax.annotation.Resource;
 
@@ -13,10 +13,10 @@ import javax.annotation.Resource;
  * @Version: 1.0
  */
 @Service
-public class TransactionTransferRecordServiceImpl implements ITransactionTransferRecordService {
+public class TransferRecordServiceImpl implements ITransferRecordService {
 
     @Resource
-    private TransactionTransferRecordMapper transferRecordMapper;
+    private TransferRecordMapper transferRecordMapper;
 
     @Override
     public boolean deleteByPrimaryKey(Long id) {
@@ -24,17 +24,17 @@ public class TransactionTransferRecordServiceImpl implements ITransactionTransfe
     }
 
     @Override
-    public boolean insert(TransactionTransferRecord record) {
+    public boolean insert(TransferRecord record) {
         return transferRecordMapper.insert(record) > 0;
     }
 
     @Override
-    public TransactionTransferRecord selectByPrimaryKey(Long id) {
+    public TransferRecord selectByPrimaryKey(Long id) {
         return transferRecordMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public boolean updateByPrimaryKey(TransactionTransferRecord record) {
+    public boolean updateByPrimaryKey(TransferRecord record) {
         return transferRecordMapper.deleteByPrimaryKey(record.getId()) > 0;
     }
 }
