@@ -188,14 +188,13 @@ public class InitServiceImpl {
 
     private void insertPenalty() {
         Penalty penalty = new Penalty();
-        penalty.setId(0L);
-        penalty.setPenaltyCode("2");
-        penalty.setPenaltyName("1");
-        penalty.setPenaltyDef("1");
+        penalty.setPenaltyCode("add_list");
+        penalty.setPenaltyName("加名单");
+        penalty.setPenaltyDef("risk.engine.service.handler.penalty.AppendListDataHandler");
         penalty.setStatus(0);
-        penalty.setOperator("1");
-        penalty.setPenaltyDescription("qq");
-        penalty.setPenaltyJson("qq");
+        penalty.setOperator("cherry.li");
+        penalty.setPenaltyDescription("这是一个加名单的方法");
+        penalty.setPenaltyJson("{\"list_library_code\": \"white_address_lib\",\"list_library_name\": \"白名单地址库\",\"status\": 1,\"list_type\": 1}");
         penalty.setCreateTime(LocalDateTime.now());
         penalty.setUpdateTime(LocalDateTime.now());
         penaltyService.insert(penalty);
@@ -214,7 +213,7 @@ public class InitServiceImpl {
         penaltyRecord.setPenaltyDef("1");
         penaltyRecord.setPenaltyReason("1");
         penaltyRecord.setPenaltyResult("1");
-        penaltyRecord.setStatus(false);
+        penaltyRecord.setStatus(PenaltyStatusEnum.WAIT.getCode());
         penaltyRecord.setRetry(0);
         penaltyRecord.setPenaltyDescription("qq");
         penaltyRecord.setPenaltyJson("qq");
@@ -227,7 +226,7 @@ public class InitServiceImpl {
     public void init() {
         //insertIndicator();
         //insertListDataLibrary();
-        insertListData();
+        //insertListData();
         //insertPenalty();
         //insertPenaltyAction();
     }

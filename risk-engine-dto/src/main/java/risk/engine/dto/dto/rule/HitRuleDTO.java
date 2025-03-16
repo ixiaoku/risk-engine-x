@@ -30,4 +30,9 @@ public class HitRuleDTO {
      */
     private Integer ruleScore;
 
+    /**
+     * 规则处置 数组形式
+     */
+    private String penaltyAction;
+
 }

@@ -39,7 +39,7 @@ public class PenaltyRecord {
 
     private String penaltyJson;
 
-    private Boolean status;
+    private Integer status;
 
     private Integer retry;
 

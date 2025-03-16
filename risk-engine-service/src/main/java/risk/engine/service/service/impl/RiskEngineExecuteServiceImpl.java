@@ -106,7 +106,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             // 异步发消息 分消费者组监听 1mysql保存引擎执行结果并且同步es 2执行处罚 加名单以及调三方接口
             //riskEngineProducer.sendMessage("test_topic1", new Gson().toJson(executeEngineDTO));
             //搞了好长时间云服务器 mq有问题 搞不好 先这样写
-            engineResultHandler.saveDataAndPenalty(executeEngineDTO);
+            engineResultHandler.saveDataAndDoPenalty(executeEngineDTO);
         }).exceptionally(ex -> {
             log.error("引擎执行 异步任务失败: {}, 异常: {}", riskEngineParam.getIncidentCode(), ex.getMessage(), ex);
             //处理失败逻辑 发送告警消息 本来是打算目前mq发送失败 然后写消息表再重试 有时间再加吧
@@ -144,7 +144,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
         executeEngineDTO.setCreateTime(LocalDateTime.now());
         List<HitRuleDTO> hitMockRules = getHitRuleDTOList(RuleStatusEnum.MOCK.getCode(), hitMOckRuleList);
         executeEngineDTO.setHitMockRules(hitMockRules);
-        List<HitRuleDTO> hitOnlineRules = getHitRuleDTOList(RuleStatusEnum.ONLINE.getCode(), hitMOckRuleList);
+        List<HitRuleDTO> hitOnlineRules = getHitRuleDTOList(RuleStatusEnum.ONLINE.getCode(), hitOnlineRuleList);
         executeEngineDTO.setHitOnlineRules(hitOnlineRules);
         return executeEngineDTO;
     }
@@ -164,6 +164,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
                     hitRuleDTO.setRuleName(rule.getRuleName());
                     hitRuleDTO.setRuleStatus(rule.getStatus());
                     hitRuleDTO.setRuleScore(rule.getScore());
+                    hitRuleDTO.setPenaltyAction(rule.getPenaltyAction());
                     return hitRuleDTO;
                 }).collect(Collectors.toList());
     }

@@ -2,11 +2,11 @@ package risk.engine.service.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import risk.engine.common.grovvy.ExpressionParser;
 import risk.engine.common.grovvy.GroovyShellUtil;
 import risk.engine.dto.dto.rule.RuleIndicatorDTO;
 import risk.engine.dto.enums.FieldTypeEnum;
 import risk.engine.dto.enums.OperationSymbolEnum;
-import risk.engine.common.grovvy.ExpressionParser;
 
 import java.util.HashMap;
 import java.util.List;
@@ -74,4 +74,5 @@ public class GroovyExpressionParser {
         boolean result = GroovyShellUtil.runGroovy(groovyExpr, variables);
         System.out.println("执行结果: " + result);
     }
+
 }

@@ -6,6 +6,7 @@ import risk.engine.db.entity.Penalty;
 import risk.engine.service.service.IPenaltyService;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @Author: X
@@ -32,6 +33,11 @@ public class PenaltyServiceImpl implements IPenaltyService {
     @Override
     public Penalty selectByPrimaryKey(Long id) {
         return penaltyMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public List<Penalty> selectByExample(Penalty penalty) {
+        return penaltyMapper.selectByExample(penalty);
     }
 
     @Override

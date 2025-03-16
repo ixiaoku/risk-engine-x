@@ -4,17 +4,28 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import risk.engine.common.es.ElasticsearchRestApi;
 import risk.engine.db.entity.EngineResult;
+import risk.engine.db.entity.Penalty;
+import risk.engine.db.entity.PenaltyRecord;
+import risk.engine.dto.constant.BusinessConstant;
 import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;
+import risk.engine.dto.dto.penalty.RulePenaltyListDTO;
+import risk.engine.dto.enums.PenaltyStatusEnum;
 import risk.engine.service.service.IEngineResultService;
+import risk.engine.service.service.IPenaltyRecordService;
+import risk.engine.service.service.IPenaltyService;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * 处理业务请求数据
@@ -32,11 +43,17 @@ public class RiskEngineHandler {
     @Resource
     private ElasticsearchRestApi elasticsearchRestApi;
 
+    @Resource
+    private IPenaltyService penaltyService;
+
+    @Resource
+    private IPenaltyRecordService penaltyRecordService;
+
     /**
      * 保存数据
      * @param executeEngineDTO 参数
      */
-    public void saveDataAndPenalty(RiskExecuteEngineDTO executeEngineDTO) {
+    public void saveDataAndDoPenalty(RiskExecuteEngineDTO executeEngineDTO) {
         engineResultService.insert(getEngineResult(executeEngineDTO));
         insertEsEngineResult(executeEngineDTO);
         doPenalty(executeEngineDTO);
@@ -47,23 +64,66 @@ public class RiskEngineHandler {
      * @param executeEngineDTO 参数
      */
     private void doPenalty(RiskExecuteEngineDTO executeEngineDTO) {
+        Penalty p = new Penalty();
+        p.setStatus(1);
+        List<Penalty> penalties = penaltyService.selectByExample(p);
+        if (CollectionUtils.isEmpty(penalties)) {
+            return;
+        }
+        Map<String, List<Penalty>> listMap = penalties.stream().collect(Collectors.groupingBy(Penalty::getPenaltyCode));
+        List<PenaltyRecord> recordList = new ArrayList<>();
+        executeEngineDTO
+                .getHitOnlineRules()
+                .stream().filter(e -> StringUtils.isNoneBlank(e.getPenaltyAction()))
+                .forEach(hitOnlineRule -> {
+                    String penaltyJson = hitOnlineRule.getPenaltyAction();
+                    List<RulePenaltyListDTO> penaltyListDTOList = JSON.parseArray(penaltyJson, RulePenaltyListDTO.class);
+                    List<PenaltyRecord> penaltyRecordList = penaltyListDTOList.stream().map(listDTO ->  {
+                        String penaltyCode = listDTO.getPenaltyCode();
+                        List<Penalty> penaltyList = listMap.get(penaltyCode);
+                        Penalty penalty = penaltyList.get(0);
+                        PenaltyRecord penaltyRecord = new PenaltyRecord();
+                        penaltyRecord.setFlowNo(executeEngineDTO.getFlowNo());
+                        penaltyRecord.setRuleCode(hitOnlineRule.getRuleCode());
+                        penaltyRecord.setRuleName(hitOnlineRule.getRuleName());
+                        penaltyRecord.setIncidentCode(executeEngineDTO.getIncidentCode());
+                        penaltyRecord.setIncidentName(executeEngineDTO.getIncidentName());
+                        penaltyRecord.setPenaltyCode(penalty.getPenaltyCode());
+                        penaltyRecord.setPenaltyName(penalty.getPenaltyName());
+                        penaltyRecord.setPenaltyDef(penalty.getPenaltyDef());
+                        penaltyRecord.setPenaltyReason(penalty.getPenaltyDescription());
+                        penaltyRecord.setPenaltyResult("");
+                        penaltyRecord.setPenaltyDescription(penalty.getPenaltyDescription());
+                        penaltyRecord.setPenaltyJson(new Gson().toJson(listDTO.getPenaltyJson()));
+                        //如果是加名单 需要从业务数据 里面取特征 时间不够了 后面再补
+                        listDTO.getPenaltyJson().forEach(json -> {
 
-
-
+                        });
+                        penaltyRecord.setStatus(PenaltyStatusEnum.WAIT.getCode());
+                        penaltyRecord.setRetry(0);
+                        penaltyRecord.setPenaltyTime(LocalDateTime.now());
+                        penaltyRecord.setCreateTime(LocalDateTime.now());
+                        penaltyRecord.setUpdateTime(LocalDateTime.now());
+                        return penaltyRecord;
+                    }).collect(Collectors.toList());
+                    recordList.addAll(penaltyRecordList);
+                });
+        //保存处罚记录
+        recordList.forEach(record -> penaltyRecordService.insert(record));
+        log.info("PenaltyRecord 保存成功");
     }
 
     /**
-     * 保存es
+     * 业务数据 保存es
      * @param engineResult 参数
      */
     private void insertEsEngineResult(RiskExecuteEngineDTO engineResult) {
-        System.out.println(new Gson().toJson(engineResult));
         List<Map<String, Object>> mapList = new ArrayList<>();
         Map<String, Object> map = JSONObject.parseObject(JSON.toJSONString(engineResult));
         map.put("id", UUID.randomUUID().toString());
         mapList.add(map);
-        elasticsearchRestApi.saveDocument("engine-record-202501", mapList);
-        log.info("es保存成功");
+        elasticsearchRestApi.saveDocument(BusinessConstant.ENGINE_INDEX, mapList);
+        log.info("es 保存成功");
     }
 
     /**

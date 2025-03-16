@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import risk.engine.job.task.BitcoinAnalysisTask;
 import risk.engine.job.task.EthereumAnalysisTask;
+import risk.engine.job.task.PenaltyExecuteTask;
 import risk.engine.job.task.SolanaAnalysisTask;
 
 /**
@@ -14,6 +15,7 @@ import risk.engine.job.task.SolanaAnalysisTask;
  */
 @Configuration
 public class QuartzConfig {
+
     // BTC JobDetail 和 Trigger
     //@Bean
     public JobDetail fetchBitcoinJobDetail() {
@@ -67,4 +69,23 @@ public class QuartzConfig {
                 .withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * * * ?"))
                 .build();
     }
+
+    // Penalty JobDetail 和 Trigger
+    @Bean
+    public JobDetail fetchPenaltyJobDetail() {
+        return JobBuilder.newJob(PenaltyExecuteTask.class)
+                .withIdentity("fetchPenaltyJob", "penalty")
+                .storeDurably()
+                .build();
+    }
+
+    @Bean
+    public Trigger fetchPenaltyJobTrigger(JobDetail fetchPenaltyJobDetail) {
+        return TriggerBuilder.newTrigger()
+                .forJob(fetchPenaltyJobDetail)
+                .withIdentity("fetchPenaltyTrigger", "penalty")
+                .withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * * * ?"))
+                .build();
+    }
+
 }
