@@ -80,14 +80,14 @@ public class InitServiceImpl {
 
     private static ChainTransferDTO getChainTransferDTO() {
         ChainTransferDTO chainTransferDTO = new ChainTransferDTO();
-        chainTransferDTO.setFromAddress("3Q8StmtPCgxNeeeM6Ue9errkDgZ9SiLHE4");
-        chainTransferDTO.setToAddress("17qeFe3L7h5CMM1PS7cyjB32E9TT6RQeX6");
+        chainTransferDTO.setSendAddress("3Q8StmtPCgxNeeeM6Ue9errkDgZ9SiLHE4");
+        chainTransferDTO.setReceiveAddress("17qeFe3L7h5CMM1PS7cyjB32E9TT6RQeX6");
         chainTransferDTO.setAmount(new BigDecimal("4.5238"));
         chainTransferDTO.setUAmount(new BigDecimal(320000));
         chainTransferDTO.setHash("5a4f29e1c388156e238099d44cc11ed503cb04a484e4c5fb33aa9094be11fe1d");
         chainTransferDTO.setHeight(887622);
         chainTransferDTO.setChain("Bitcoin");
-        chainTransferDTO.setCoin("BTC");
+        chainTransferDTO.setToken("BTC");
         chainTransferDTO.setFee(new BigDecimal("0.01845659"));
         return chainTransferDTO;
     }

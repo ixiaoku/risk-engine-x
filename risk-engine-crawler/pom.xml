@@ -44,6 +44,7 @@
             <version>2.15.2</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.web3j/core -->
         <dependency>
             <groupId>org.web3j</groupId>
             <artifactId>core</artifactId>
@@ -65,11 +66,10 @@
             <artifactId>risk-engine-dto</artifactId>
         </dependency>
 
-        <!-- HTTP 客户端 -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>4.12.0</version>
+            <version>3.14.9</version>  <!-- 兼容 Web3j 4.8.7 -->
         </dependency>
 
         <dependency>

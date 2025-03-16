@@ -37,7 +37,9 @@
 <!--        <table tableName="engine_result" domainObjectName="EngineResult" />-->
 <!--        <table tableName="RULE" domainObjectName="Rule" />-->
 <!--        <table tableName="incident" domainObjectName="Incident" />-->
-        <table tableName="blockchain_block" domainObjectName="BlockchainBlock" />
+<!--        <table tableName="blockchain_block" domainObjectName="BlockchainBlock" />-->
+        <table tableName="transaction_transfer_record" domainObjectName="TransactionTransferRecord" />
+
         <!-- 可以添加多个<table>元素来指定多个表 -->
     </context>
 </generatorConfiguration>

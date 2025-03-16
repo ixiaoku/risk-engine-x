@@ -3,6 +3,7 @@ package risk.engine.dto.dto.block;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * 链上转账
@@ -14,14 +15,14 @@ import java.math.BigDecimal;
 public class ChainTransferDTO {
 
     /**
-     * 转出地址
+     * 发送地址
      */
-    private String fromAddress;
+    private String sendAddress;
 
     /**
-     * 收款地址
+     * 接收地址
      */
-    private String toAddress;
+    private String receiveAddress;
 
     /**
      * 数量
@@ -51,11 +52,26 @@ public class ChainTransferDTO {
     /**
      * 代币
      */
-    private String coin;
+    private String token;
 
     /**
      * 手续费
      */
     private BigDecimal fee;
+
+    /**
+     * 交易转账时间
+     */
+    private long transferTime;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createdTime;
+
+    /**
+     * 是否同步引擎执行
+     */
+    private Integer status;
 
 }
