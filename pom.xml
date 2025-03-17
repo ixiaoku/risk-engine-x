@@ -18,6 +18,7 @@
       <module>risk-engine-service</module>
     <module>risk-engine-dto</module>
       <module>risk-engine-job</module>
+      <module>risk-engine-indicator</module>
   </modules>
 
   <parent>

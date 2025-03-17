@@ -11,7 +11,8 @@
 ## risk-engine-db dao持久化模块 数据库相关
 
 ## risk-engine-rest 引擎执行服务 风控引擎相关
-
+## risk-engine-indicator 特征服务 计算特征值
+## risk-engine-job job服务 消费消息和定时任务
 
 ## 一、序言
 
@@ -30,7 +31,7 @@
 3. **提升用户体验**：在高性能风控下尽量减少对正常交易的干扰。
 4. **应对多样化风险**：覆盖现货、合约、链上转账等多业务场景，结合链上数据分析，识别聪明钱、黑地址及异常交易模式。
 5. **支持业务扩展**：模块化设计，适应未来新业务（如 DeFi、NFT 交易）的风控需求。
-6. **监控链上数据**：实时发送告警，春江水暖鸭先知，先别人一步。
+6. **监控链上数据**：实时发送告警，春江水暖鸭先知，赚钱先别人一步。
 
 本系统将采用分层架构，结合实时内存计算、分布式消息队列、异步任务处理及链上大数据分析，满足不同业务场景的需求。
 
@@ -58,7 +59,7 @@
     - **异常价格**：监控买卖单与市场深度偏差（如大单压盘、拉盘）。
     - **资金流向**：追踪账户间异常转账（洗钱）。
 - **设计**：
-    - 使用 Redis 存储用户交易计数器（INCRBY 记录频率）。
+    - 使用 Redis 存储用户交易计数器。
     - Flink 流处理实时计算市场深度和订单异常。
     - 规则引擎触发拦截（如频率超 100 次/秒）。
 - **性能优化**：
@@ -70,8 +71,11 @@
 - **需求**：高实时性，支持杠杆倍数，需监控爆仓风险。
 - **风控角度**：
     - **持仓风险**：监控杠杆倍数与账户余额比例。
-    - **市场操纵**：检测异常爆仓（如恶意清算）。
+    - **市场操纵**：检测异常爆仓（如恶意清算）、大额合约交易引发的穿仓。
     - **资金异常**：防止资金池被恶意套利。
+    - **交易频率**：检测单位时间内的高频下单/撤单（刷单、DDoS 攻击）。
+    - **合约清算**：价格波动超阈值时触发清算。
+
 - **设计**：
     - Redis 存储用户持仓和余额快照。
     - Flink 实时计算风险率（持仓价值/保证金）。
@@ -88,7 +92,7 @@
     - **抵押品波动**：检测抵押资产价格异常。
 - **设计**：
     - Redis 存储借贷记录和抵押品价值。
-    - 定时任务（Quartz）检查逾期还款。
+    - 定时任务 检查逾期还款。
     - 价格波动超阈值时触发清算。
 
 #### 2.4 理财业务
@@ -112,7 +116,7 @@
     - **地域限制**：限制高风险地区交易。
 - **设计**：
     - 数据库存储 KYC 信息，Redis 缓存黑名单。
-    - 同步调用第三方 AML 服务（如 Chainalysis）。
+    - 同步调用第三方 AML 服务（如 Chainalysis、OKLinkAML）。
     - IP 地理位置检查（GeoIP 库）。
 
 #### 2.6 链上提币
@@ -125,7 +129,7 @@
 - **设计**：
     - RocketMQ 接收提币请求，异步处理。
     - 调用链上分析服务（见 2.8），检查地址风险。
-    - 高额提币（> 10 BTC）触发多重签名审核。
+    - 高额提币（> 2 BTC）触发多重签名审核。
 
 #### 2.7 链上充值
 
@@ -152,7 +156,7 @@
         - 高频小额转账（洗钱）。
         - 大额单笔转账（资金转移）。
 - **设计**：
-    - **数据采集**：Web3j/Solana SDK 抓取区块交易，存入 Elasticsearch。
+    - **数据采集**：blockstream.info/api (Bitcoin)、Web3j(Ethereum)、Solana SDK 抓取区块交易，存入 Elasticsearch。
     - **黑地址库**：Redis 存储黑地址集合（SET），实时匹配。
     - **聪明钱分析**：Flink 流处理计算地址收益，标记高风险地址。
     - **转账监控**：异步任务分析转账链路，生成风险评分。
@@ -166,7 +170,7 @@
     - **智能合约**：检测异常调用（如闪电贷攻击）。
 - **设计**：
     - **存储**：Elasticsearch 存储链上交易和区块数据。
-    - **分析**：Spark 离线分析交易图谱，Flink 实时检测异常。
+    - **分析**：离线分析交易图谱，Flink 实时检测异常。
     - **规则**：动态更新聪明钱和黑地址库。
 
 ### 3. 系统组件设计
@@ -189,7 +193,7 @@
 
 #### 3.3 消息队列
 
-- **技术**：RocketMQ。
+- **技术**：RocketMQ、Kafka。
 - **功能**：
     - 异步处理提币、充值及链上分析任务。
     - 保证消息不丢失（事务消息）。
@@ -298,3 +302,204 @@ CREATE TABLE engine_result (
     rule_version         VARCHAR(255) NULL COMMENT '规则版本号',
     create_time          DATETIME NOT NULL COMMENT '创建时间'
 );
+
+sql
+-- auto-generated definition
+create table incident
+(
+    id                 bigint auto_increment
+        primary key,
+    incident_code      varchar(255) not null comment '事件编码',
+    incident_name      varchar(255) not null comment '事件名称',
+    request_payload    text         null comment '请求载荷（JSON报文）',
+    decision_result    varchar(255) not null comment '处置方式 0拒绝 1成功 可配置',
+    status             int          not null comment '状态（0：删除，1：上线，2：下线）',
+    responsible_person varchar(255) not null comment '责任人',
+    operator           varchar(255) not null comment '操作人',
+    create_time        datetime     not null comment '创建时间',
+    update_time        datetime     not null comment '修改时间',
+    constraint incident_code
+        unique (incident_code)
+);
+
+sql
+-- auto-generated definition
+create table indicator
+(
+    id               bigint auto_increment comment '主键，自增ID'
+        primary key,
+    incident_code    varchar(64)                        not null comment '事件编码',
+    indicator_code   varchar(64)                        not null comment '指标编码',
+    indicator_name   varchar(128)                       not null comment '指标名称',
+    indicator_value  varchar(256)                       not null comment '指标值 示例',
+    indicator_desc   varchar(128)                       not null comment '指标描述',
+    indicator_source tinyint                            not null comment '指标来源 枚举',
+    indicator_type   tinyint                            not null comment '数据类型 枚举',
+    operator         varchar(64)                        not null comment '操作人',
+    create_time      datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_time      datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    constraint uk_indicator_code
+        unique (indicator_code) comment '唯一索引，确保事件code不重复'
+)
+    comment '风控特征表';
+
+create index idx_incident_code
+    on indicator (incident_code)
+    comment '索引，按事件code搜索';
+
+
+sql
+-- auto-generated definition
+create table list_data
+(
+    id                bigint auto_increment comment '主键ID'
+        primary key,
+    list_library_code varchar(64)          not null comment '名单库编码',
+    list_library_name varchar(128)         not null comment '名单库名称',
+    list_name         varchar(128)         not null comment '名单名称',
+    list_code         varchar(64)          not null comment '名单编码',
+    list_value        varchar(256)         not null comment '名单值',
+    list_desc         varchar(256)         not null comment '名单描述',
+    status            tinyint(1) default 0 not null comment '状态（0：未启用，1：已启用）',
+    list_type         tinyint    default 0 not null comment '名单类型（1：地址，2：ip 3：设备 4：uid）',
+    operator          varchar(64)          not null comment '操作者',
+    create_time       datetime             not null comment '创建时间',
+    update_time       datetime             not null comment '更新时间',
+    constraint uk_list_library_code
+        unique (list_library_code, list_code) comment '唯一索引，确保处罚编码不重复'
+)
+    comment '名单数据表';
+
+sql
+-- auto-generated definition
+create table list_library
+(
+    id                bigint auto_increment comment '主键，自增ID'
+        primary key,
+    list_library_code varchar(64)                          not null comment '名单库编码',
+    list_library_name varchar(128)                         not null comment '名单库名称',
+    list_library_desc      text                                 null comment '名单描述',
+    status            tinyint(1) default 0                 not null comment '状态，0未启用，1启用',
+    list_category     tinyint(1)                           not null comment '名单库类别',
+    operator          varchar(64)                          not null comment '操作人',
+    create_time       datetime   default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_time       datetime   default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    constraint uk_list_library_code
+        unique (list_library_code) comment '唯一索引，确保名单编码不重复'
+)
+    comment '风控名单库表';
+
+sql
+-- auto-generated definition
+create table penalty
+(
+    id                  bigint auto_increment comment '主键，自增ID'
+        primary key,
+    penalty_code        varchar(50)                          not null comment '处罚编码',
+    penalty_name        varchar(100)                         not null comment '处罚名称',
+    penalty_def         varchar(255)                         null comment '处罚定义',
+    penalty_description text                                 null comment '处罚描述',
+    penalty_json        text                                 null comment '处罚报文',
+    status              tinyint(1) default 0                 not null comment '状态，0=未启用，1=启用',
+    operator            varchar(64)                          null comment '操作人',
+    create_time         datetime   default CURRENT_TIMESTAMP not null comment '创建时间，记录处罚记录的生成时间',
+    update_time         datetime   default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间，记录处罚记录的最后修改时间',
+    constraint uk_penalty_code
+        unique (penalty_code) comment '唯一索引，确保处罚编码不重复'
+)
+    comment '风控处罚定义表';
+
+sql
+-- auto-generated definition
+create table penalty_record
+(
+    id                  bigint auto_increment comment '主键，自增ID'
+        primary key,
+    flow_no              varchar(64)                          not null comment '业务流水号',
+    rule_code           varchar(64)                          not null comment '规则编码',
+    rule_name           varchar(128)                         not null comment '规则名称',
+    incident_code       varchar(64)                          not null comment '事件编码',
+    incident_name       varchar(128)                         not null comment '事件名称',
+    penalty_code        varchar(64)                          not null comment '处罚编码',
+    penalty_name        varchar(128)                         not null comment '处罚名称',
+    penalty_def         varchar(255)                         null comment '处罚接口定义',
+    penalty_description text                                 null comment '处罚描述',
+    penalty_json        text                                 null comment '处罚报文',
+    penalty_reason      varchar(128)                         null comment '处罚原因',
+    penalty_result      varchar(128)                         null comment '执行结果',
+    status              tinyint(1) default 0                 not null comment '处罚状态，0=待执行，1=成功，2=执行中，3=失败',
+    retry               int        default 0                 not null comment '重试次数',
+    penalty_time        datetime                             not null comment '处罚执行时间',
+    create_time         datetime   default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_time         datetime   default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
+)
+    comment '风控处罚表，存储处罚记录并支持定时任务执行';
+
+create index idx_status_retry
+    on penalty_record (status, retry)
+    comment '复合索引，加速按状态和重试次数查询';
+
+sql
+-- auto-generated definition
+create table rule
+(
+    id                 bigint auto_increment
+        primary key,
+    incident_code      varchar(255) not null comment '关联事件编码',
+    rule_code          varchar(255) not null comment '规则编码',
+    rule_name          varchar(255) not null comment '规则名称',
+    status             int          not null comment '状态（0：删除，1：上线，2：下线，3：模拟）',
+    groovy_script      text         null comment 'groovy可执行表达式',
+    json_script        text         null comment '特征json数组',
+    logic_script       varchar(255) null comment '逻辑表达式 1 && 2 || 3',
+    score              int          not null comment '风险分数',
+    decision_result    varchar(255) not null comment '决策结果 0拒绝 1成功',
+    expiry_time        int          null comment '失效时间 单位h',
+    label              varchar(255) null comment '标签文本',
+    penalty_action     varchar(255) null comment '处罚措施',
+    version            varchar(255) null comment '规则版本号',
+    responsible_person varchar(255) not null comment '责任人',
+    operator           varchar(255) not null comment '操作人',
+    create_time        datetime     not null comment '创建时间',
+    update_time        datetime     not null comment '修改时间',
+    constraint rule_code
+        unique (rule_code)
+);
+
+sql
+-- auto-generated definition
+create table transfer_record
+(
+    id              bigint auto_increment comment '主键ID'
+        primary key,
+    send_address    varchar(255)    not null comment '发送地址',
+    receive_address varchar(255)    not null comment '接收地址',
+    amount          decimal(30, 18) not null comment '数量',
+    u_amount        decimal(30, 18) null comment '折u价格',
+    hash            varchar(255)    not null comment '交易哈希',
+    height          int             not null comment '区块高度',
+    chain           varchar(255)    not null comment '链',
+    token           varchar(255)    not null comment '代币',
+    fee             decimal(30, 18) null comment '手续费',
+    transfer_time   bigint          null comment '交易转账时间（毫秒级时间戳）',
+    created_time    datetime        not null comment '创建时间',
+    status          int             not null comment '是否同步引擎执行（0或1表示状态）'
+)
+    comment '交易转账表';
+
+create index idx_chain_token
+    on transfer_record (chain, token);
+
+create index idx_hash
+    on transfer_record (hash);
+
+create index idx_receive_address
+    on transfer_record (receive_address);
+
+create index idx_send_address
+    on transfer_record (send_address);
+
+
+
+
+
