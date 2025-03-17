@@ -489,7 +489,7 @@ create index idx_receive_address
 create index idx_send_address
     on transfer_record (send_address);
     
-```sql
+-
 
 ### 2. 系统设计
 
@@ -502,7 +502,61 @@ create index idx_send_address
 - **加密**：--->特征服务，特征服务根据特征类型获取特征值，特征值类型划分为用户特征（监控用户中心相关表kafka推送），三方服务特征（调用第三方API获取），计数器特征通过和flink
 任务交互，发送kafka消息给flink任务，flink计算特征，再回写到redis
 
+以下是转换成 Markdown 语法的内容，可以直接复制粘贴使用：
 
+# 1.10 Transfer Record
+
+## 数据库表结构
+
+```sql
+-- auto-generated definition
+CREATE TABLE transfer_record (
+    id              BIGINT AUTO_INCREMENT COMMENT '主键ID' PRIMARY KEY,
+    send_address    VARCHAR(255)    NOT NULL COMMENT '发送地址',
+    receive_address VARCHAR(255)    NOT NULL COMMENT '接收地址',
+    amount          DECIMAL(30, 18) NOT NULL COMMENT '数量',
+    u_amount        DECIMAL(30, 18) NULL COMMENT '折u价格',
+    hash            VARCHAR(255)    NOT NULL COMMENT '交易哈希',
+    height          INT             NOT NULL COMMENT '区块高度',
+    chain           VARCHAR(255)    NOT NULL COMMENT '链',
+    token           VARCHAR(255)    NOT NULL COMMENT '代币',
+    fee             DECIMAL(30, 18) NULL COMMENT '手续费',
+    transfer_time   BIGINT          NULL COMMENT '交易转账时间（毫秒级时间戳）',
+    created_time    DATETIME        NOT NULL COMMENT '创建时间',
+    status          INT             NOT NULL COMMENT '是否同步引擎执行（0或1表示状态）'
+) COMMENT '交易转账表';
+
+CREATE INDEX idx_chain_token ON transfer_record (chain, token);
+CREATE INDEX idx_hash ON transfer_record (hash);
+CREATE INDEX idx_receive_address ON transfer_record (receive_address);
+CREATE INDEX idx_send_address ON transfer_record (send_address);
+
+
+
+⸻
+
+2. 系统设计
+
+2.1 设计详情
+
+风控系统采用 分层架构，确保高性能、可扩展性和模块化设计：
+	1.	业务请求
+	•	加密: 业务请求先进行加密处理
+	•	引擎服务:
+	•	校验唯一性（业务唯一流水号和事件 code）
+	•	通过 布隆过滤器 校验是否命中黑名单
+	•	获取 事件的策略，遍历策略，解析策略的 Groovy 表达式
+	•	解析 JSON 报文，匹配特征表达式
+	2.	特征服务
+	•	获取特征值:
+	•	用户特征: 监控用户中心相关表 Kafka 推送
+	•	三方服务特征: 调用第三方 API 获取
+	•	计数器特征:
+	•	与 Flink 任务交互
+	•	发送 Kafka 消息 给 Flink 任务
+	•	Flink 计算特征，并回写到 Redis
+
+这样格式化后，SQL 代码可以直接执行，系统设计部分也清晰易读，适合文档化管理。
 
 
 
