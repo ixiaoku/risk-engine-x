@@ -488,6 +488,8 @@ create index idx_receive_address
 
 create index idx_send_address
     on transfer_record (send_address);
+    
+```sql
 
 ### 2. 系统设计
 
