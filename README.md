@@ -259,7 +259,7 @@
 
 ### 1. MySQL 表结构
 
-#### `blockchain_block`
+#### 库名`risk`
 
 ```sql
 -- auto-generated definition
@@ -488,6 +488,17 @@ create index idx_receive_address
 
 create index idx_send_address
     on transfer_record (send_address);
+
+### 2. 系统设计
+
+#### 2.1 设计详情
+
+风控系统采用分层架构，确保高性能、可扩展性和模块化设计：
+
+业务请求
+- **加密**：--->引擎服务，校验唯一性业务唯一流水号和事件code，通过布隆过滤器校验是否命中黑名单，获取事件的策略，遍历策略获取策略的groovy表达式，通过json报文的特征表达式，
+- **加密**：--->特征服务，特征服务根据特征类型获取特征值，特征值类型划分为用户特征（监控用户中心相关表kafka推送），三方服务特征（调用第三方API获取），计数器特征通过和flink
+任务交互，发送kafka消息给flink任务，flink计算特征，再回写到redis
 
 
 
