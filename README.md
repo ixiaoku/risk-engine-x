@@ -216,40 +216,40 @@
 - **Flink**：实时流处理（聪明钱、异常转账）。
 - **Spark**：离线分析（交易图谱、历史趋势）。
 
-### 4. 风控流程示例
+#### 3.7 风控流程示例
 
-#### 4.1 现货交易
+##### 3.7.1 现货交易
 
 1. 用户下单 -> Redis 计数频率。
 2. Flink 检查市场深度 -> 异常触发拦截。
 3. 订单通过 -> 异步记录日志。
 
-#### 4.2 链上提币
+##### 3.7.2 链上提币
 
 1. 用户提交提币 -> RocketMQ 推送请求。
 2. 异步任务调用链上分析 -> 黑地址命中则拒绝。
 3. 高额提币 -> 多签审核 -> 执行提币。
 
-#### 4.3 聪明钱检测
+##### 3.7.3 聪明钱检测
 
 1. 链上数据采集 -> Elasticsearch 存储。
 2. Flink 实时计算收益 -> 标记高风险地址。
 3. 更新 Redis 黑名单 -> 影响交易和提币。
 
-### 5. 性能与扩展性
+##### 3.7.4 性能与扩展性
 
 - **实时业务**：Redis 单机 10万 QPS，Flink 分布式扩展。
 - **同步业务**：数据库分库分表，缓存预热。
 - **异步业务**：RocketMQ 水平扩展，任务动态分配。
 - **链上分析**：Elasticsearch 集群存储 PB 级数据。
 
-### 6. 安全与合规
+##### 3.7.5 安全与合规
 
 - **加密**：敏感数据（如提币私钥）加密存储。
 - **审计**：所有风控决策记录日志，存 Elasticsearch。
 - **合规**：集成 AML/KYC 服务，定期更新黑名单。
 
-### 7. 未来扩展
+##### 3.7.6 未来扩展
 
 - **DeFi 风控**：监控智能合约交互。
 - **NFT 交易**：检测异常铸造和转账。
@@ -282,8 +282,7 @@ CREATE TABLE blockchain_block (
     chain               VARCHAR(32) NOT NULL COMMENT '链',
     create_time         DATETIME NOT NULL COMMENT '创建时间'
 ) COMMENT '比特币区块信息表';
-engine_result
-sql
+
 -- auto-generated definition
 CREATE TABLE engine_result (
     id                   BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -303,7 +302,6 @@ CREATE TABLE engine_result (
     create_time          DATETIME NOT NULL COMMENT '创建时间'
 );
 
-sql
 -- auto-generated definition
 create table incident
 (
@@ -322,7 +320,6 @@ create table incident
         unique (incident_code)
 );
 
-sql
 -- auto-generated definition
 create table indicator
 (
@@ -347,8 +344,6 @@ create index idx_incident_code
     on indicator (incident_code)
     comment '索引，按事件code搜索';
 
-
-sql
 -- auto-generated definition
 create table list_data
 (
@@ -370,7 +365,6 @@ create table list_data
 )
     comment '名单数据表';
 
-sql
 -- auto-generated definition
 create table list_library
 (
@@ -389,7 +383,6 @@ create table list_library
 )
     comment '风控名单库表';
 
-sql
 -- auto-generated definition
 create table penalty
 (
@@ -409,7 +402,6 @@ create table penalty
 )
     comment '风控处罚定义表';
 
-sql
 -- auto-generated definition
 create table penalty_record
 (
@@ -439,7 +431,6 @@ create index idx_status_retry
     on penalty_record (status, retry)
     comment '复合索引，加速按状态和重试次数查询';
 
-sql
 -- auto-generated definition
 create table rule
 (
@@ -466,7 +457,6 @@ create table rule
         unique (rule_code)
 );
 
-sql
 -- auto-generated definition
 create table transfer_record
 (
