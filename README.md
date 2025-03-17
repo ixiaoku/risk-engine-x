@@ -532,7 +532,7 @@ CREATE INDEX idx_hash ON transfer_record (hash);
 CREATE INDEX idx_receive_address ON transfer_record (receive_address);
 CREATE INDEX idx_send_address ON transfer_record (send_address);
 
-
+```
 
 ⸻
 
