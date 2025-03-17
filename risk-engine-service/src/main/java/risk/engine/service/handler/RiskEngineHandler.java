@@ -54,6 +54,7 @@ public class RiskEngineHandler {
      * @param executeEngineDTO 参数
      */
     public void saveDataAndDoPenalty(RiskExecuteEngineDTO executeEngineDTO) {
+        executeEngineDTO.setCreateTime(LocalDateTime.now());
         engineResultService.insert(getEngineResult(executeEngineDTO));
         insertEsEngineResult(executeEngineDTO);
         doPenalty(executeEngineDTO);

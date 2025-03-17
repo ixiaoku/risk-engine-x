@@ -6,6 +6,7 @@ import risk.engine.db.entity.TransferRecord;
 import risk.engine.service.service.ITransferRecordService;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @Author: X
@@ -31,6 +32,11 @@ public class TransferRecordServiceImpl implements ITransferRecordService {
     @Override
     public TransferRecord selectByPrimaryKey(Long id) {
         return transferRecordMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public List<TransferRecord> selectByExample(TransferRecord transferRecord) {
+        return transferRecordMapper.selectByExample(transferRecord);
     }
 
     @Override

@@ -9,7 +9,7 @@ spring:
     timeout: 2000ms
     database: 1  #默认有16个db(集群模式用hash槽代替)，这里配置具体使用的db，默认是0
 rocketmq:
-  name-server: 106.55.233.79:9876
+  name-server: 127.0.0.1:9876
   consumer:
     group: consumer-group-test1
   producer:

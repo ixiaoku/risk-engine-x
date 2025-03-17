@@ -6,22 +6,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import risk.engine.common.grovvy.GroovyShellUtil;
+import risk.engine.common.mq.RiskEngineProducer;
 import risk.engine.db.entity.Incident;
 import risk.engine.db.entity.Rule;
-import risk.engine.dto.dto.rule.HitRuleDTO;
 import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;
+import risk.engine.dto.dto.rule.HitRuleDTO;
 import risk.engine.dto.enums.DecisionResultEnum;
 import risk.engine.dto.enums.IncidentStatusEnum;
 import risk.engine.dto.enums.RuleStatusEnum;
 import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.dto.result.RiskEngineExecuteResult;
-import risk.engine.service.handler.RiskEngineHandler;
 import risk.engine.service.service.IIncidentService;
 import risk.engine.service.service.IRiskEngineExecuteService;
 import risk.engine.service.service.IRuleService;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +45,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
     private IIncidentService incidentService;
 
     @Resource
-    private RiskEngineHandler engineResultHandler;
+    private RiskEngineProducer producer;
 
     /**
      * 引擎执行 主逻辑
@@ -104,9 +103,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
         //异步保存数据和发送mq消息 规则熔断
         CompletableFuture.runAsync(() -> {
             // 异步发消息 分消费者组监听 1mysql保存引擎执行结果并且同步es 2执行处罚 加名单以及调三方接口
-            //riskEngineProducer.sendMessage("test_topic1", new Gson().toJson(executeEngineDTO));
-            //搞了好长时间云服务器 mq有问题 搞不好 先这样写
-            engineResultHandler.saveDataAndDoPenalty(executeEngineDTO);
+            producer.sendMessage("test_topic1", JSON.toJSONString(executeEngineDTO));
         }).exceptionally(ex -> {
             log.error("引擎执行 异步任务失败: {}, 异常: {}", riskEngineParam.getIncidentCode(), ex.getMessage(), ex);
             //处理失败逻辑 发送告警消息 本来是打算目前mq发送失败 然后写消息表再重试 有时间再加吧
@@ -141,7 +138,6 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             executeEngineDTO.setRulePenaltyAction(hitRule.getPenaltyAction());
             executeEngineDTO.setRuleVersion(hitRule.getVersion());
         }
-        executeEngineDTO.setCreateTime(LocalDateTime.now());
         List<HitRuleDTO> hitMockRules = getHitRuleDTOList(RuleStatusEnum.MOCK.getCode(), hitMOckRuleList);
         executeEngineDTO.setHitMockRules(hitMockRules);
         List<HitRuleDTO> hitOnlineRules = getHitRuleDTOList(RuleStatusEnum.ONLINE.getCode(), hitOnlineRuleList);
