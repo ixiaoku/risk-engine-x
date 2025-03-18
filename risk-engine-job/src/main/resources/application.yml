@@ -1,6 +1,8 @@
 spring:
+  application:
+    name: RISK-ENGINE-X-JOB
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/risk?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false
+    url: jdbc:mysql://127.0.0.1:3306/risk?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useSSL=false
     username: dcr
     password: dcr
   redis:
@@ -22,8 +24,22 @@ elasticsearch:
   password: ELASTIC_dcr_0315
 
 server:
-  port: 8888
+  port: 8889
+
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: risk.engine.db.entity
+
+xxl:
+  job:
+    admin:
+      addresses: http://106.55.233.79:8001/xxl-job-admin  # XXL-Job Admin 的地址
+      accessToken: xxl-job-token
+    executor:
+      appname: xxl-job-executor-x  # 执行器名称，需与 Admin 中配置一致
+      address:  # 可选，自动注册时留空
+      ip: 103.167.134.67 # 可选，默认自动获取
+      port: 9999  # 执行器端口，需与 Docker 配置一致
+      logpath: ./logs  # 日志存储路径
+      logretentiondays: 7  # 日志保留天数

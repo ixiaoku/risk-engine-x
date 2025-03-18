@@ -2,7 +2,6 @@ package risk.engine.job.config;
 
 import org.quartz.*;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import risk.engine.job.task.BitcoinAnalysisTask;
 import risk.engine.job.task.EthereumAnalysisTask;
 import risk.engine.job.task.PenaltyExecuteTask;
@@ -13,7 +12,6 @@ import risk.engine.job.task.SolanaAnalysisTask;
  * @Date: 2025/3/16 00:51
  * @Version: 1.0
  */
-@Configuration
 public class QuartzConfig {
 
     // BTC JobDetail 和 Trigger

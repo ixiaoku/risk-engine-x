@@ -44,6 +44,7 @@
     <mybatis.version>2.2.2</mybatis.version>
     <guava.version>33.2.0-jre</guava.version>
     <gson.version>2.11.0</gson.version>
+    <xxl-job.version>2.4.0</xxl-job.version>
   </properties>
 
   <dependencyManagement>
@@ -216,6 +217,13 @@
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
         <version>${gson.version}</version>
+      </dependency>
+
+      <!-- XXL-Job Core -->
+      <dependency>
+        <groupId>com.xuxueli</groupId>
+        <artifactId>xxl-job-core</artifactId>
+        <version>${xxl-job.version}</version>
       </dependency>
 
       <dependency>

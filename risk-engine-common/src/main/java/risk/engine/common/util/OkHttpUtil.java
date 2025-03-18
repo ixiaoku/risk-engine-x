@@ -1,5 +1,6 @@
 package risk.engine.common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.util.Map;
  * @Date: 2025/3/14 23:53
  * @Version: 1.0
  */
+@Slf4j
 public class OkHttpUtil {
 
     private static final OkHttpClient client = new OkHttpClient();
@@ -38,12 +40,18 @@ public class OkHttpUtil {
      * @param json   JSON 字符串
      * @return 响应字符串
      */
-    public static String post(String url, String json) throws IOException {
-        RequestBody body = RequestBody.create(MediaType.get("application/json; charset=utf-8"), json);
-        Request request = new Request.Builder().url(url).post(body).build();
-        try (Response response = client.newCall(request).execute()) {
-            return response.body() != null ? response.body().string() : null;
+    public static String post(String url, String json) {
+        try {
+            RequestBody body = RequestBody.create(MediaType.get("application/json; charset=utf-8"), json);
+            Request request = new Request.Builder().url(url).post(body).build();
+            try (Response response = client.newCall(request).execute()) {
+                return response.body() != null ? response.body().string() : null;
+            }
+        } catch (Exception e) {
+            log.error("Http Post请求报错：{}", e.getMessage(), e);
+            throw new RuntimeException(e);
         }
+
     }
 
     /**
