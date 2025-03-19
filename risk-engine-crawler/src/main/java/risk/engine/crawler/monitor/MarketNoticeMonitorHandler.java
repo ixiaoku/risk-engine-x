@@ -34,7 +34,10 @@ public class MarketNoticeMonitorHandler {
         extractTitles(jsonResponse);
     }
 
-    // 使用 Gson 解析 JSON 并提取 title 字段
+    /**
+     * 使用 Gson 解析 JSON 并提取 title 字段
+     * @param jsonResponse 参数
+     */
     private static void extractTitles(String jsonResponse) {
         JsonObject rootObject = JsonParser.parseString(jsonResponse).getAsJsonObject();
         // 检查返回状态

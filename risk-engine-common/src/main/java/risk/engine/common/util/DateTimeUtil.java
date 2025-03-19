@@ -15,11 +15,15 @@ public class DateTimeUtil {
     private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
     private static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
     private static final String DEFAULT_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String DATETIME_FORMAT_CHINESE = "yyyy年-MM月-dd日 HH时:mm分:ss秒";
+
 
     // DateTimeFormatter 实例
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT);
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATETIME_FORMAT);
+    private static final DateTimeFormatter DATETIME_FORMATTER_CHINESE = DateTimeFormatter.ofPattern(DATETIME_FORMAT_CHINESE);
+
 
     /**
      * 获取当前时间的字符串（默认格式 yyyy-MM-dd HH:mm:ss）
@@ -52,6 +56,11 @@ public class DateTimeUtil {
     public static String getTimeByTimestamp(long timestamp) {
         LocalDateTime localDateTime = timestampToLocalDateTime(timestamp);
         return localDateTime.format(DATETIME_FORMATTER);
+    }
+
+    public static String getTime(long timestamp) {
+        LocalDateTime localDateTime = timestampToLocalDateTime(timestamp);
+        return localDateTime.format(DATETIME_FORMATTER_CHINESE);
     }
 
     /**
@@ -117,29 +126,4 @@ public class DateTimeUtil {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public static void main(String[] args) {
-        // 测试时间工具类
-        System.out.println("当前日期时间: " + getCurrentDateTime());
-        System.out.println("当前日期: " + getCurrentDate());
-        System.out.println("当前时间: " + getCurrentTime());
-
-        long timestamp = System.currentTimeMillis();
-        System.out.println("时间戳转 LocalDateTime: " + timestampToLocalDateTime(timestamp));
-
-        LocalDateTime now = LocalDateTime.now();
-        System.out.println("LocalDateTime 转时间戳: " + localDateTimeToTimestamp(now));
-
-        System.out.println("字符串转 LocalDateTime: " + parseDateTime("2025-03-18 14:30:00"));
-        System.out.println("字符串转 LocalDate: " + parseDate("2025-03-18"));
-
-        System.out.println("计算日期差: " + daysBetween(LocalDate.of(2025, 3, 1), LocalDate.of(2025, 3, 18)) + " 天");
-        System.out.println("计算秒数差: " + secondsBetween(now, now.plusMinutes(10)) + " 秒");
-
-        System.out.println("增加 5 天: " + addDays(now, 5));
-        System.out.println("增加 3 小时: " + addHours(now, 3));
-
-        Date date = new Date();
-        System.out.println("Date 转 LocalDateTime: " + dateToLocalDateTime(date));
-        System.out.println("LocalDateTime 转 Date: " + localDateTimeToDate(now));
-    }
 }

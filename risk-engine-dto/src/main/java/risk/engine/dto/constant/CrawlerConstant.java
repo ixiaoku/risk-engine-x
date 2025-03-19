@@ -19,8 +19,9 @@ public interface CrawlerConstant {
     String weChatBotUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=4b9616dd-d798-46ba-af63-3bd0cda405a3";
 
     String notIceBotContent = "监控结果通知\n" +
-            ">监控项目:<font color=\"comment\">Binance公告1</font>\n" +
-            ">内容:<font color=\"comment\">%s</font>\n" +
-            ">时间:<font color=\"comment\">%s</font>";;
+            ">**标题**:<font color=\"comment\">Binance公告</font>\n" +
+            ">**内容**:<font color=\"comment\">%s</font>\n" +
+            ">**时间**:<font color=\"comment\">%s</font> \n" +
+            ">**人员**：<@DongChunRong> <@carl> <@hdl> <@YuanFeng>";;
 
 }
