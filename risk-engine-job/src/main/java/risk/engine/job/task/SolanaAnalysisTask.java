@@ -2,9 +2,6 @@ package risk.engine.job.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import risk.engine.crawler.monitor.transfer.SolanaBlockFetcherHandler;
 import risk.engine.db.entity.TransferRecord;
 import risk.engine.dto.dto.block.ChainTransferDTO;
@@ -20,7 +17,7 @@ import java.util.List;
  * @Version: 1.0
  */
 @Slf4j
-public class SolanaAnalysisTask implements Job {
+public class SolanaAnalysisTask {
 
     @Resource
     private SolanaBlockFetcherHandler fetcherHandler;
@@ -28,8 +25,7 @@ public class SolanaAnalysisTask implements Job {
     @Resource
     private ITransferRecordService transferRecordService;
 
-    @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void execute() {
         log.info("Quartz 定时抓取Solana链上数据...");
         crawlerSolBlock();
     }

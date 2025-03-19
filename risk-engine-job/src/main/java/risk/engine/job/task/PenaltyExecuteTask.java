@@ -2,9 +2,6 @@ package risk.engine.job.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import risk.engine.common.util.ApplicationContextUtil;
 import risk.engine.db.entity.PenaltyRecord;
 import risk.engine.dto.enums.PenaltyStatusEnum;
@@ -23,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @Version: 1.0
  */
 @Slf4j
-public class PenaltyExecuteTask implements Job {
+public class PenaltyExecuteTask {
 
     @Resource
     private IPenaltyRecordService penaltyRecordService;
@@ -31,10 +28,9 @@ public class PenaltyExecuteTask implements Job {
     @Resource
     private ApplicationContextUtil applicationContextUtil;
 
-    @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void execute() {
 
-        System.out.println("PenaltyExecuteTask start");
+        log.info("PenaltyExecuteTask start");
         PenaltyRecord record = new PenaltyRecord();
         List<PenaltyRecord> penaltyRecordList = penaltyRecordService.selectExample(record);
         if (CollectionUtils.isEmpty(penaltyRecordList)) {
@@ -53,6 +49,6 @@ public class PenaltyExecuteTask implements Job {
             penaltyRecord.setUpdateTime(LocalDateTime.now());
             penaltyRecordService.updateByPrimaryKey(penaltyRecord);
         });
-        System.out.println("PenaltyExecuteTask end");
+        log.info("PenaltyExecuteTask end");
     }
 }

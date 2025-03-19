@@ -38,8 +38,8 @@ xxl:
       accessToken: xxl-job-token
     executor:
       appname: xxl-job-executor-x  # 执行器名称，需与 Admin 中配置一致
-      address:  # 可选，自动注册时留空
-      ip: 103.167.134.67 # 可选，默认自动获取
-      port: 9999  # 执行器端口，需与 Docker 配置一致
+      address: https://71f7-103-167-134-66.ngrok-free.app # 可选，自动注册时留空
+      #ip: 103.167.134.66 # 可选，默认自动获取
+      #port: 9999  # 执行器端口，需与 Docker 配置一致
       logpath: ./logs  # 日志存储路径
       logretentiondays: 7  # 日志保留天数

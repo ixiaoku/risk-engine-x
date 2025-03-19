@@ -2,8 +2,7 @@ package risk.engine.job.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
+import org.springframework.stereotype.Component;
 import risk.engine.crawler.monitor.transfer.EthereumFetcherHandler;
 import risk.engine.db.entity.TransferRecord;
 import risk.engine.dto.dto.block.ChainTransferDTO;
@@ -19,7 +18,8 @@ import java.util.List;
  * @Version: 1.0
  */
 @Slf4j
-public class EthereumAnalysisTask implements Job {
+@Component
+public class EthereumAnalysisTask {
 
     @Resource
     private EthereumFetcherHandler ethereumFetcherHandler;
@@ -27,13 +27,8 @@ public class EthereumAnalysisTask implements Job {
     @Resource
     private ITransferRecordService transferRecordService;
 
-    @Override
-    public void execute(JobExecutionContext jobExecutionContext) {
-        log.info("Quartz 定时抓取Ethereum链上数据...");
-        crawlerEthereumChain(ethereumFetcherHandler);
-    }
-
-    private void crawlerEthereumChain(EthereumFetcherHandler ethereumFetcherHandler) {
+    private void execute() {
+        log.info("Ethereum 定时抓取Ethereum链上数据...");
         try {
             List<ChainTransferDTO> chainTransferDTOList = ethereumFetcherHandler.getTransactions();
             if (CollectionUtils.isEmpty(chainTransferDTOList)) {
