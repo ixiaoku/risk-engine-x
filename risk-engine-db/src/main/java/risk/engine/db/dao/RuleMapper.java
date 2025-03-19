@@ -1,9 +1,10 @@
 package risk.engine.db.dao;
 
-import java.util.List;
-
 import org.apache.ibatis.annotations.Mapper;
 import risk.engine.db.entity.Rule;
+import risk.engine.db.entity.example.RuleExample;
+
+import java.util.List;
 
 /**
  * 规则
@@ -18,7 +19,7 @@ public interface RuleMapper {
 
     int insert(Rule record);
 
-    List<Rule> selectByExample(Rule example);
+    List<Rule> selectByExample(RuleExample example);
 
     Rule selectByRuleCode(String incidentCode);
 

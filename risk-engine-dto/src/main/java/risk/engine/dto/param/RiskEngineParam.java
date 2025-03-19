@@ -1,7 +1,6 @@
 package risk.engine.dto.param;
 
 import lombok.Data;
-import lombok.NonNull;
 
 /**
  * @Author: X

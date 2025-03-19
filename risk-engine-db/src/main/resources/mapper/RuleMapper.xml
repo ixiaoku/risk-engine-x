@@ -28,7 +28,14 @@
     groovy_script, json_script, logic_script
   </sql>
 
-  <select id="selectByRuleCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from rule
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByRuleCode" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from rule
@@ -42,17 +49,25 @@
         where incident_code = #{incidentCode,jdbcType=VARCHAR}
     </select>
 
-    <select id="selectByExample" parameterType="risk.engine.db.entity.Rule" resultMap="BaseResultMap">
+    <select id="selectByExample" parameterType="risk.engine.db.entity.example.RuleExample" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
         from rule
-        where 1 == 1
-        <if test="incidentCode != null">
-            and incident_code = #{incidentCode,jdbcType=VARCHAR}
-        </if>
-        <if test="status != null">
-            and status = #{status,jdbcType=VARCHAR}
-        </if>
+        <where>
+            <if test="incidentCode != null">
+                incident_code = #{incidentCode,jdbcType=VARCHAR}
+            </if>
+            <if test="ruleCode != null">
+                and rule_code = #{ruleCode,jdbcType=VARCHAR}
+            </if>
+            <if test="ruleName != null">
+                and rule_name = #{ruleName,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=VARCHAR}
+            </if>
+        </where>
+        order by id desc;
     </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
@@ -77,9 +92,7 @@
 
   <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.Rule">
     update rule
-    set incident_code = #{incidentCode,jdbcType=VARCHAR},
-        rule_code = #{ruleCode,jdbcType=VARCHAR},
-        rule_name = #{ruleName,jdbcType=VARCHAR},
+    set rule_name = #{ruleName,jdbcType=VARCHAR},
         status = #{status,jdbcType=INTEGER},
         score = #{score,jdbcType=INTEGER},
         decision_result = #{decisionResult,jdbcType=VARCHAR},
@@ -90,8 +103,8 @@
         responsible_person = #{responsiblePerson,jdbcType=VARCHAR},
         operator = #{operator,jdbcType=VARCHAR},
         json_script = #{jsonScript,jdbcType=LONGVARCHAR},
-        expression = #{expression,jdbcType=VARCHAR},
-        create_time = #{createTime,jdbcType=TIMESTAMP},
+        logic_script = #{logicScript,jdbcType=VARCHAR},
+        groovy_script = #{groovyScript,jdbcType=LONGVARCHAR},
         update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>

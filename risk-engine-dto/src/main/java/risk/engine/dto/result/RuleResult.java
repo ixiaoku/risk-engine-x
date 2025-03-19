@@ -1,6 +1,8 @@
-package risk.engine.dto.param;
+package risk.engine.dto.result;
 
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 /**
  * @Author: X
@@ -8,9 +10,7 @@ import lombok.Data;
  * @Version: 1.0
  */
 @Data
-public class RuleParam extends PageHelperQuery {
-
-    private Long id;
+public class RuleResult {
 
     /**
      * 事件code
@@ -48,7 +48,7 @@ public class RuleParam extends PageHelperQuery {
     private String jsonScript;
 
     /**
-     * 配置的表达式 1 && 2 || 3
+     * 配置的逻辑表达式 1 && 2 || 3
      */
     private String logicScript;
 
@@ -81,5 +81,15 @@ public class RuleParam extends PageHelperQuery {
      * 操作人
      */
     private String operator;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
+
+    /**
+     * 修改时间
+     */
+    private LocalDateTime updateTime;
 
 }

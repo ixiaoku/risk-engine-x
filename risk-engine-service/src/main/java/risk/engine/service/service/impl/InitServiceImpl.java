@@ -51,7 +51,7 @@ public class InitServiceImpl {
      */
     public void initIncident() {
         Incident entity = new Incident();
-        entity.setIncidentCode("ChainTransfer");
+        entity.setIncidentCode("ChainTransfer11");
         entity.setIncidentName("链上转账");
         entity.setDecisionResult(new Gson().toJson(List.of(0, 1)));
         entity.setStatus(IncidentStatusEnum.ONLINE.getCode());
@@ -61,8 +61,8 @@ public class InitServiceImpl {
         entity.setUpdateTime(LocalDateTime.now());
         ChainTransferDTO chainTransferDTO = getChainTransferDTO();
         entity.setRequestPayload(new Gson().toJson(chainTransferDTO));
-        System.out.println(new Gson().toJson(chainTransferDTO));
-        incidentMapper.insert(entity);
+        System.out.println(new Gson().toJson(entity));
+        //incidentMapper.insert(entity);
     }
 
     public void initRule() {
@@ -86,7 +86,7 @@ public class InitServiceImpl {
         rule.setGroovyScript(conditionScript);
         rule.setCreateTime(LocalDateTime.now());
         rule.setUpdateTime(LocalDateTime.now());
-        ruleService.insert(rule);
+        //ruleService.insert(rule);
     }
 
     private static ChainTransferDTO getChainTransferDTO() {

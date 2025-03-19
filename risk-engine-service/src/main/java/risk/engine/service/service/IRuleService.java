@@ -1,6 +1,8 @@
 package risk.engine.service.service;
 
 import risk.engine.db.entity.Rule;
+import risk.engine.dto.param.RuleParam;
+import risk.engine.dto.result.RuleResult;
 
 import java.util.List;
 
@@ -11,18 +13,15 @@ import java.util.List;
  */
 public interface IRuleService {
 
-    boolean deleteByPrimaryKey(Long id);
-
-    boolean insert(Rule record);
-
-    List<Rule> selectByExample(Rule example);
-
-    Rule selectByRuleCode(String incidentCode);
-
     List<Rule> selectByIncidentCode(String incidentCode);
 
-    Rule selectByPrimaryKey(Long id);
+    Boolean insert(RuleParam ruleParam);
 
-    boolean updateByPrimaryKey(Rule record);
+    List<RuleResult> list(RuleParam ruleParam);
 
+    Boolean delete(RuleParam ruleParam);
+
+    Boolean update(RuleParam ruleParam);
+
+    RuleResult detail(RuleParam ruleParam);
 }

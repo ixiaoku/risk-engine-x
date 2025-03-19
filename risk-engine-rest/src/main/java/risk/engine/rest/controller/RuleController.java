@@ -5,13 +5,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import risk.engine.db.entity.Rule;
 import risk.engine.dto.param.RuleParam;
+import risk.engine.dto.result.RuleResult;
 import risk.engine.service.service.IRuleService;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.List;
 
 /**
  * @Author: X
@@ -29,25 +28,31 @@ public class RuleController {
     @PostMapping("/insert")
     public Boolean insertRule(@RequestBody RuleParam ruleParam) {
         log.info("Inserting rule: {}", ruleParam);
-        Rule rule = new Rule();
-        rule.setIncidentCode(ruleParam.getIncidentCode());
-        rule.setRuleCode(ruleParam.getRuleCode());
-        rule.setRuleName(ruleParam.getRuleName());
-        rule.setStatus(ruleParam.getStatus());
-        rule.setScore(ruleParam.getScore());
-        rule.setGroovyScript(ruleParam.getConditionScript());
-        rule.setJsonScript(ruleParam.getJsonScript());
-        rule.setLogicScript(ruleParam.getExpression());
-        rule.setDecisionResult(ruleParam.getDecisionResult());
-        rule.setExpiryTime(ruleParam.getExpiryTime());
-        rule.setLabel(ruleParam.getLabel());
-        rule.setPenaltyAction(ruleParam.getPenaltyAction());
-        rule.setVersion(UUID.randomUUID().toString());
-        rule.setResponsiblePerson(ruleParam.getResponsiblePerson());
-        rule.setOperator(ruleParam.getOperator());
-        rule.setCreateTime(LocalDateTime.now());
-        rule.setUpdateTime(LocalDateTime.now());
-        return ruleService.insert(rule);
+        return ruleService.insert(ruleParam);
+    }
+
+    @PostMapping("/list")
+    public List<RuleResult> list(@RequestBody RuleParam ruleParam) {
+        log.info("list rules: {}", ruleParam);
+        return ruleService.list(ruleParam);
+    }
+
+    @PostMapping("/delete")
+    public Boolean delete(@RequestBody RuleParam ruleParam) {
+        log.info("delete rules: {}", ruleParam);
+        return ruleService.delete(ruleParam);
+    }
+
+    @PostMapping("/update")
+    public Boolean update(@RequestBody RuleParam ruleParam) {
+        log.info("update rules: {}", ruleParam);
+        return ruleService.update(ruleParam);
+    }
+
+    @PostMapping("/detail")
+    public RuleResult detail(@RequestBody RuleParam ruleParam) {
+        log.info("detail rules: {}", ruleParam);
+        return ruleService.detail(ruleParam);
     }
 
 }
