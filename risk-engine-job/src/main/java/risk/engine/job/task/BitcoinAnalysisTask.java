@@ -1,6 +1,7 @@
 package risk.engine.job.task;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import risk.engine.service.service.ITransferRecordService;
 
 import javax.annotation.Resource;
@@ -11,6 +12,7 @@ import javax.annotation.Resource;
  * @Version: 1.0
  */
 @Slf4j
+@Component
 public class BitcoinAnalysisTask {
 
     @Resource

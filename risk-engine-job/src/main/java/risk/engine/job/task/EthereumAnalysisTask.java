@@ -27,7 +27,7 @@ public class EthereumAnalysisTask {
     @Resource
     private ITransferRecordService transferRecordService;
 
-    private void execute() {
+    public void execute() {
         log.info("Ethereum 定时抓取Ethereum链上数据...");
         try {
             List<ChainTransferDTO> chainTransferDTOList = ethereumFetcherHandler.getTransactions();

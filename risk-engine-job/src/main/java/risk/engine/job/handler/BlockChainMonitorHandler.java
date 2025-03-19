@@ -28,11 +28,28 @@ public class BlockChainMonitorHandler {
     @Resource
     private SolanaAnalysisTask solanaAnalysisTask;
 
-    @XxlJob("marketNoticeNewJob")
-    public void executeMarketNoticeNew() {
-        String param = XxlJobHelper.getJobParam(); // 获取任务参数
-        XxlJobHelper.log("binanceNoticeJob, param: " + param);
-        log.info("binanceNoticeJob job executed successfully!");
+    @XxlJob("bitcoinMonitorJob")
+    public void executeBitcoinMonitor() {
+        String param = XxlJobHelper.getJobParam();
+        bitcoinAnalysisTask.execute();
+        XxlJobHelper.log("bitcoinMonitorJob, param: " + param);
+        log.info("bitcoinMonitorJob job executed successfully!");
+    }
+
+    @XxlJob("ethereumMonitorJob")
+    public void executeEthereumMonitor() {
+        String param = XxlJobHelper.getJobParam();
+        ethereumAnalysisTask.execute();
+        XxlJobHelper.log("ethereumMonitorJob, param: " + param);
+        log.info("ethereumMonitorJob job executed successfully!");
+    }
+
+    @XxlJob("solMonitorJob")
+    public void executeSolMonitor() {
+        String param = XxlJobHelper.getJobParam();
+        solanaAnalysisTask.execute();
+        XxlJobHelper.log("solMonitorJob, param: " + param);
+        log.info("solMonitorJob job executed successfully!");
     }
 
 

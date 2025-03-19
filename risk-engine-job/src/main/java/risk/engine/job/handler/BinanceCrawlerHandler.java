@@ -4,6 +4,9 @@ import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import risk.engine.crawler.monitor.MarketNoticeMonitorHandler;
+
+import javax.annotation.Resource;
 
 /**
  * @Author: X
@@ -14,9 +17,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class BinanceCrawlerHandler {
 
-    @XxlJob("marketNoticeNewJob")
+    @Resource
+    private MarketNoticeMonitorHandler noticeMonitorHandler;
+
+    @XxlJob("newMarketNoticeJob")
     public void executeMarketNoticeNew() {
-        String param = XxlJobHelper.getJobParam(); // 获取任务参数
+        String param = XxlJobHelper.getJobParam();
+        noticeMonitorHandler.start();
         XxlJobHelper.log("binanceNoticeJob, param: " + param);
         log.info("binanceNoticeJob job executed successfully!");
     }

@@ -11,9 +11,12 @@ import risk.engine.dto.dto.crawler.GroupChatBotDTO;
 
 import java.util.Objects;
 
+/**
+ * 币安公告监控
+ */
 @Slf4j
 @Component
-public class BinanceCrawlerHandler {
+public class MarketNoticeMonitorHandler {
 
     private static final Gson gson = new GsonBuilder()
             .disableHtmlEscaping()
