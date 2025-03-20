@@ -18,6 +18,11 @@ public class RuleResult {
     private String incidentCode;
 
     /**
+     * 事件名称
+     */
+    private String incidentName;
+
+    /**
      * 规则code
      */
     private String ruleCode;

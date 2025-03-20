@@ -1,6 +1,5 @@
 package risk.engine.service.service;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -10,5 +9,5 @@ import java.util.Map;
  */
 public interface IDictionaryService {
 
-    List<Map<String, Object>> getList(String key);
+    Map<String, Object> getList(String[] keys);
 }

@@ -10,6 +10,6 @@ import lombok.Data;
 @Data
 public class DictionaryParam {
 
-    String dictionaryKey;
+    private String[] dictKeyList;
 
 }

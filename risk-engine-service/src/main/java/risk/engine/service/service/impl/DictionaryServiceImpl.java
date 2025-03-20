@@ -6,7 +6,7 @@ import risk.engine.service.common.OptionsEnumFunction;
 import risk.engine.service.service.IDictionaryService;
 
 import javax.annotation.Resource;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,9 +21,13 @@ public class DictionaryServiceImpl implements IDictionaryService {
     private ApplicationContext applicationContext;
 
     @Override
-    public List<Map<String, Object>> getList(String key) {
-        OptionsEnumFunction optionsEnumFunction = (OptionsEnumFunction) applicationContext.getBean(key);
-        return optionsEnumFunction.getDictionary();
+    public Map<String, Object> getList(String[] keys) {
+        Map<String, Object> result = new HashMap<>();
+        for (String keyStr : keys) {
+            OptionsEnumFunction optionsEnumFunction = (OptionsEnumFunction) applicationContext.getBean(keyStr);
+            result.put(keyStr, optionsEnumFunction.getDictionary());
+        }
+        return result;
     }
 
 }

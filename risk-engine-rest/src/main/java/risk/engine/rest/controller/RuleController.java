@@ -59,12 +59,12 @@ public class RuleController {
     @GetMapping("/options/indicators")
     public ResponseResult indicatorOptions(@RequestParam DictionaryParam dictionaryParam) {
         log.info("detail indicator: {}", dictionaryParam);
-        return ResponseResult.success(dictionaryService.getList(dictionaryParam.getDictionaryKey()));
+        return ResponseResult.success(dictionaryService.getList(dictionaryParam.getDictKeyList()));
     }
 
-    @GetMapping("/options/operations")
-    public ResponseResult operationOptions(@RequestParam DictionaryParam dictionaryParam) {
-        return ResponseResult.success(dictionaryService.getList(dictionaryParam.getDictionaryKey()));
+    @GetMapping("/options")
+    public ResponseResult operationOptions(@RequestParam("dictKeyList") String[] dictKeyList) {
+        return ResponseResult.success(dictionaryService.getList(dictKeyList));
     }
 
 }

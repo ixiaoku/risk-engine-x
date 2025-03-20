@@ -2,6 +2,8 @@ package risk.engine.dto.enums;
 
 import lombok.Getter;
 
+import java.util.Objects;
+
 /**
  * @Author: X
  * @Date: 2025/3/14 12:52
@@ -10,7 +12,6 @@ import lombok.Getter;
 @Getter
 public enum RuleStatusEnum {
 
-    DELETED(0,"删除"),
     ONLINE(1,"上线"),
     OFFLINE(2,"下线"),
     MOCK(3,"模拟")
@@ -38,7 +39,7 @@ public enum RuleStatusEnum {
      */
     public static RuleStatusEnum getIncidentStatusEnumByCode(Integer code) {
         for (RuleStatusEnum status : RuleStatusEnum.values()) {
-            if (status.getCode() == code) {
+            if (Objects.equals(status.getCode(), code)) {
                 return status;
             }
         }
