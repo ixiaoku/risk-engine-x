@@ -43,7 +43,7 @@ public class RuleParam extends PageHelperQuery {
     private String groovyScript;
 
     /**
-     * json结构特征
+     * json结构指标
      */
     private String jsonScript;
 

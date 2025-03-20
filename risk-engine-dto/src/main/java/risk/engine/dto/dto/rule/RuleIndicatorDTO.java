@@ -1,6 +1,7 @@
 package risk.engine.dto.dto.rule;
 
 import lombok.Data;
+import risk.engine.dto.enums.IndicatorTypeEnum;
 
 /**
  * @Author: X
@@ -16,23 +17,23 @@ public class RuleIndicatorDTO {
     private Integer serialNumber;
 
     /**
-     * 特征code
+     * 指标code
      */
     private String indicatorCode;
 
     /**
-     * 特征值
+     * 指标值
      */
     private String indicatorValue;
 
     /**
-     * 特征名称
+     * 指标名称
      */
     private String indicatorName;
 
     /**
-     * 特征数据类型
-     * @see risk.engine.dto.enums.FieldTypeEnum
+     * 指标数据类型
+     * @see IndicatorTypeEnum
      */
     private Integer indicatorType;
 

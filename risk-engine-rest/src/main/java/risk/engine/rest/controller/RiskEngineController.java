@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.dto.result.RiskEngineExecuteResult;
-import risk.engine.common.valid.ValidatorUtils;
+import risk.engine.common.function.ValidatorUtils;
 import risk.engine.service.service.IRiskEngineExecuteService;
 import risk.engine.service.service.impl.InitServiceImpl;
 

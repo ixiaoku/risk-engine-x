@@ -54,13 +54,13 @@
         <include refid="Base_Column_List" />
         from rule
         <where>
-            <if test="incidentCode != null">
+            <if test="incidentCode != null and incidentCode != ''">
                 incident_code = #{incidentCode,jdbcType=VARCHAR}
             </if>
-            <if test="ruleCode != null">
+            <if test="ruleCode != null and ruleCode != ''">
                 and rule_code = #{ruleCode,jdbcType=VARCHAR}
             </if>
-            <if test="ruleName != null">
+            <if test="ruleName != null and ruleName != ''">
                 and rule_name = #{ruleName,jdbcType=VARCHAR}
             </if>
             <if test="status != null">

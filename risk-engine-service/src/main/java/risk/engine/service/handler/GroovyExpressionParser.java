@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import risk.engine.common.grovvy.ExpressionParser;
 import risk.engine.common.grovvy.GroovyShellUtil;
 import risk.engine.dto.dto.rule.RuleIndicatorDTO;
-import risk.engine.dto.enums.FieldTypeEnum;
+import risk.engine.dto.enums.IndicatorTypeEnum;
 import risk.engine.dto.enums.OperationSymbolEnum;
 
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class GroovyExpressionParser {
     /**
      * 解析
      * @param logicString 逻辑表达式 !(1&&2||(3&&4))
-     * @param jsonScript json特征结构
+     * @param jsonScript json指标结构
      * @return 返回groovy可执行表达式 amount > 5
      */
     public static String parseToGroovyExpression(String logicString, String jsonScript) {
@@ -44,17 +44,17 @@ public class GroovyExpressionParser {
     }
 
     /**
-     * 根据特征类型和操作符号处理
-     * @param expressionDTO 特征
-     * @return 返回特征表达式
+     * 根据指标类型和操作符号处理
+     * @param expressionDTO 指标
+     * @return 返回指标表达式
      */
     private static String buildConditionExpression(RuleIndicatorDTO expressionDTO) {
         String attributeCode = expressionDTO.getIndicatorCode();
         String attributeValue = expressionDTO.getIndicatorValue();
         //操作逻辑符号
         String operator = OperationSymbolEnum.getOperationSymbolEnumByCode(expressionDTO.getOperationSymbol()).getName();
-        //特征类型
-        boolean isString = Objects.equals(expressionDTO.getIndicatorType(), FieldTypeEnum.STRING.getCode());
+        //指标类型
+        boolean isString = Objects.equals(expressionDTO.getIndicatorType(), IndicatorTypeEnum.STRING.getCode());
         String value = isString ? "'" + attributeValue + "'" : attributeValue;
         return attributeCode + " " + operator + " " + value;
     }

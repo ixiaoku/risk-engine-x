@@ -2,9 +2,10 @@ package risk.engine.rest.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import risk.engine.dto.param.DictionaryParam;
 import risk.engine.dto.param.RuleParam;
 import risk.engine.dto.result.ResponseResult;
-import risk.engine.dto.result.RuleResult;
+import risk.engine.service.service.IDictionaryService;
 import risk.engine.service.service.IRuleService;
 
 import javax.annotation.Resource;
@@ -22,10 +23,13 @@ public class RuleController {
     @Resource
     private IRuleService ruleService;
 
+    @Resource
+    private IDictionaryService dictionaryService;
+
     @PostMapping("/insert")
-    public Boolean insertRule(@RequestBody RuleParam ruleParam) {
+    public ResponseResult insert(@RequestBody RuleParam ruleParam) {
         log.info("Inserting rule: {}", ruleParam);
-        return ruleService.insert(ruleParam);
+        return ResponseResult.success(ruleService.insert(ruleParam));
     }
 
     @PostMapping("/list")
@@ -35,21 +39,32 @@ public class RuleController {
     }
 
     @PostMapping("/delete")
-    public Boolean delete(@RequestBody RuleParam ruleParam) {
+    public ResponseResult delete(@RequestBody RuleParam ruleParam) {
         log.info("delete rules: {}", ruleParam);
-        return ruleService.delete(ruleParam);
+        return ResponseResult.success(ruleService.delete(ruleParam));
     }
 
     @PostMapping("/update")
-    public Boolean update(@RequestBody RuleParam ruleParam) {
+    public ResponseResult update(@RequestBody RuleParam ruleParam) {
         log.info("update rules: {}", ruleParam);
-        return ruleService.update(ruleParam);
+        return ResponseResult.success(ruleService.update(ruleParam));
     }
 
     @GetMapping("/detail")
-    public RuleResult detail(@RequestParam RuleParam ruleParam) {
+    public ResponseResult detail(@RequestParam RuleParam ruleParam) {
         log.info("detail rules: {}", ruleParam);
-        return ruleService.detail(ruleParam);
+        return ResponseResult.success(ruleService.detail(ruleParam));
+    }
+
+    @GetMapping("/options/indicators")
+    public ResponseResult indicatorOptions(@RequestParam DictionaryParam dictionaryParam) {
+        log.info("detail indicator: {}", dictionaryParam);
+        return ResponseResult.success(dictionaryService.getList(dictionaryParam.getDictionaryKey()));
+    }
+
+    @GetMapping("/options/operations")
+    public ResponseResult operationOptions(@RequestParam DictionaryParam dictionaryParam) {
+        return ResponseResult.success(dictionaryService.getList(dictionaryParam.getDictionaryKey()));
     }
 
 }

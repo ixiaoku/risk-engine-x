@@ -6,6 +6,7 @@ import risk.engine.db.entity.Indicator;
 import risk.engine.service.service.IIndicatorService;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @Author: X
@@ -36,5 +37,10 @@ public class IndicatorServiceImpl implements IIndicatorService {
     @Override
     public boolean updateByPrimaryKey(Indicator record) {
         return indicatorMapper.updateByPrimaryKey(record) > 0;
+    }
+
+    @Override
+    public List<Indicator> selectByExample(Indicator record) {
+        return indicatorMapper.selectByExample(record);
     }
 }

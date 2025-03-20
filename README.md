@@ -11,7 +11,7 @@
 ## risk-engine-db dao持久化模块 数据库相关
 
 ## risk-engine-rest 引擎执行服务 风控引擎相关
-## risk-engine-indicator 特征服务 计算特征值
+## risk-engine-indicator 指标服务 计算指标值
 ## risk-engine-job job服务 消费消息和定时任务
 
 ## 一、序言
@@ -338,7 +338,7 @@ create table indicator
     constraint uk_indicator_code
         unique (indicator_code) comment '唯一索引，确保事件code不重复'
 )
-    comment '风控特征表';
+    comment '风控指标表';
 
 create index idx_incident_code
     on indicator (incident_code)
@@ -441,7 +441,7 @@ create table rule
     rule_name          varchar(255) not null comment '规则名称',
     status             int          not null comment '状态（0：删除，1：上线，2：下线，3：模拟）',
     groovy_script      text         null comment 'groovy可执行表达式',
-    json_script        text         null comment '特征json数组',
+    json_script        text         null comment '指标json数组',
     logic_script       varchar(255) null comment '逻辑表达式 1 && 2 || 3',
     score              int          not null comment '风险分数',
     decision_result    varchar(255) not null comment '决策结果 0拒绝 1成功',
@@ -507,17 +507,17 @@ create index idx_send_address
   - **校验唯一性**（业务唯一流水号和事件 code）
   - 通过 **布隆过滤器** 校验是否命中黑名单
   - 通过 **缓存** 获取 **事件** 和 **事件的规则**，遍历规则
-  - 解析 **规则配置的特征相关 JSON 报文**，解析需要的 **特征值相关的特征字段**
+  - 解析 **规则配置的指标相关 JSON 报文**，解析需要的 **指标值相关的指标字段**
 
-  - **特征服务**:
-    - **获取特征值**:
-    - **用户特征**: 监控用户中心相关表 **Kafka 推送**
-    - **三方服务特征**: 调用第三方 **API 获取**
-    - **计数器特征**:
+  - **指标服务**:
+    - **获取指标值**:
+    - **用户指标**: 监控用户中心相关表 **Kafka 推送**
+    - **三方服务指标**: 调用第三方 **API 获取**
+    - **计数器指标**:
       - 与 **Flink 任务交互**
       - 发送 **Kafka 消息** 给 **Flink 任务**
-      - **Flink 计算特征，并回写到 Redis**
-    - **从redis将获取的特征组装 返回引擎服务** ：
+      - **Flink 计算指标，并回写到 Redis**
+    - **从redis将获取的指标组装 返回引擎服务** ：
   
   - **GroovyShell** 执行相关groovy字符串脚本返回true或者false
   - **命中规则集合** 状态上线和分数排序降序，返回结果
@@ -525,7 +525,7 @@ create index idx_send_address
     - 保存mysql业务结果数据
     - **canal**监听mysql表 同步到保存到es
     - 遍历命中的上线规则 执行**处罚**
-      - 组装数据、处罚接口的json报文和特征值、生成处罚记录 
+      - 组装数据、处罚接口的json报文和指标值、生成处罚记录 
       - **处罚中心** 定时任务遍历 处罚记录 根据status=0和retry<=3
       - 通过类全限定名获取处罚接口实例 执行处罚
       - 执行成功 执行失败 分业务返回失败 直接记录失败 业务方服务超时或者不可用 重试三次**
@@ -533,4 +533,4 @@ create index idx_send_address
       - 通过canal同步es最终处罚记录
       - 定时任务遍历 处罚记录 retry>=3和status=2 五分钟一次发送电话告警
   - **消息发送失败**存入mysql表 定时重试回放消息 发送告警
-  - **结束**根据业务数据分析 配置事件接入、规则的条件表达式、特征制作
+  - **结束**根据业务数据分析 配置事件接入、规则的条件表达式、指标制作

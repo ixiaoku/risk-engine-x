@@ -101,6 +101,10 @@
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
         </dependency>
+        <dependency>
+            <groupId>risk.engine.dto</groupId>
+            <artifactId>risk-engine-dto</artifactId>
+        </dependency>
 
     </dependencies>
 </project>

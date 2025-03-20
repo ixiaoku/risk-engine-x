@@ -18,7 +18,7 @@ public class GroovyShellUtil {
     /**
      * groovy表达式
      * @param script 条件表达式
-     * @param objectMap 特征map
+     * @param objectMap 指标map
      * @return 结果
      */
     public static boolean runGroovy(String script, Map<String, Object> objectMap) {

@@ -16,7 +16,7 @@ public class Indicator {
     private Long id;
 
     /**
-     * 特征code
+     * 指标code
      */
     private String incidentCode;
 

@@ -1,4 +1,4 @@
-package risk.engine.service;
+package risk.engine.service.handler;
 
 import risk.engine.db.entity.PenaltyRecord;
 import risk.engine.dto.enums.PenaltyStatusEnum;

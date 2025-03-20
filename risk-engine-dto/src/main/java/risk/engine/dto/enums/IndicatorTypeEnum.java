@@ -5,13 +5,13 @@ import lombok.Getter;
 import java.util.Objects;
 
 /**
- * 特征字段数据类型
+ * 指标字段数据类型
  * @Author: X
  * @Date: 2025/3/14 12:52
  * @Version: 1.0
  */
 @Getter
-public enum FieldTypeEnum {
+public enum IndicatorTypeEnum {
 
     // 字符串类型
     STRING(1, "String"),
@@ -49,7 +49,7 @@ public enum FieldTypeEnum {
     private final String desc;
 
     // 枚举的构造函数，用于设置整数值
-    FieldTypeEnum(Integer value, String desc) {
+    IndicatorTypeEnum(Integer value, String desc) {
         this.code = value;
         this.desc = desc;
     }
@@ -59,8 +59,8 @@ public enum FieldTypeEnum {
      * @param code 参数
      * @return 返回枚举
      */
-    public static FieldTypeEnum getIncidentStatusEnumByCode(Integer code) {
-        for (FieldTypeEnum status : FieldTypeEnum.values()) {
+    public static IndicatorTypeEnum getIncidentStatusEnumByCode(Integer code) {
+        for (IndicatorTypeEnum status : IndicatorTypeEnum.values()) {
             if (Objects.equals(status.getCode(), code)) {
                 return status;
             }

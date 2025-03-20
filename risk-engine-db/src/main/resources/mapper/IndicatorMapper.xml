@@ -24,6 +24,18 @@
     from indicator
     where id = #{id,jdbcType=BIGINT}
   </select>
+
+  <select id="selectByExample" parameterType="risk.engine.db.entity.Indicator" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from indicator
+    <where>
+      <if test="incidentCode != null and incidentCode != ''">
+        incident_code = #{incidentCode,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from indicator
     where id = #{id,jdbcType=BIGINT}

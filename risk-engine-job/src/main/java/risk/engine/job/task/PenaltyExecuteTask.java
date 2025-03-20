@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import risk.engine.common.util.ApplicationContextUtil;
 import risk.engine.db.entity.PenaltyRecord;
 import risk.engine.dto.enums.PenaltyStatusEnum;
-import risk.engine.service.IPenaltyHandler;
+import risk.engine.service.handler.IPenaltyHandler;
 import risk.engine.service.service.IPenaltyRecordService;
 
 import javax.annotation.Resource;

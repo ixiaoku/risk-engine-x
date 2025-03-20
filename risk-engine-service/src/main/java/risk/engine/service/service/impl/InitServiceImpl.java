@@ -108,28 +108,28 @@ public class InitServiceImpl {
         expressionDTO1.setIndicatorCode("fromAddress");
         expressionDTO1.setOperationSymbol(OperationSymbolEnum.EQUAL_TO.getCode());
         expressionDTO1.setIndicatorValue("3Q8StmtPCgxNeeeM6Ue9errkDgZ9SiLHE4");
-        expressionDTO1.setIndicatorType(FieldTypeEnum.STRING.getCode());
+        expressionDTO1.setIndicatorType(IndicatorTypeEnum.STRING.getCode());
         expressionDTO1.setSerialNumber(1);
 
         RuleIndicatorDTO expressionDTO2 = new RuleIndicatorDTO();
         expressionDTO2.setIndicatorCode("amount");
         expressionDTO2.setOperationSymbol(OperationSymbolEnum.GREATER_THAN.getCode());
         expressionDTO2.setIndicatorValue("5");
-        expressionDTO2.setIndicatorType(FieldTypeEnum.BIG_DECIMAL.getCode());
+        expressionDTO2.setIndicatorType(IndicatorTypeEnum.BIG_DECIMAL.getCode());
         expressionDTO2.setSerialNumber(2);
 
         RuleIndicatorDTO expressionDTO3 = new RuleIndicatorDTO();
         expressionDTO3.setIndicatorCode("toAddress");
         expressionDTO3.setOperationSymbol(OperationSymbolEnum.EQUAL_TO.getCode());
         expressionDTO3.setIndicatorValue("17qeFe3L7h5CMM1PS7cyjB32E9TT6RQeX6");
-        expressionDTO3.setIndicatorType(FieldTypeEnum.STRING.getCode());
+        expressionDTO3.setIndicatorType(IndicatorTypeEnum.STRING.getCode());
         expressionDTO3.setSerialNumber(3);
 
         RuleIndicatorDTO expressionDTO4 = new RuleIndicatorDTO();
         expressionDTO4.setIndicatorCode("uAmount");
         expressionDTO4.setOperationSymbol(OperationSymbolEnum.GREATER_THAN.getCode());
         expressionDTO4.setIndicatorValue("5");
-        expressionDTO4.setIndicatorType(FieldTypeEnum.BIG_DECIMAL.getCode());
+        expressionDTO4.setIndicatorType(IndicatorTypeEnum.BIG_DECIMAL.getCode());
         expressionDTO4.setSerialNumber(4);
 
         List<RuleIndicatorDTO> expressionList = new ArrayList<>();

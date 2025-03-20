@@ -2,6 +2,8 @@ package risk.engine.service.service;
 
 import risk.engine.db.entity.Indicator;
 
+import java.util.List;
+
 /**
  * @Author: X
  * @Date: 2025/3/16 12:55
@@ -16,5 +18,7 @@ public interface IIndicatorService {
     Indicator selectByPrimaryKey(Long id);
 
     boolean updateByPrimaryKey(Indicator record);
+
+    List<Indicator> selectByExample(Indicator record);
 
 }

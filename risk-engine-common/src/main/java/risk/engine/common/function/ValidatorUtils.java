@@ -1,4 +1,4 @@
-package risk.engine.common.valid;
+package risk.engine.common.function;
 
 import java.util.Objects;
 

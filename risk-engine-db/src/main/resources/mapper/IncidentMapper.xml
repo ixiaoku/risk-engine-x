@@ -25,13 +25,14 @@
     select
     <include refid="Base_Column_List" />
     from incident
-    where 1 == 1
-    <if test="incident_code != null">
-      and incident_code = #{incidentCode,jdbcType=VARCHAR}
-    </if>
-    <if test="status != null">
-      and status = #{status,jdbcType=INTEGER}
-    </if>
+    <where>
+      <if test="incidentCode != null and incidentCode != '' ">
+        incident_code = #{incidentCode,jdbcType=VARCHAR}
+      </if>
+      <if test="status != null">
+        and status = #{status,jdbcType=INTEGER}
+      </if>
+    </where>
   </select>
 
   <select id="selectByIncidentCode" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">

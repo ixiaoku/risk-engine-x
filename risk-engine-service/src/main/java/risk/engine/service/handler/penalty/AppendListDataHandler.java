@@ -10,7 +10,7 @@ import risk.engine.db.entity.ListData;
 import risk.engine.db.entity.PenaltyRecord;
 import risk.engine.dto.dto.ListDataDTO;
 import risk.engine.dto.enums.PenaltyStatusEnum;
-import risk.engine.service.IPenaltyHandler;
+import risk.engine.service.handler.IPenaltyHandler;
 import risk.engine.service.service.IListDataService;
 
 import java.time.LocalDateTime;

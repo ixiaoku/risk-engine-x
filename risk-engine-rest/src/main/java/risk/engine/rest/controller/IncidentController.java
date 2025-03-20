@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import risk.engine.common.valid.ValidatorUtils;
+import risk.engine.common.function.ValidatorUtils;
 import risk.engine.dto.param.IncidentParam;
 import risk.engine.service.service.IIncidentService;
 import risk.engine.service.service.impl.InitServiceImpl;

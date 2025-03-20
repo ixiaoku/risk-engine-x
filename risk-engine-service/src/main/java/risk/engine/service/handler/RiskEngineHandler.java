@@ -96,7 +96,6 @@ public class RiskEngineHandler {
                         penaltyRecord.setPenaltyResult("");
                         penaltyRecord.setPenaltyDescription(penalty.getPenaltyDescription());
                         penaltyRecord.setPenaltyJson(new Gson().toJson(listDTO.getPenaltyJson()));
-                        //如果是加名单 需要从业务数据 里面取特征 时间不够了 后面再补
                         listDTO.getPenaltyJson().forEach(json -> {
 
                         });
