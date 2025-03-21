@@ -2,6 +2,7 @@ package risk.engine.service.service;
 
 import risk.engine.db.entity.Incident;
 import risk.engine.dto.param.IncidentParam;
+import risk.engine.dto.result.IncidentResult;
 
 import java.util.List;
 
@@ -20,8 +21,9 @@ public interface IIncidentService {
 
     Incident selectByIncidentCode(String incidentCode);
 
-    Incident selectByPrimaryKey(Long id);
+    IncidentResult selectByPrimaryKey(Long id);
 
-    boolean updateByPrimaryKey(Incident record);
+    boolean updateByPrimaryKey(IncidentParam incidentParam);
 
+    List<IncidentResult> list(IncidentParam incidentParam);
 }

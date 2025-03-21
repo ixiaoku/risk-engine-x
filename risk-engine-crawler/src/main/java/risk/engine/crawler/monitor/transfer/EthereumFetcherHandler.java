@@ -9,6 +9,8 @@ import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
 import org.web3j.protocol.core.methods.response.Transaction;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
+import risk.engine.common.util.CryptoUtils;
+import risk.engine.dto.constant.BlockChainConstant;
 import risk.engine.dto.dto.block.ChainTransferDTO;
 
 import java.io.IOException;
@@ -27,11 +29,14 @@ import java.util.List;
 @Component
 public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
 
-    private static final String INFURA_URL = "https://mainnet.infura.io/v3/98f9c8a03d054a7aa9972559460db851";
-    private static final Web3j web3j = Web3j.build(new HttpService(INFURA_URL));
+    private Web3j web3j = null;
 
     @Override
     public List<ChainTransferDTO> getTransactions() throws IOException {
+
+        String secretKey = CryptoUtils.getDesSecretKey();
+        String key = CryptoUtils.desDecrypt(BlockChainConstant.ETH_DATA_KEY, secretKey);
+        web3j = Web3j.build(new HttpService(BlockChainConstant.INFURA_URL + key));
         // 1. 获取最新区块高度
         BigInteger latestBlockNumber = web3j.ethBlockNumber().send().getBlockNumber();
         log.info("Ethereum链 最新区块高度: {}", latestBlockNumber);
@@ -81,4 +86,5 @@ public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
         EthGetTransactionReceipt receipt = web3j.ethGetTransactionReceipt(txHash).send();
         return receipt.getTransactionReceipt().get().getGasUsed();
     }
+
 }

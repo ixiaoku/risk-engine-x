@@ -1,4 +1,4 @@
-package risk.engine.service.common;
+package risk.engine.service.common.dict;
 
 import java.util.List;
 import java.util.Map;
@@ -9,9 +9,9 @@ import java.util.Map;
  * @Version: 1.0
  */
 @FunctionalInterface
-public interface OptionsDbFunction<T> {
+public interface OptionsEnumFunction {
 
-    List<Map<String, Object>> getDictionary(T value);
+    List<Map<String, Object>> getDictionary();
 
 }
 

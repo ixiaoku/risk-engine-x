@@ -1,17 +1,18 @@
-package risk.engine.dto.param;
+package risk.engine.dto.result;
 
 import lombok.Data;
 import risk.engine.dto.dto.rule.IndicatorDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * @Author: X
- * @Date: 2025/3/16 16:58
+ * @Date: 2025/3/20 23:28
  * @Version: 1.0
  */
 @Data
-public class IncidentParam {
+public class IncidentResult {
 
     private Long id;
 
@@ -56,5 +57,15 @@ public class IncidentParam {
      * 事件接入配置的字段 和关联requestPayload
      */
     private List<IndicatorDTO> indicators;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
+
+    /**
+     * 修改时间
+     */
+    private LocalDateTime updateTime;
 
 }

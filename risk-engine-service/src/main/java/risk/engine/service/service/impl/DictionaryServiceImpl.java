@@ -2,7 +2,8 @@ package risk.engine.service.service.impl;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import risk.engine.service.common.OptionsEnumFunction;
+import risk.engine.service.common.dict.OptionsDbFunction;
+import risk.engine.service.common.dict.OptionsEnumFunction;
 import risk.engine.service.service.IDictionaryService;
 
 import javax.annotation.Resource;
@@ -26,6 +27,16 @@ public class DictionaryServiceImpl implements IDictionaryService {
         for (String keyStr : keys) {
             OptionsEnumFunction optionsEnumFunction = (OptionsEnumFunction) applicationContext.getBean(keyStr);
             result.put(keyStr, optionsEnumFunction.getDictionary());
+        }
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> getList(String[] keys, String queryCode) {
+        Map<String, Object> result = new HashMap<>();
+        for (String keyStr : keys) {
+            OptionsDbFunction<String> optionsDbFunction = (OptionsDbFunction<String>) applicationContext.getBean(keyStr);
+            result.put(keyStr, optionsDbFunction.getDictionary(queryCode));
         }
         return result;
     }

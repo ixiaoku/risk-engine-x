@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import risk.engine.db.dao.RuleMapper;
 import risk.engine.db.entity.Rule;
 import risk.engine.db.entity.example.RuleExample;
+import risk.engine.dto.dto.IncidentDTO;
 import risk.engine.dto.param.RuleParam;
 import risk.engine.dto.result.RuleResult;
+import risk.engine.service.common.cache.GuavaStartupCache;
 import risk.engine.service.service.IRuleService;
 
 import javax.annotation.Resource;
@@ -26,6 +28,9 @@ public class RuleServiceImpl implements IRuleService {
 
     @Resource
     private RuleMapper ruleMapper;
+
+    @Resource
+    private GuavaStartupCache guavaStartupCache;
 
     @Override
     public List<Rule> selectByIncidentCode(String incidentCode) {
@@ -70,7 +75,8 @@ public class RuleServiceImpl implements IRuleService {
         }
         return ruleList.stream().map(rule -> {
             RuleResult ruleResult = new RuleResult();
-            ruleResult.setIncidentCode(rule.getIncidentCode());
+            IncidentDTO incidentDTO = guavaStartupCache.getIncident(rule.getIncidentCode());
+            ruleResult.setIncidentName(incidentDTO.getIncidentName());
             ruleResult.setRuleCode(rule.getRuleCode());
             ruleResult.setRuleName(rule.getRuleName());
             ruleResult.setStatus(rule.getStatus());

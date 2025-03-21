@@ -4,6 +4,7 @@ import com.google.gson.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import risk.engine.common.util.CryptoUtils;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.common.util.OkHttpUtil;
 import risk.engine.dto.constant.CrawlerConstant;
@@ -51,7 +52,9 @@ public class MarketNoticeMonitorHandler {
         if (Objects.isNull(dataArray)) {
             log.error("未找到 data 数组");
         }
-
+        //解密这个api token
+        String secretKey = CryptoUtils.getDesSecretKey();
+        String key = CryptoUtils.desDecrypt(CrawlerConstant.weChatBotDataKey, secretKey);
         for (JsonElement element : dataArray) {
             JsonObject dataObject = element.getAsJsonObject();
             String title = dataObject.get("title").getAsString();
@@ -66,7 +69,7 @@ public class MarketNoticeMonitorHandler {
                 markdown.setContent(content);
                 groupChatBotDTO.setMarkdown(markdown);
                 //企业微信群bot
-                String result = OkHttpUtil.post(CrawlerConstant.weChatBotUrl, gson.toJson(groupChatBotDTO));
+                String result = OkHttpUtil.post(CrawlerConstant.weChatBotUrl + key, gson.toJson(groupChatBotDTO));
                 if (StringUtils.isEmpty(result)) {
                     log.error("企业微信群bot 消息发送失败： {}", result);
                 }
@@ -77,4 +80,5 @@ public class MarketNoticeMonitorHandler {
             }
         }
     }
+
 }

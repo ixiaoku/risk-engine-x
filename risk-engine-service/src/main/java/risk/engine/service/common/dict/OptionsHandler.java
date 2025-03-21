@@ -1,4 +1,4 @@
-package risk.engine.service.common;
+package risk.engine.service.common.dict;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;

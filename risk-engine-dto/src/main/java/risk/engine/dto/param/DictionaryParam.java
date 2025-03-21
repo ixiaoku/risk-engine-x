@@ -12,4 +12,6 @@ public class DictionaryParam {
 
     private String[] dictKeyList;
 
+    private String queryCode;
+
 }

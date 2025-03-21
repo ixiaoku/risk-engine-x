@@ -16,7 +16,10 @@ public interface CrawlerConstant {
 
     String notIceCode = "00000";
 
-    String weChatBotUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=4b9616dd-d798-46ba-af63-3bd0cda405a3";
+    String weChatBotUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=";
+
+    String weChatBotDataKey = "FC3DVhg+cBjQ96QATuWRco4PVCK1rg7UFGefsmXPet52p1YGLkHtgg==";
+
 
     String notIceBotContent = "监控结果通知\n" +
             ">**标题**:<font color=\"comment\">Binance公告</font>\n" +

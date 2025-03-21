@@ -40,6 +40,12 @@
     delete from indicator
     where id = #{id,jdbcType=BIGINT}
   </delete>
+
+  <delete id="deleteByIncidentCode" parameterType="java.lang.String">
+    delete from indicator
+    where incident_code = #{incidentCode,jdbcType=VARCHAR}
+  </delete>
+
   <insert id="insert" parameterType="risk.engine.db.entity.Indicator">
     insert into indicator (id, incident_code, indicator_code, 
       indicator_name, indicator_value, indicator_desc, 
@@ -50,18 +56,20 @@
       #{indicatorSource,jdbcType=TINYINT}, #{indicatorType,jdbcType=TINYINT}, #{operator,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
-  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.Indicator">
-    update indicator
-    set incident_code = #{incidentCode,jdbcType=VARCHAR},
-      indicator_code = #{indicatorCode,jdbcType=VARCHAR},
-      indicator_name = #{indicatorName,jdbcType=VARCHAR},
-      indicator_value = #{indicatorValue,jdbcType=VARCHAR},
-      indicator_desc = #{indicatorDesc,jdbcType=VARCHAR},
-      indicator_source = #{indicatorSource,jdbcType=TINYINT},
-      indicator_type = #{indicatorType,jdbcType=TINYINT},
-      operator = #{operator,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    INSERT INTO indicator (
+    id, incident_code, indicator_code,
+    indicator_name, indicator_value, indicator_desc,
+    indicator_source, indicator_type, operator,
+    create_time, update_time
+    ) VALUES
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id,jdbcType=BIGINT}, #{item.incidentCode,jdbcType=VARCHAR}, #{item.indicatorCode,jdbcType=VARCHAR},
+      #{item.indicatorName,jdbcType=VARCHAR}, #{item.indicatorValue,jdbcType=VARCHAR}, #{item.indicatorDesc,jdbcType=VARCHAR},
+      #{item.indicatorSource,jdbcType=TINYINT}, #{item.indicatorType,jdbcType=TINYINT}, #{item.operator,jdbcType=VARCHAR},
+      #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+
 </mapper>

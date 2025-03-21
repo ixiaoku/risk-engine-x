@@ -10,4 +10,6 @@ import java.util.Map;
 public interface IDictionaryService {
 
     Map<String, Object> getList(String[] keys);
+
+    Map<String, Object> getList(String[] keys, String queryCode);
 }

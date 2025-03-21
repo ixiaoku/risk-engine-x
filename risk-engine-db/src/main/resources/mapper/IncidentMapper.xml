@@ -29,10 +29,20 @@
       <if test="incidentCode != null and incidentCode != '' ">
         incident_code = #{incidentCode,jdbcType=VARCHAR}
       </if>
+      <if test="incidentName != null and incidentName != '' ">
+        and incident_name = #{incidentName,jdbcType=VARCHAR}
+      </if>
       <if test="status != null">
         and status = #{status,jdbcType=INTEGER}
       </if>
     </where>
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    from incident
+    where id = #{id,jdbcType=BIGINT}
   </select>
 
   <select id="selectByIncidentCode" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
