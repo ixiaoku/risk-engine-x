@@ -53,7 +53,7 @@ public class RuleServiceImpl implements IRuleService {
         rule.setLabel(ruleParam.getLabel());
         rule.setPenaltyAction(ruleParam.getPenaltyAction());
         rule.setResponsiblePerson(ruleParam.getResponsiblePerson());
-        rule.setOperator(ruleParam.getOperator());
+        rule.setOperator("System");
         rule.setVersion(UUID.randomUUID().toString());
         rule.setCreateTime(LocalDateTime.now());
         rule.setUpdateTime(LocalDateTime.now());

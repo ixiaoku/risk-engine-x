@@ -1,7 +1,6 @@
 package risk.engine.common.util;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
@@ -36,16 +35,16 @@ public class CryptoUtils {
     /**
      * 生成 DES 密钥
      */
-    public static String generateDesKey() {
-        try {
-            KeyGenerator keyGen = KeyGenerator.getInstance("DES");
-            keyGen.init(56);
-            SecretKey secretKey = keyGen.generateKey();
-            return Base64.getEncoder().encodeToString(secretKey.getEncoded());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("DES 密钥生成失败", e);
-        }
-    }
+//    public static String generateDesKey() {
+//        try {
+//            KeyGenerator keyGen = KeyGenerator.getInstance("DES");
+//            keyGen.init(56);
+//            SecretKey secretKey = keyGen.generateKey();
+//            return Base64.getEncoder().encodeToString(secretKey.getEncoded());
+//        } catch (NoSuchAlgorithmException e) {
+//            throw new RuntimeException("DES 密钥生成失败", e);
+//        }
+//    }
 
     /**
      * DES 加密
@@ -173,7 +172,8 @@ public class CryptoUtils {
 
         // DES
         //String desKey = generateDesKey();
-        String desEncrypted = desEncrypt("98f9c8a03d054a7aa9972559460db851", secretKey);
+        System.out.println(secretKey);
+        String desEncrypted = desEncrypt("", secretKey);
         String desDecrypted = desDecrypt(desEncrypted, secretKey);
         System.out.println("DES Key: " + secretKey);
         System.out.println("DES Encrypted: " + desEncrypted);
