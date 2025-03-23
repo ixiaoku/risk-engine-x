@@ -5,16 +5,16 @@ import lombok.Getter;
 import java.util.Objects;
 
 /**
+ * 同步任务枚举
  * @Author: X
  * @Date: 2025/3/14 12:52
  * @Version: 1.0
  */
 @Getter
-public enum PenaltyStatusEnum {
+public enum TaskStatusEnum {
 
-    FAIL(0,"失败"),
-    SUCCESS(1,"成功"),
-    WAIT(2,"待执行"),
+    WAIT(0,"未同步"),
+    SUCCESS(1,"已同步"),
     ;
 
     /**
@@ -27,7 +27,7 @@ public enum PenaltyStatusEnum {
     private final String desc;
 
     // 枚举的构造函数，用于设置整数值
-    PenaltyStatusEnum(Integer value, String desc) {
+    TaskStatusEnum(Integer value, String desc) {
         this.code = value;
         this.desc = desc;
     }
@@ -37,8 +37,8 @@ public enum PenaltyStatusEnum {
      * @param code 参数
      * @return 返回枚举
      */
-    public static PenaltyStatusEnum getPenaltyStatusEnumByCode(Integer code) {
-        for (PenaltyStatusEnum status : PenaltyStatusEnum.values()) {
+    public static TaskStatusEnum getTaskStatusEnumByCode(Integer code) {
+        for (TaskStatusEnum status : TaskStatusEnum.values()) {
             if (Objects.equals(status.getCode(), code)) {
                 return status;
             }

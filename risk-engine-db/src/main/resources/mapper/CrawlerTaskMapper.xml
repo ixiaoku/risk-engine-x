@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="risk.engine.db.dao.CrawlerTaskMapper">
+  <resultMap id="BaseResultMap" type="risk.engine.db.entity.CrawlerTask">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="flow_no" jdbcType="VARCHAR" property="flowNo" />
+    <result column="incident_code" jdbcType="VARCHAR" property="incidentCode" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="retry" jdbcType="INTEGER" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="risk.engine.db.entity.CrawlerTask">
+    <result column="request_payload" jdbcType="LONGVARCHAR" property="requestPayload" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, flow_no, incident_code, request_payload, status, retry, create_time, update_time
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    from crawler_task
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from crawler_task
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    INSERT INTO crawler_task (id, flow_no, incident_code,
+    status, retry, create_time, update_time,
+    request_payload)
+    VALUES
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id,jdbcType=BIGINT}, #{item.flowNo,jdbcType=VARCHAR}, #{item.incidentCode,jdbcType=VARCHAR},
+      #{item.status,jdbcType=INTEGER}, #{item.retry,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP},
+      #{item.updateTime,jdbcType=TIMESTAMP}, #{item.requestPayload,jdbcType=LONGVARCHAR})
+    </foreach>
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.CrawlerTask">
+    update crawler_task
+    set status = #{status,jdbcType=INTEGER},
+        retry = #{retry,jdbcType=INTEGER},
+        update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -13,40 +13,77 @@ import java.time.LocalDateTime;
 @Data
 public class PenaltyRecord {
 
+    /**
+     * 主键id
+     */
     private Long id;
-
+    /**
+     * 业务流水号
+     */
     private String flowNo;
-
-    private String ruleCode;
-
-    private String ruleName;
-
+    /**
+     * 事件code
+     */
     private String incidentCode;
-
+    /**
+     * 事件名称
+     */
     private String incidentName;
-
+    /**
+     * 规则code
+     */
+    private String ruleCode;
+    /**
+     * 规则名称
+     */
+    private String ruleName;
+    /**
+     * 处置code
+     */
     private String penaltyCode;
-
+    /**
+     * 处置名称
+     */
     private String penaltyName;
-
+    /**
+     * 处置接口定义
+     */
     private String penaltyDef;
-
+    /**
+     * 处置原因
+     */
     private String penaltyReason;
-
+    /**
+     * 处置结果
+     */
     private String penaltyResult;
-
+    /**
+     * 处置描述
+     */
     private String penaltyDescription;
-
+    /**
+     * 处置接口json报文
+     */
     private String penaltyJson;
-
+    /**
+     * 状态 0待执行 1成功 2失败
+     */
     private Integer status;
-
+    /**
+     * 重置次数
+     */
     private Integer retry;
-
+    /**
+     * 处置时间
+     */
     private LocalDateTime penaltyTime;
-
+    /**
+     * 创建时间
+     */
     private LocalDateTime createTime;
-
+    /**
+     * 更新时间
+     */
     private LocalDateTime updateTime;
 
 }
