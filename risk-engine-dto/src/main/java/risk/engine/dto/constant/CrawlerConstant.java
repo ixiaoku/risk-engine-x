@@ -10,16 +10,13 @@ public interface CrawlerConstant {
 
     String notIceUrl = "https://www.binance.com/bapi/apex/v1/public/apex/cms/article/list/query?type=1&catalogId=48&pageNo=1&pageSize=20";
 
-    String notIceKey = "Binance Futures Will Launch";
-
-    String notIceType = "New Cryptocurrency Listing";
-
-    String notIceCode = "00000";
+    String notIceCode = "000000";
 
     String weChatBotUrl = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=";
 
     String weChatBotDataKey = "FC3DVhg+cBjQ96QATuWRco4PVCK1rg7UFGefsmXPet52p1YGLkHtgg==";
 
+    String BINANCE_NOTICE_LIST = "BinanceNoticeList";
 
     String notIceBotContent = "监控结果通知\n" +
             ">**标题**:<font color=\"comment\">Binance公告</font>\n" +

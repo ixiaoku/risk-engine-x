@@ -2,19 +2,21 @@ package risk.engine.crawler.monitor.binance;
 
 import com.google.gson.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import risk.engine.common.util.CryptoUtils;
-import risk.engine.common.util.DateTimeUtil;
 import risk.engine.common.util.OkHttpUtil;
-import risk.engine.common.wechat.base.MessageApi;
+import risk.engine.db.dao.CrawlerTaskMapper;
+import risk.engine.db.entity.CrawlerTask;
+import risk.engine.dto.constant.BusinessConstant;
 import risk.engine.dto.constant.CrawlerConstant;
-import risk.engine.dto.dto.crawler.GroupChatBotDTO;
+import risk.engine.dto.enums.TaskStatusEnum;
 
-import java.util.Arrays;
+import javax.annotation.Resource;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 /**
  * 币安公告监控
@@ -23,34 +25,36 @@ import java.util.Random;
 @Component
 public class MarketNoticeMonitorHandler {
 
-    private static final Gson gson = new GsonBuilder()
-            .disableHtmlEscaping()
-            .setPrettyPrinting()
-            .create();
+    @Resource
+    private CrawlerTaskMapper crawlerTaskMapper;
 
     public void start() {
-
-        // 发送 HTTP GET 请求
         String jsonResponse = OkHttpUtil.get(CrawlerConstant.notIceUrl);
         if (StringUtils.isEmpty(jsonResponse)) {
             log.error("请求失败，未获取到数据");
             return;
         }
-        // 解析json
-        extractTitles(jsonResponse);
+        // 解析json 获取公告爬虫数据
+        List<CrawlerTask> crawlerTasks = getCrawlerTasks(jsonResponse);
+        if (CollectionUtils.isEmpty(crawlerTasks)) {
+            return;
+        }
+        //批量保存爬虫数据
+        crawlerTaskMapper.batchInsert(crawlerTasks);
     }
 
     /**
-     * 使用 Gson 解析 JSON 并提取 title 字段
+     * 解析json报文 获取公告爬虫数据
      * @param jsonResponse 参数
+     * @return 结果
      */
-    private void extractTitles(String jsonResponse) {
+    private List<CrawlerTask> getCrawlerTasks(String jsonResponse) {
         JsonObject rootObject = JsonParser.parseString(jsonResponse).getAsJsonObject();
         // 检查返回状态
         String code = rootObject.get("code").getAsString();
-        if (!"000000".equals(code)) {
+        if (!CrawlerConstant.notIceCode.equals(code)) {
             log.error("API 返回错误，code: {}, message: {}", code, rootObject.get("message"));
-            return;
+            return List.of();
         }
         JsonObject data = rootObject.get("data").getAsJsonObject();
         // 获取 data 数组
@@ -58,51 +62,36 @@ public class MarketNoticeMonitorHandler {
         if (Objects.isNull(catalogs)) {
             log.error("未找到 data 数组");
         }
-        int i = 0;
-        //解密这个api token
-        String secretKey = CryptoUtils.getDesSecretKey();
-        String key = CryptoUtils.desDecrypt(CrawlerConstant.weChatBotDataKey, secretKey);
+        List<CrawlerTask> crawlerTasks = new ArrayList<>();
         for (JsonElement element : catalogs) {
             JsonObject dataObject = element.getAsJsonObject();
             JsonArray articles =  dataObject.get("articles").getAsJsonArray();
+            if (Objects.isNull(articles)) {
+                continue;
+            }
             for (JsonElement article : articles) {
                 JsonObject articleObject = article.getAsJsonObject();
-                String title = articleObject.get("title").getAsString();
-                String time = DateTimeUtil.getTimeByTimestamp(articleObject.get("releaseDate").getAsLong());
-                String content = String.format(CrawlerConstant.notIceBotContent, title, time);
-                log.info("标题: {}", title);
-                GroupChatBotDTO groupChatBotDTO = new GroupChatBotDTO();
-                groupChatBotDTO.setMsgtype("markdown");
-                GroupChatBotDTO.Markdown markdown = new GroupChatBotDTO.Markdown();
-                markdown.setContent(content);
-                groupChatBotDTO.setMarkdown(markdown);
-                //企业微信群bot
-//                String result = OkHttpUtil.post(CrawlerConstant.weChatBotUrl + key, gson.toJson(groupChatBotDTO));
-//                if (StringUtils.isEmpty(result)) {
-//                    log.error("企业微信群bot 消息发送失败： {}", result);
-//                }
-                // 个人微信
-                String textContent = String.format(CrawlerConstant.PERSON_BOT_CONTENT, title, time );
-                send(textContent);
-                i++;
-                if (i > 1) {
-                    return;
+                String articleCode = articleObject.get("code").getAsString();
+                //去重 重复的不保存
+                CrawlerTask taskQuery = new CrawlerTask();
+                taskQuery.setFlowNo(articleCode);
+                taskQuery.setIncidentCode(CrawlerConstant.BINANCE_NOTICE_LIST);
+                List<CrawlerTask> crawlerTaskList = crawlerTaskMapper.selectByExample(taskQuery);
+                if (CollectionUtils.isNotEmpty(crawlerTaskList)) {
+                    continue;
                 }
+                //组装爬虫数据
+                CrawlerTask crawlerTask = new CrawlerTask();
+                crawlerTask.setFlowNo(articleCode);
+                crawlerTask.setIncidentCode(CrawlerConstant.BINANCE_NOTICE_LIST);
+                crawlerTask.setStatus(TaskStatusEnum.WAIT.getCode());
+                crawlerTask.setRetry(BusinessConstant.RETRY);
+                crawlerTask.setRequestPayload(articleObject.getAsString());
+                crawlerTask.setCreateTime(LocalDateTime.now());
+                crawlerTask.setUpdateTime(LocalDateTime.now());
+                crawlerTasks.add(crawlerTask);
             }
         }
+        return crawlerTasks;
     }
-
-    public void send(String content) {
-        List<String> toWxids = Arrays.asList("44760028169@chatroom", "52067326265@chatroom", "48977305404@chatroom");
-        for (String toWxid : toWxids) {
-            MessageApi.postText(CrawlerConstant.appId, toWxid,content,"");
-            int i = new Random().nextInt(6);
-            try {
-                Thread.sleep(i*1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
 }

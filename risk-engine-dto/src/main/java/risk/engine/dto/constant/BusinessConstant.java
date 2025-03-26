@@ -9,4 +9,6 @@ public interface BusinessConstant {
 
     String ENGINE_INDEX = "risk_engine_2025_01";
 
+    Integer RETRY = 0;
+
 }

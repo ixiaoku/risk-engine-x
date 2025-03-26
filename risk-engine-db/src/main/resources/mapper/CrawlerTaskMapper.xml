@@ -24,6 +24,20 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
 
+  <select id="selectByExample" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    from crawler_task
+    <where>
+      <if test="incidentCode != null and incidentCode != '' ">
+        incident_code = #{incidentCode,jdbcType=VARCHAR}
+      </if>
+      <if test="flowNo != null and flowNo != '' ">
+        and flow_no = #{flowNo,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from crawler_task
     where id = #{id,jdbcType=BIGINT}

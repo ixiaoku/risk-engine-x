@@ -45,6 +45,7 @@ public class PenaltyExecuteTask {
             if (Objects.equals(penaltyStatusEnum.getCode(), PenaltyStatusEnum.WAIT.getCode())) {
                retry.getAndSet(retry.get() + 1);
                penaltyRecord.setRetry(penaltyRecord.getRetry());
+               penaltyRecord.setStatus(PenaltyStatusEnum.WAIT.getCode());
             }
             penaltyRecord.setStatus(penaltyStatusEnum.getCode());
             penaltyRecord.setPenaltyResult("调用成功");

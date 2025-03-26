@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import risk.engine.db.entity.ListData;
 import risk.engine.db.entity.PenaltyRecord;
@@ -13,10 +12,12 @@ import risk.engine.dto.enums.PenaltyStatusEnum;
 import risk.engine.service.handler.IPenaltyHandler;
 import risk.engine.service.service.IListDataService;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 
 /**
+ * 加名单
  * @Author: X
  * @Date: 2025/3/16 22:07
  * @Version: 1.0
@@ -25,9 +26,8 @@ import java.util.List;
 @Component
 public class AppendListDataHandler implements IPenaltyHandler {
 
-    @Autowired
+    @Resource
     private IListDataService listDataService;
-
 
     @Override
     public PenaltyStatusEnum doPenalty(PenaltyRecord record) {
@@ -52,12 +52,10 @@ public class AppendListDataHandler implements IPenaltyHandler {
                 listData.setUpdateTime(LocalDateTime.now());
                 listDataService.insert(listData);
             });
-            System.out.println("处罚执行成功");
+            return PenaltyStatusEnum.SUCCESS;
         } catch (Exception e) {
             log.error("加名单执行报错：{}", e.getMessage(), e);
-            record.setStatus(PenaltyStatusEnum.WAIT.getCode());
             return PenaltyStatusEnum.WAIT;
         }
-        return PenaltyStatusEnum.SUCCESS;
     }
 }
