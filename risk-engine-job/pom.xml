@@ -57,11 +57,6 @@
         </dependency>
 
         <dependency>
-            <groupId>risk.engine.db</groupId>
-            <artifactId>risk-engine-db</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>risk.engine.crawler</groupId>
             <artifactId>risk-engine-crawler</artifactId>
         </dependency>
