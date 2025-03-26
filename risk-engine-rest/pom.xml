@@ -50,6 +50,10 @@
             <groupId>risk.engine.service</groupId>
             <artifactId>risk-engine-service</artifactId>
         </dependency>
+        <dependency>
+            <groupId>risk.engine.crawler</groupId>
+            <artifactId>risk-engine-crawler</artifactId>
+        </dependency>
 
     </dependencies>
 </project>

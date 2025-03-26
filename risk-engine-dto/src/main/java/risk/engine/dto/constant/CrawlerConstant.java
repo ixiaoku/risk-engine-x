@@ -8,7 +8,7 @@ package risk.engine.dto.constant;
 
 public interface CrawlerConstant {
 
-    String notIceUrl = "https://www.binance.com/bapi/composite/v1/public/market/notice/get?page=1&rows=20";
+    String notIceUrl = "https://www.binance.com/bapi/apex/v1/public/apex/cms/article/list/query?type=1&catalogId=48&pageNo=1&pageSize=20";
 
     String notIceKey = "Binance Futures Will Launch";
 
@@ -24,7 +24,20 @@ public interface CrawlerConstant {
     String notIceBotContent = "监控结果通知\n" +
             ">**标题**:<font color=\"comment\">Binance公告</font>\n" +
             ">**内容**:<font color=\"comment\">%s</font>\n" +
+            ">**时间**:<font color=\"comment\">%s</font> \n";
+
+    String notIceLinkBotContent = "监控结果通知\n" +
+            ">**标题**:<font color=\"comment\">Binance公告</font>\n" +
+            ">**内容**:<font color=\"comment\">%s</font>\n" +
             ">**时间**:<font color=\"comment\">%s</font> \n" +
-            ">**人员**：<@DongChunRong> <@carl> <@hdl> <@YuanFeng>";;
+            ">**人员**：<@DongChunRong> <@carl> <@hdl> <@YuanFeng>";
+
+    String PERSON_BOT_CONTENT = "\uD83D\uDEA8 【监控结果通知】\n" +
+            "\uD83D\uDD14 【标题】: Binance公告 \n" +
+            "\uD83D\uDD25 【内容】: %s \n" +
+            "\uD83D\uDDD3 【时间】: %s \n";
+
+    String appId = "wx_ima6EoKmHub0LsKJZwtgi";
+
 
 }

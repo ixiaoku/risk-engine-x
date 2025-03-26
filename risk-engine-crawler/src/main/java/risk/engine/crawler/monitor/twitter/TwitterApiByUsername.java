@@ -1,6 +1,5 @@
 package risk.engine.crawler.monitor.twitter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import risk.engine.common.util.CryptoUtils;
 import risk.engine.dto.constant.BlockChainConstant;
@@ -22,14 +21,13 @@ public class TwitterApiByUsername {
     private static final HttpClient client = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10)) // 连接超时 10 秒
             .build();
-    private static final ObjectMapper mapper = new ObjectMapper(); // 用于解析 JSON
 
     public static void main(String[] args) {
         String secretKey = CryptoUtils.getDesSecretKey();
         String bearerToken = CryptoUtils.desDecrypt(BlockChainConstant.TWITTER_TOKEN, secretKey);
-        String username = "1483495485889564674"; // 目标用户名
+        String userId = "1483495485889564674";
         try {
-            String tweets = getTweetsByUserId(username, bearerToken);
+            String tweets = getTweetsByUserId(userId, bearerToken);
             System.out.println("推文结果: " + tweets);
         } catch (Exception e) {
             log.error("错误信息：{}", e.getMessage(), e);

@@ -1,4 +1,4 @@
-package risk.engine.crawler.monitor;
+package risk.engine.crawler.monitor.binance;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
