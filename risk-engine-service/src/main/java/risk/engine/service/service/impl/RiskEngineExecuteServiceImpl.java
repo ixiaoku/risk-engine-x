@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import risk.engine.common.grovvy.GroovyShellUtil;
-import risk.engine.common.mq.RiskEngineProducer;
+import risk.engine.components.mq.RiskEngineProducer;
 import risk.engine.db.entity.Incident;
 import risk.engine.db.entity.Rule;
 import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;

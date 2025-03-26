@@ -92,20 +92,20 @@ public class ThreadPoolExecutorUtil implements DisposableBean {
     }
 
     // 测试方法（可删除）
-    public static void main(String[] args) throws Exception {
-        ThreadPoolExecutorUtil util = new ThreadPoolExecutorUtil();
-        for (int i = 0; i < 15; i++) {
-            int taskId = i;
-            util.execute(() -> {
-                try {
-                    System.out.println("Task " + taskId + " running on " + Thread.currentThread().getName());
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            });
-        }
-        System.out.println(util.getPoolStatus());
-        util.destroy();
-    }
+//    public static void main(String[] args) throws Exception {
+//        ThreadPoolExecutorUtil util = new ThreadPoolExecutorUtil();
+//        for (int i = 0; i < 15; i++) {
+//            int taskId = i;
+//            util.execute(() -> {
+//                try {
+//                    System.out.println("Task " + taskId + " running on " + Thread.currentThread().getName());
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    Thread.currentThread().interrupt();
+//                }
+//            });
+//        }
+//        System.out.println(util.getPoolStatus());
+//        util.destroy();
+//    }
 }

@@ -7,11 +7,11 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>risk.engine.service</groupId>
-    <artifactId>risk-engine-service</artifactId>
+    <groupId>risk.engine.components</groupId>
+    <artifactId>risk-engine-components</artifactId>
     <packaging>jar</packaging>
 
-    <name>risk-engine-service</name>
+    <name>risk-engine-components</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -22,21 +22,28 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
         </dependency>
 
+        <!-- elasticsearch 依赖 -->
         <dependency>
-            <groupId>risk.engine.db</groupId>
-            <artifactId>risk-engine-db</artifactId>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-client</artifactId>
         </dependency>
 
+        <!-- RocketMQ 依赖 -->
         <dependency>
-            <groupId>risk.engine.common</groupId>
-            <artifactId>risk-engine-common</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>risk.engine.components</groupId>
-            <artifactId>risk-engine-components</artifactId>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-spring-boot-starter</artifactId>
         </dependency>
 
         <dependency>
@@ -45,5 +52,4 @@
         </dependency>
 
     </dependencies>
-
 </project>

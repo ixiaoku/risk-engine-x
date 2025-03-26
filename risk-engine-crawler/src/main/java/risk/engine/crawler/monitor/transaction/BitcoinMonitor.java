@@ -3,7 +3,6 @@ package risk.engine.crawler.monitor.transaction;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import lombok.extern.java.Log;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -24,7 +23,6 @@ import java.util.Date;
  * @Date: 2025/3/9 22:43
  * @Version: 1.0
  */
-@Log
 @Component
 public class BitcoinMonitor {
     @Resource

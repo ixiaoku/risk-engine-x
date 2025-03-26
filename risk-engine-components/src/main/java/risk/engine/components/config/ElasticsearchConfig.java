@@ -1,4 +1,4 @@
-package risk.engine.common.config;
+package risk.engine.components.config;
 
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;

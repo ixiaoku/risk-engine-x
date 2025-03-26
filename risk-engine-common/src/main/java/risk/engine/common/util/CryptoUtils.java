@@ -163,31 +163,31 @@ public class CryptoUtils {
     /**
      * 测试
      */
-    public static void main(String[] args) {
-
-        String secretKey = getDesSecretKey();
-        // MD5
-        String md5Hash = md5("HelloWorld");
-        System.out.println("MD5: " + md5Hash);
-
-        // DES
-        //String desKey = generateDesKey();
-        System.out.println(secretKey);
-        String desEncrypted = desEncrypt("", secretKey);
-        String desDecrypted = desDecrypt(desEncrypted, secretKey);
-        System.out.println("DES Key: " + secretKey);
-        System.out.println("DES Encrypted: " + desEncrypted);
-        System.out.println("DES Decrypted: " + desDecrypted);
-
-        // RSA
-        KeyPair rsaKeyPair = generateRsaKeyPair();
-        String publicKeyBase64 = getBase64Key(rsaKeyPair.getPublic());
-        String privateKeyBase64 = getBase64Key(rsaKeyPair.getPrivate());
-        String rsaEncrypted = rsaEncrypt("HelloRSA", rsaKeyPair.getPublic());
-        String rsaDecrypted = rsaDecrypt(rsaEncrypted, rsaKeyPair.getPrivate());
-        //System.out.println("RSA Public Key: " + publicKeyBase64);
-        //System.out.println("RSA Private Key: " + privateKeyBase64);
-        //System.out.println("RSA Encrypted: " + rsaEncrypted);
-        //System.out.println("RSA Decrypted: " + rsaDecrypted);
-    }
+//    public static void main(String[] args) {
+//
+//        String secretKey = getDesSecretKey();
+//        // MD5
+//        String md5Hash = md5("HelloWorld");
+//        System.out.println("MD5: " + md5Hash);
+//
+//        // DES
+//        //String desKey = generateDesKey();
+//        System.out.println(secretKey);
+//        String desEncrypted = desEncrypt("", secretKey);
+//        String desDecrypted = desDecrypt(desEncrypted, secretKey);
+//        System.out.println("DES Key: " + secretKey);
+//        System.out.println("DES Encrypted: " + desEncrypted);
+//        System.out.println("DES Decrypted: " + desDecrypted);
+//
+//        // RSA
+//        KeyPair rsaKeyPair = generateRsaKeyPair();
+//        String publicKeyBase64 = getBase64Key(rsaKeyPair.getPublic());
+//        String privateKeyBase64 = getBase64Key(rsaKeyPair.getPrivate());
+//        String rsaEncrypted = rsaEncrypt("HelloRSA", rsaKeyPair.getPublic());
+//        String rsaDecrypted = rsaDecrypt(rsaEncrypted, rsaKeyPair.getPrivate());
+//        //System.out.println("RSA Public Key: " + publicKeyBase64);
+//        //System.out.println("RSA Private Key: " + privateKeyBase64);
+//        //System.out.println("RSA Encrypted: " + rsaEncrypted);
+//        //System.out.println("RSA Decrypted: " + rsaDecrypted);
+//    }
 }

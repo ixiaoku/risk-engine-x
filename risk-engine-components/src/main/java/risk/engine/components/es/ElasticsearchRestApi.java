@@ -1,4 +1,4 @@
-package risk.engine.common.es;
+package risk.engine.components.es;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
