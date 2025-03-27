@@ -1,6 +1,6 @@
 spring:
   application:
-    name: RISK-ENGINE-X-REST
+    name: RISK-ENGINE-REST
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/risk?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false
     username: root
@@ -30,3 +30,6 @@ mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: risk.engine.db.entity
 
+logging:
+  file:
+    path: /Users/dongchunrong/Documents/project/data/logs

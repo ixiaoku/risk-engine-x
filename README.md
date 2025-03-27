@@ -1,6 +1,6 @@
 # risk-engine-x 风控引擎系统X
 
-## risk-engine-crawler 爬虫模块 抓取链上信息
+## risk-engine-crawler 爬虫模块 抓取链上信息以及其他
 
 ## risk-engine-analysis 分析模块 分析清洗爬虫数据
 
@@ -10,8 +10,12 @@
 
 ## risk-engine-db dao持久化模块 数据库相关
 
-## risk-engine-rest 引擎执行服务 风控引擎相关
+## risk-engine-components 中间件模块es、mq
+
 ## risk-engine-indicator 指标服务 计算指标值
+
+## risk-engine-rest 引擎执行服务 风控引擎相关
+
 ## risk-engine-job job服务 消费消息和定时任务
 
 ## 一、序言
