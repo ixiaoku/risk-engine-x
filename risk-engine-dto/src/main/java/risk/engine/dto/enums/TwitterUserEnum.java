@@ -19,31 +19,32 @@ public enum TwitterUserEnum {
     ;
 
     /**
-     * 整数值
+     * 用户名
      */
-    private final String code;
+    private final String username;
+
     /**
-     * 描述
+     * 用户id
      */
-    private final String desc;
+    private final String userId;
 
     // 枚举的构造函数，用于设置整数值
-    TwitterUserEnum(String value, String desc) {
-        this.code = value;
-        this.desc = desc;
+    TwitterUserEnum(String username, String userId) {
+        this.username = username;
+        this.userId = userId;
     }
 
     /**
      * 根据整数值获取枚举实例的方法
-     * @param code 参数
+     * @param username 参数
      * @return 返回枚举
      */
-    public static TwitterUserEnum getTwitterUserEnumByCode(String code) {
-        for (TwitterUserEnum status : TwitterUserEnum.values()) {
-            if (Objects.equals(status.getCode(), code)) {
-                return status;
+    public static TwitterUserEnum getTwitterUserEnumByCode(String username) {
+        for (TwitterUserEnum user : TwitterUserEnum.values()) {
+            if (Objects.equals(user.getUsername(), username)) {
+                return user;
             }
         }
-        throw new IllegalArgumentException("No enum constant with value " + code);
+        throw new IllegalArgumentException("No enum constant with value " + username);
     }
 }

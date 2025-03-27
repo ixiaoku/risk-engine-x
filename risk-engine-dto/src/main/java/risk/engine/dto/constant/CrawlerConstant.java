@@ -18,6 +18,8 @@ public interface CrawlerConstant {
 
     String BINANCE_NOTICE_LIST = "BinanceNoticeList";
 
+    String TWITTER_USER_RELEASE_LIST = "TwitterUserReleaseList";
+
     String notIceBotContent = "监控结果通知\n" +
             ">**标题**:<font color=\"comment\">Binance公告</font>\n" +
             ">**内容**:<font color=\"comment\">%s</font>\n" +

@@ -24,4 +24,6 @@ public interface ICrawlerTaskService {
 
     CrawlerTask selectByPrimaryKey(Long id);
 
+    CrawlerTask getCrawlerTask(String flowNo, String incidentCode, String requestPayload);
+
 }

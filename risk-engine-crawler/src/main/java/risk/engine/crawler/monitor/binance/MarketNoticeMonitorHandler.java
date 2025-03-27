@@ -1,19 +1,22 @@
 package risk.engine.crawler.monitor.binance;
 
-import com.google.gson.*;
+import com.alibaba.fastjson.JSON;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import risk.engine.common.util.DateTimeUtil;
 import risk.engine.common.util.OkHttpUtil;
-import risk.engine.db.dao.CrawlerTaskMapper;
 import risk.engine.db.entity.CrawlerTask;
-import risk.engine.dto.constant.BusinessConstant;
 import risk.engine.dto.constant.CrawlerConstant;
-import risk.engine.dto.enums.TaskStatusEnum;
+import risk.engine.dto.dto.crawler.CrawlerNoticeDTO;
+import risk.engine.service.service.ICrawlerTaskService;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -26,7 +29,7 @@ import java.util.Objects;
 public class MarketNoticeMonitorHandler {
 
     @Resource
-    private CrawlerTaskMapper crawlerTaskMapper;
+    private ICrawlerTaskService crawlerTaskService;
 
     public void start() {
         String jsonResponse = OkHttpUtil.get(CrawlerConstant.notIceUrl);
@@ -40,7 +43,7 @@ public class MarketNoticeMonitorHandler {
             return;
         }
         //批量保存爬虫数据
-        crawlerTaskMapper.batchInsert(crawlerTasks);
+        crawlerTaskService.batchInsert(crawlerTasks);
     }
 
     /**
@@ -71,24 +74,17 @@ public class MarketNoticeMonitorHandler {
             }
             for (JsonElement article : articles) {
                 JsonObject articleObject = article.getAsJsonObject();
-                String articleCode = articleObject.get("code").getAsString();
-                //去重 重复的不保存
-                CrawlerTask taskQuery = new CrawlerTask();
-                taskQuery.setFlowNo(articleCode);
-                taskQuery.setIncidentCode(CrawlerConstant.BINANCE_NOTICE_LIST);
-                List<CrawlerTask> crawlerTaskList = crawlerTaskMapper.selectByExample(taskQuery);
-                if (CollectionUtils.isNotEmpty(crawlerTaskList)) {
+                String flowNo = articleObject.get("id").getAsString();
+                String title = articleObject.get("title").getAsString();
+                String createdAt = DateTimeUtil.getTimeByTimestamp(articleObject.get("releaseDate").getAsLong());
+                CrawlerNoticeDTO noticeDTO = new CrawlerNoticeDTO();
+                noticeDTO.setFlowNo(flowNo);
+                noticeDTO.setTitle(title);
+                noticeDTO.setCreatedAt(createdAt);
+                CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(flowNo, CrawlerConstant.BINANCE_NOTICE_LIST, JSON.toJSONString(noticeDTO));
+                if (Objects.isNull(crawlerTask)) {
                     continue;
                 }
-                //组装爬虫数据
-                CrawlerTask crawlerTask = new CrawlerTask();
-                crawlerTask.setFlowNo(articleCode);
-                crawlerTask.setIncidentCode(CrawlerConstant.BINANCE_NOTICE_LIST);
-                crawlerTask.setStatus(TaskStatusEnum.WAIT.getCode());
-                crawlerTask.setRetry(BusinessConstant.RETRY);
-                crawlerTask.setRequestPayload(articleObject.getAsString());
-                crawlerTask.setCreateTime(LocalDateTime.now());
-                crawlerTask.setUpdateTime(LocalDateTime.now());
                 crawlerTasks.add(crawlerTask);
             }
         }
