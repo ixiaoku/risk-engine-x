@@ -1,4 +1,4 @@
-package risk.engine.crawler.monitor.transfer;
+package risk.engine.crawler.monitor;
 
 import risk.engine.dto.dto.block.ChainTransferDTO;
 

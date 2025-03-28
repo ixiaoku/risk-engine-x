@@ -34,7 +34,7 @@ import java.util.Objects;
  */
 @Slf4j
 @Component
-public class TwitterCrawlerUserRelease {
+public class TwitterCrawlerUserHandler {
 
     @Resource
     private ICrawlerTaskService crawlerTaskService;
@@ -43,7 +43,7 @@ public class TwitterCrawlerUserRelease {
             .connectTimeout(Duration.ofSeconds(10))
             .build();
 
-    public void send() throws Exception {
+    public void start() throws Exception {
         List<CrawlerTask> crawlerTasks = new ArrayList<>();
         for (TwitterUserEnum user : TwitterUserEnum.values()) {
             String secretKey = CryptoUtils.getDesSecretKey();
@@ -79,37 +79,43 @@ public class TwitterCrawlerUserRelease {
     // 用用户 ID 获取推文
     public static String getTweetsByUserId(String userId, String bearerToken) throws Exception {
         String tweetsUrl = "https://api.twitter.com/2/users/" + userId + "/tweets?max_results=10&tweet.fields=id,text,created_at";
-        HttpRequest tweetsRequest = HttpRequest.newBuilder()
+        HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(tweetsUrl))
                 .header("Authorization", "Bearer " + bearerToken)
                 .header("Accept", "application/json")
-                .timeout(Duration.ofSeconds(15)) // 请求超时 15 秒
+                .timeout(Duration.ofSeconds(5))
                 .GET()
                 .build();
-        HttpResponse<String> tweetsResponse = sendWithRetry(tweetsRequest, 3);
-        if (tweetsResponse.statusCode() != 200) {
-            throw new RuntimeException("获取推文失败，状态码: " + tweetsResponse.statusCode() + ", 响应: " + tweetsResponse.body());
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("获取推文失败，状态码: " + response.statusCode() + ", 响应: " + response.body());
         }
-        return tweetsResponse.body();
+        return response.body();
     }
 
-    // 发送请求并带重试逻辑
-    private static HttpResponse<String> sendWithRetry(HttpRequest request, int maxRetries) throws Exception {
-        int attempt = 0;
-        while (attempt < maxRetries) {
-            try {
-                System.out.println("发送请求到: " + request.uri());
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                return response;
-            } catch (java.io.IOException e) {
-                attempt++;
-                if (attempt == maxRetries) {
-                    throw e; // 达到最大重试次数，抛出异常
-                }
-                System.out.println("连接失败，第 " + attempt + " 次重试...");
-                Thread.sleep(1000 * attempt); // 每次重试延迟增加
-            }
+    // 新增方法：通过 username 获取 userId
+    public static String getUserIdByUsername(String username, String bearerToken) throws Exception {
+        String userUrl = "https://api.twitter.com/2/users/by/username/" + username;
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(userUrl))
+                .header("Authorization", "Bearer " + bearerToken)
+                .header("Accept", "application/json")
+                .timeout(Duration.ofSeconds(5))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() != 200) {
+            log.error("获取用户 {} 的 userId 失败，状态码: {}, 响应: {}", username, response.statusCode(), response.body());
+            return null;
         }
-        throw new RuntimeException("重试次数耗尽，请求失败");
+
+        JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
+        JsonObject data = jsonObject.getAsJsonObject("data");
+        if (Objects.isNull(data)) {
+            log.warn("用户 {} 的数据为空", username);
+            return null;
+        }
+        return data.get("id").getAsString();
     }
 }

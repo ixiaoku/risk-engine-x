@@ -3,7 +3,7 @@ package risk.engine.job.task;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
-import risk.engine.crawler.monitor.transfer.SolanaBlockFetcherHandler;
+import risk.engine.crawler.monitor.transfer.SolBlockFetcherHandler;
 import risk.engine.db.entity.TransferRecord;
 import risk.engine.dto.dto.block.ChainTransferDTO;
 import risk.engine.service.service.ITransferRecordService;
@@ -22,7 +22,7 @@ import java.util.List;
 public class SolanaAnalysisTask {
 
     @Resource
-    private SolanaBlockFetcherHandler fetcherHandler;
+    private SolBlockFetcherHandler fetcherHandler;
 
     @Resource
     private ITransferRecordService transferRecordService;

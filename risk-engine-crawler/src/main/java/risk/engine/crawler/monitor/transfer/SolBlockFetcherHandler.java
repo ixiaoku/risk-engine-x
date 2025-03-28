@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import risk.engine.common.util.OkHttpUtil;
+import risk.engine.crawler.monitor.ICrawlerBlockChainHandler;
 import risk.engine.dto.dto.block.ChainTransferDTO;
 import risk.engine.dto.dto.block.SolanaBlockDTO;
 
@@ -24,7 +25,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class SolanaBlockFetcherHandler implements ICrawlerBlockChainHandler{
+public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
 
     private static final String RPC_URL = "https://api.devnet.solana.com";
 

@@ -16,7 +16,6 @@
 
     <!-- 滚动文件日志 -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 不指定 <file>，让 rollingPolicy 控制路径 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/${APP_NAME}/%d{yyyy-MM-dd}/${APP_NAME}.log</fileNamePattern>
             <maxHistory>7</maxHistory>

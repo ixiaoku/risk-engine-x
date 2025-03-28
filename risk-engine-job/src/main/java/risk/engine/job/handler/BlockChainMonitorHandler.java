@@ -30,27 +30,44 @@ public class BlockChainMonitorHandler {
 
     @XxlJob("bitcoinMonitorJob")
     public void executeBitcoinMonitor() {
-        String param = XxlJobHelper.getJobParam();
-        bitcoinAnalysisTask.execute();
-        XxlJobHelper.log("bitcoinMonitorJob, param: " + param);
-        log.info("bitcoinMonitorJob job executed successfully!");
+        try {
+            String param = XxlJobHelper.getJobParam();
+            bitcoinAnalysisTask.execute();
+            XxlJobHelper.log("bitcoinMonitorJob, param: " + param);
+            log.info("bitcoinMonitorJob job executed successfully!");
+        } catch (Exception e) {
+            log.error("bitcoinMonitorJob executed failed : {}", e.getMessage(), e);
+            XxlJobHelper.log("bitcoinMonitorJob executed failed : {}", e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
     }
 
     @XxlJob("ethereumMonitorJob")
     public void executeEthereumMonitor() {
-        String param = XxlJobHelper.getJobParam();
-        ethereumAnalysisTask.execute();
-        XxlJobHelper.log("ethereumMonitorJob, param: " + param);
-        log.info("ethereumMonitorJob job executed successfully!");
+        try {
+            String param = XxlJobHelper.getJobParam();
+            ethereumAnalysisTask.execute();
+            XxlJobHelper.log("ethereumMonitorJob, param: " + param);
+            log.info("ethereumMonitorJob job executed successfully!");
+        } catch (Exception e) {
+            log.error("ethereumMonitorJob executed failed : {}", e.getMessage(), e);
+            XxlJobHelper.log("ethereumMonitorJob executed failed : {}", e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
     }
 
     @XxlJob("solMonitorJob")
     public void executeSolMonitor() {
-        String param = XxlJobHelper.getJobParam();
-        solanaAnalysisTask.execute();
-        XxlJobHelper.log("solMonitorJob, param: " + param);
-        log.info("solMonitorJob job executed successfully!");
+        try {
+            String param = XxlJobHelper.getJobParam();
+            solanaAnalysisTask.execute();
+            XxlJobHelper.log("solMonitorJob, param: " + param);
+            log.info("solMonitorJob job executed successfully!");
+        } catch (Exception e) {
+            log.error("solMonitorJob executed failed : {}", e.getMessage(), e);
+            XxlJobHelper.log("solMonitorJob executed failed : {}", e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
     }
-
 
 }
