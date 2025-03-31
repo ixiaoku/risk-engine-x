@@ -13,8 +13,9 @@ import java.util.Objects;
 @Getter
 public enum PenaltyTypeEnum {
 
-    // 地址
-    ADD_LIST("ADD_LIST", "加名单"),
+
+    APPEND_LIST("append_list", "加名单"),
+    BUSINESS_WECHAT_BOT("business_wechat_bot", "企业微信机器人"),
     ;
 
     /**

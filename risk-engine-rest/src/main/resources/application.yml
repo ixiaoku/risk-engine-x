@@ -7,7 +7,7 @@ spring:
     password:
   redis:
     host: 127.0.0.1
-    password:
+    password: dcr
     timeout: 2000ms
     database: 1  #默认有16个db(集群模式用hash槽代替)，这里配置具体使用的db，默认是0
 rocketmq:

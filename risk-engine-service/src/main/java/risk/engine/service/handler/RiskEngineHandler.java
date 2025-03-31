@@ -16,6 +16,7 @@ import risk.engine.dto.constant.BusinessConstant;
 import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;
 import risk.engine.dto.dto.penalty.RulePenaltyListDTO;
 import risk.engine.dto.enums.PenaltyStatusEnum;
+import risk.engine.dto.enums.PenaltyTypeEnum;
 import risk.engine.service.service.IEngineResultService;
 import risk.engine.service.service.IPenaltyRecordService;
 import risk.engine.service.service.IPenaltyService;
@@ -94,10 +95,8 @@ public class RiskEngineHandler {
                         penaltyRecord.setPenaltyReason(penalty.getPenaltyDescription());
                         penaltyRecord.setPenaltyResult("");
                         penaltyRecord.setPenaltyDescription(penalty.getPenaltyDescription());
+                        getPenaltyJson(listDTO, executeEngineDTO);
                         penaltyRecord.setPenaltyJson(new Gson().toJson(listDTO.getPenaltyJson()));
-                        listDTO.getPenaltyJson().forEach(json -> {
-
-                        });
                         penaltyRecord.setStatus(PenaltyStatusEnum.WAIT.getCode());
                         penaltyRecord.setRetry(0);
                         penaltyRecord.setPenaltyTime(LocalDateTime.now());
@@ -108,8 +107,17 @@ public class RiskEngineHandler {
                     recordList.addAll(penaltyRecordList);
                 });
         //保存处罚记录
-        recordList.forEach(record -> penaltyRecordService.insert(record));
+        penaltyRecordService.batchInsert(recordList);
         log.info("PenaltyRecord 保存成功");
+    }
+
+    private void getPenaltyJson (RulePenaltyListDTO penaltyListDTO, RiskExecuteEngineDTO executeEngineDTO) {
+        if (StringUtils.equals(penaltyListDTO.getPenaltyCode(), PenaltyTypeEnum.APPEND_LIST.getCode())) {
+            penaltyListDTO.getPenaltyJson().forEach(json -> {
+                String listValue = (String) executeEngineDTO.getRequestPayload().get(json.getListCode());
+                json.setListValue(listValue);
+            });
+        }
     }
 
     /**

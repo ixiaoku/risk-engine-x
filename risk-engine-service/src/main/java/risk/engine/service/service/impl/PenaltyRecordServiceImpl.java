@@ -32,6 +32,11 @@ public class PenaltyRecordServiceImpl implements IPenaltyRecordService {
     }
 
     @Override
+    public boolean batchInsert(List<PenaltyRecord> records) {
+        return penaltyRecordMapper.batchInsert(records) > 0;
+    }
+
+    @Override
     public Penalty selectByPrimaryKey(Long id) {
         return penaltyRecordMapper.selectByPrimaryKey(id);
     }

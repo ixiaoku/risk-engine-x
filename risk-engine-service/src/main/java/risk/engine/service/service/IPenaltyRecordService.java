@@ -16,6 +16,8 @@ public interface IPenaltyRecordService {
 
     boolean insert(PenaltyRecord record);
 
+    boolean batchInsert(List<PenaltyRecord> records);
+
     Penalty selectByPrimaryKey(Long id);
 
     List<PenaltyRecord> selectExample(PenaltyRecord penaltyRecord);
