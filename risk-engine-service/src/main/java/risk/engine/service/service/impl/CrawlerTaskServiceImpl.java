@@ -25,13 +25,8 @@ public class CrawlerTaskServiceImpl implements ICrawlerTaskService {
     private CrawlerTaskMapper crawlerTaskMapper;
 
     @Override
-    public Boolean insert(CrawlerTask record) {
-        return crawlerTaskMapper.insert(record) > 0;
-    }
-
-    @Override
-    public Boolean batchInsert(List<CrawlerTask> recordList) {
-        return crawlerTaskMapper.batchInsert(recordList) > 0;
+    public void batchInsert(List<CrawlerTask> recordList) {
+        crawlerTaskMapper.batchInsert(recordList);
     }
 
     @Override

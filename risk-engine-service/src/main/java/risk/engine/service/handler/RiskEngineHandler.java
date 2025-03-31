@@ -53,18 +53,17 @@ public class RiskEngineHandler {
      * 保存数据
      * @param executeEngineDTO 参数
      */
-    public void saveDataAndDoPenalty(RiskExecuteEngineDTO executeEngineDTO) {
+    public void saveEngineResult(RiskExecuteEngineDTO executeEngineDTO) {
         executeEngineDTO.setCreateTime(LocalDateTime.now());
         engineResultService.insert(getEngineResult(executeEngineDTO));
         insertEsEngineResult(executeEngineDTO);
-        doPenalty(executeEngineDTO);
     }
 
     /**
      * 处罚
      * @param executeEngineDTO 参数
      */
-    private void doPenalty(RiskExecuteEngineDTO executeEngineDTO) {
+    public void savePenalty(RiskExecuteEngineDTO executeEngineDTO) {
         Penalty p = new Penalty();
         p.setStatus(1);
         List<Penalty> penalties = penaltyService.selectByExample(p);

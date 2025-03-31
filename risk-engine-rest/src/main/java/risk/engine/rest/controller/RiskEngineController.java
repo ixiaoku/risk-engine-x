@@ -2,13 +2,14 @@ package risk.engine.rest.controller;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import risk.engine.common.function.ValidatorUtils;
 import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.dto.result.RiskEngineExecuteResult;
-import risk.engine.common.function.ValidatorUtils;
 import risk.engine.service.service.IRiskEngineExecuteService;
 import risk.engine.service.service.impl.InitServiceImpl;
 
@@ -31,7 +32,7 @@ public class RiskEngineController {
     private InitServiceImpl initService;
 
     @PostMapping("/engine")
-    public RiskEngineExecuteResult execute(@RequestBody RiskEngineParam riskEngineParam) throws Exception {
+    public RiskEngineExecuteResult execute(@RequestBody @Validated RiskEngineParam riskEngineParam) throws Exception {
 
         log.info("RiskEngineController execute request：{}", new Gson().toJson(riskEngineParam));
         //不为空校验

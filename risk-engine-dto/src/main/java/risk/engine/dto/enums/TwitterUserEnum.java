@@ -14,8 +14,8 @@ import java.util.Objects;
 public enum TwitterUserEnum {
 
     BWE("bwenews", "1483495485889564674"),
-    CZ("heyibinance", "1003840309166366721"),
-    HY("cz_binance", "902926941413453824"),
+//    CZ("heyibinance", "1003840309166366721"),
+//    HY("cz_binance", "902926941413453824"),
     ;
 
     /**

@@ -7,8 +7,6 @@ import java.util.List;
 
 public interface CrawlerTaskMapper {
 
-    int insert(CrawlerTask record);
-
     int batchInsert(@Param("list") List<CrawlerTask> recordList);
 
     int deleteByPrimaryKey(Long id);

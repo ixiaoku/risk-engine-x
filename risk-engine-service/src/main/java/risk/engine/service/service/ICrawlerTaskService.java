@@ -12,9 +12,7 @@ import java.util.List;
  */
 public interface ICrawlerTaskService {
 
-    Boolean insert(CrawlerTask record);
-
-    Boolean batchInsert(@Param("list") List<CrawlerTask> recordList);
+    void batchInsert(@Param("list") List<CrawlerTask> recordList);
 
     Boolean deleteByPrimaryKey(Long id);
 
