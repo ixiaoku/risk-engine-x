@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import risk.engine.common.util.DateTimeUtil;
 import risk.engine.components.es.ElasticsearchRestApi;
 import risk.engine.db.entity.EngineResult;
 import risk.engine.db.entity.Penalty;
@@ -54,7 +55,6 @@ public class RiskEngineHandler {
      * @param executeEngineDTO 参数
      */
     public void saveEngineResult(RiskExecuteEngineDTO executeEngineDTO) {
-        executeEngineDTO.setCreateTime(LocalDateTime.now());
         engineResultService.insert(getEngineResult(executeEngineDTO));
         insertEsEngineResult(executeEngineDTO);
     }
@@ -120,9 +120,9 @@ public class RiskEngineHandler {
         List<Map<String, Object>> mapList = new ArrayList<>();
         Map<String, Object> map = JSONObject.parseObject(JSON.toJSONString(engineResult));
         map.put("id", UUID.randomUUID().toString());
+        map.put("createTime", DateTimeUtil.getTimeByTimestamp(System.currentTimeMillis()));
         mapList.add(map);
         elasticsearchRestApi.saveDocument(BusinessConstant.ENGINE_INDEX, mapList);
-        log.info("es 保存成功");
     }
 
     /**
@@ -134,7 +134,7 @@ public class RiskEngineHandler {
         EngineResult engineResult = new EngineResult();
         engineResult.setFlowNo(executeEngineDTO.getFlowNo());
         engineResult.setRiskFlowNo(executeEngineDTO.getRiskFlowNo());
-        engineResult.setRequestPayload(executeEngineDTO.getRequestPayload());
+        engineResult.setRequestPayload(JSON.toJSONString(executeEngineDTO.getRequestPayload()));
         engineResult.setIncidentCode(executeEngineDTO.getIncidentCode());
         engineResult.setIncidentName(executeEngineDTO.getIncidentName());
         engineResult.setRuleCode(executeEngineDTO.getRuleCode());
@@ -145,7 +145,7 @@ public class RiskEngineHandler {
         engineResult.setRuleLabel(executeEngineDTO.getRuleLabel());
         engineResult.setRulePenaltyAction(executeEngineDTO.getRulePenaltyAction());
         engineResult.setRuleVersion(executeEngineDTO.getRuleVersion());
-        engineResult.setCreateTime(executeEngineDTO.getCreateTime());
+        engineResult.setCreateTime(LocalDateTime.now());
         engineResult.setHitMockRules(new Gson().toJson(executeEngineDTO.getHitMockRules()));
         engineResult.setHitOnlineRules(new Gson().toJson(executeEngineDTO.getHitOnlineRules()));
         engineResultService.insert(engineResult);

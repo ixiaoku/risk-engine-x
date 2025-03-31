@@ -54,7 +54,7 @@ public class RuleServiceImpl implements IRuleService {
         rule.setPenaltyAction(ruleParam.getPenaltyAction());
         rule.setResponsiblePerson(ruleParam.getResponsiblePerson());
         rule.setOperator("System");
-        rule.setVersion(UUID.randomUUID().toString());
+        rule.setVersion(UUID.randomUUID().toString().replace("-", ""));
         rule.setCreateTime(LocalDateTime.now());
         rule.setUpdateTime(LocalDateTime.now());
         return ruleMapper.insert(rule) > 0;

@@ -89,7 +89,7 @@ public class TelegramBotHandler implements LongPollingBot {
             String messageText = message.getText();
             log.info("监听群组某个用户发言 messageText:{}", messageText);
             CrawlerNoticeDTO noticeDTO = new CrawlerNoticeDTO();
-            noticeDTO.setCreatedAt(DateTimeUtil.getTime(message.getDate().longValue() * 1000));
+            noticeDTO.setCreatedAt(DateTimeUtil.getTimeByTimestamp(message.getDate().longValue() * 1000));
             noticeDTO.setTitle(messageText);
             noticeDTO.setFlowNo(message.getMessageId().toString() + "_" + message.getDate().toString());
             CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(noticeDTO.getFlowNo(), "TelegramBEWnews", JSON.toJSONString(noticeDTO));

@@ -3,8 +3,8 @@ package risk.engine.dto.dto.engine;
 import lombok.Data;
 import risk.engine.dto.dto.rule.HitRuleDTO;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: X
@@ -27,7 +27,12 @@ public class RiskExecuteEngineDTO {
     /**
      * 请求报文
      */
-    private String requestPayload;
+    private Map<String, Object> requestPayload;
+
+    /**
+     * 指标
+     */
+    private Map<String, Object> indicator;
 
     /**
      * 事件code
@@ -88,10 +93,5 @@ public class RiskExecuteEngineDTO {
      * 命中模拟策略集合
      */
     private List<HitRuleDTO> hitMockRules;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
 
 }

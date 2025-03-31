@@ -58,11 +58,6 @@ public class DateTimeUtil {
         return localDateTime.format(DATETIME_FORMATTER);
     }
 
-    public static String getTime(long timestamp) {
-        LocalDateTime localDateTime = timestampToLocalDateTime(timestamp);
-        return localDateTime.format(DATETIME_FORMATTER_CHINESE);
-    }
-
     /**
      * LocalDateTime 转时间戳（毫秒）
      */
