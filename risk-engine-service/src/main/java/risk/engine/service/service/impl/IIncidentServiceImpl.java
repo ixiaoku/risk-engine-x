@@ -38,13 +38,6 @@ public class IIncidentServiceImpl implements IIncidentService {
     @Resource
     private IndicatorMapper indicatorMapper;
 
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public boolean deleteByPrimaryKey(Long id) {
-        Incident incident = incidentMapper.selectByPrimaryKey(id);
-        return incidentMapper.deleteByPrimaryKey(id) > 0 && indicatorMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
-    }
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean insert(IncidentParam incidentParam) {
@@ -69,6 +62,27 @@ public class IIncidentServiceImpl implements IIncidentService {
         return incidentMapper.insert(incident) > 0 && indicatorMapper.batchInsert(indicatorList) > 0;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean deleteByPrimaryKey(Long id) {
+        Incident incident = incidentMapper.selectByPrimaryKey(id);
+        return incidentMapper.deleteByPrimaryKey(id) > 0 && indicatorMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateByPrimaryKey(IncidentParam param) {
+        Incident incident = new Incident();
+        BeanUtils.copyProperties(param, incident);
+        incident.setUpdateTime(LocalDateTime.now());
+        incident.setRequestPayload(param.getRequestPayload());
+        Boolean flag1 = incidentMapper.updateByPrimaryKey(incident) > 0;
+        Boolean flag2 = indicatorMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
+        List<Indicator> indicatorList = getIndicatorList(param);
+        Boolean flag3 = indicatorMapper.batchInsert(indicatorList) > 0;
+        return flag1 && flag2 && flag3;
+    }
+
     @Override
     public List<Incident> selectByExample(Incident incident) {
         return incidentMapper.selectByExample(incident);
@@ -85,8 +99,7 @@ public class IIncidentServiceImpl implements IIncidentService {
         if (incident == null) {
             return null;
         }
-        IncidentResult incidentResult = new IncidentResult();
-        BeanUtils.copyProperties(incident, incidentResult);
+        IncidentResult incidentResult = getIncidentResult(incident);
         List<IndicatorDTO> indicators = JSON.parseArray(incident.getRequestPayload(), IndicatorDTO.class);
         incidentResult.setIndicators(indicators);
         return incidentResult;
@@ -94,7 +107,6 @@ public class IIncidentServiceImpl implements IIncidentService {
 
     @Override
     public List<IndicatorDTO> parseIndicator(String incidentCode, String requestPayload) {
-
         Indicator indicatorQuery = new Indicator();
         indicatorQuery.setIncidentCode(incidentCode);
         List<Indicator> indicatorList = indicatorMapper.selectByExample(indicatorQuery);
@@ -137,20 +149,6 @@ public class IIncidentServiceImpl implements IIncidentService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean updateByPrimaryKey(IncidentParam param) {
-        Incident incident = new Incident();
-        BeanUtils.copyProperties(param, incident);
-        incident.setUpdateTime(LocalDateTime.now());
-        incident.setRequestPayload(param.getRequestPayload());
-        Boolean flag1 = incidentMapper.updateByPrimaryKey(incident) > 0;
-        Boolean flag2 = indicatorMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
-        List<Indicator> indicatorList = getIndicatorList(param);
-        Boolean flag3 = indicatorMapper.batchInsert(indicatorList) > 0;
-        return flag1 && flag2 && flag3;
-    }
-
-    @Override
     public List<IncidentResult> list(IncidentParam incidentParam) {
         Incident incidentQuery = new Incident();
         incidentQuery.setIncidentCode(incidentParam.getIncidentCode());
@@ -160,16 +158,27 @@ public class IIncidentServiceImpl implements IIncidentService {
         if (CollectionUtils.isEmpty(incidentList)) {
             return List.of();
         }
-        return incidentList.stream().map(incident -> {
-            IncidentResult incidentResult = new IncidentResult();
-            incidentResult.setIncidentCode(incident.getIncidentCode());
-            incidentResult.setIncidentName(incident.getIncidentName());
-            incidentResult.setStatus(incident.getStatus());
-            incidentResult.setOperator(incident.getOperator());
-            incidentResult.setCreateTime(DateTimeUtil.getTimeByLocalDateTime(incident.getCreateTime()));
-            incidentResult.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(incident.getUpdateTime()));
-            return incidentResult;
-        }).collect(Collectors.toList());
+        return incidentList.stream().map(this::getIncidentResult).collect(Collectors.toList());
+    }
+
+    /**
+     * 转换类
+     * @param incident 实体类
+     * @return 结果
+     */
+    private IncidentResult getIncidentResult(Incident incident) {
+        IncidentResult incidentResult = new IncidentResult();
+        incidentResult.setId(incident.getId());
+        incidentResult.setIncidentCode(incident.getIncidentCode());
+        incidentResult.setIncidentName(incident.getIncidentName());
+        incidentResult.setRequestPayload(incident.getRequestPayload());
+        incidentResult.setStatus(incident.getStatus());
+        incidentResult.setDecisionResult(incident.getDecisionResult());
+        incidentResult.setResponsiblePerson(incident.getResponsiblePerson());
+        incidentResult.setOperator(incident.getOperator());
+        incidentResult.setCreateTime(DateTimeUtil.getTimeByLocalDateTime(incident.getCreateTime()));
+        incidentResult.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(incident.getUpdateTime()));
+        return incidentResult;
     }
 
     /**

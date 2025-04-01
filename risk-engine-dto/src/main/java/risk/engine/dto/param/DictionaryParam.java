@@ -10,8 +10,14 @@ import lombok.Data;
 @Data
 public class DictionaryParam {
 
+    /**
+     * 字典key数组
+     */
     private String[] dictKeyList;
 
+    /**
+     * 字典查询条件
+     */
     private String queryCode;
 
 }

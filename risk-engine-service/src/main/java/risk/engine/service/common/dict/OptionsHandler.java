@@ -14,10 +14,7 @@ import risk.engine.service.service.IIncidentService;
 import risk.engine.service.service.IIndicatorService;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -80,6 +77,26 @@ public class OptionsHandler {
     }
 
     /**
+     * 指标字典
+     * @return 结果
+     */
+    @Bean("indicatorList")
+    public OptionsDbFunction<String> indicatorList() {
+        List<Indicator> incidentList = indicatorService.selectByExample(new Indicator());
+        if (CollectionUtils.isEmpty(incidentList)) {
+            return null;
+        }
+        return value -> incidentList.stream()
+                .filter(i -> StringUtils.equals(value, i.getIncidentCode()))
+                .map(e -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("code", e.getIncidentCode());
+                    options.put("msg", e.getIndicatorName());
+                    return options;
+                }).collect(Collectors.toList());
+    }
+
+    /**
      * 事件字典
      * @return 结果
      */
@@ -101,21 +118,17 @@ public class OptionsHandler {
     }
 
     /**
-     * 指标字典
+     * 事件状态字典
      * @return 结果
      */
-    @Bean("indicatorList")
-    public OptionsDbFunction<String> indicatorList() {
-        List<Indicator> incidentList = indicatorService.selectByExample(new Indicator());
-        if (CollectionUtils.isEmpty(incidentList)) {
-            return null;
-        }
-        return value -> incidentList.stream()
-                .filter(i -> StringUtils.equals(value, i.getIncidentCode()))
+    @Bean("incidentStatus")
+    public OptionsEnumFunction incidentStatus() {
+        return () -> Arrays.stream(IncidentStatusEnum.values())
+                .filter(e -> !Objects.equals(e.getCode(), IncidentStatusEnum.DELETED.getCode()))
                 .map(e -> {
                     Map<String, Object> options = new HashMap<>();
-                    options.put("code", e.getIncidentCode());
-                    options.put("msg", e.getIndicatorName());
+                    options.put("code", e.getCode());
+                    options.put("msg", e.getDesc());
                     return options;
                 }).collect(Collectors.toList());
     }
