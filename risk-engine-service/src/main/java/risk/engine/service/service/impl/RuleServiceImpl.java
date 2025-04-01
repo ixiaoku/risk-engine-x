@@ -1,5 +1,6 @@
 package risk.engine.service.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import risk.engine.db.dao.RuleMapper;
@@ -9,6 +10,7 @@ import risk.engine.dto.dto.IncidentDTO;
 import risk.engine.dto.param.RuleParam;
 import risk.engine.dto.result.RuleResult;
 import risk.engine.service.common.cache.GuavaStartupCache;
+import risk.engine.service.handler.GroovyExpressionParser;
 import risk.engine.service.service.IRuleService;
 
 import javax.annotation.Resource;
@@ -45,13 +47,14 @@ public class RuleServiceImpl implements IRuleService {
         rule.setRuleName(ruleParam.getRuleName());
         rule.setStatus(ruleParam.getStatus());
         rule.setScore(ruleParam.getScore());
-        rule.setGroovyScript(ruleParam.getGroovyScript());
-        rule.setJsonScript(ruleParam.getJsonScript());
+        rule.setJsonScript(JSON.toJSONString(ruleParam.getJsonScript()));
         rule.setLogicScript(ruleParam.getLogicScript());
+        String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), rule.getJsonScript());
+        rule.setGroovyScript(groovyScript);
         rule.setDecisionResult(ruleParam.getDecisionResult());
         rule.setExpiryTime(ruleParam.getExpiryTime());
         rule.setLabel(ruleParam.getLabel());
-        rule.setPenaltyAction(ruleParam.getPenaltyAction());
+        rule.setPenaltyAction(JSON.toJSONString(ruleParam.getPenaltyAction()));
         rule.setResponsiblePerson(ruleParam.getResponsiblePerson());
         rule.setOperator("System");
         rule.setVersion(UUID.randomUUID().toString().replace("-", ""));
@@ -99,13 +102,14 @@ public class RuleServiceImpl implements IRuleService {
         rule.setRuleName(ruleParam.getRuleName());
         rule.setStatus(ruleParam.getStatus());
         rule.setScore(ruleParam.getScore());
-        rule.setGroovyScript(ruleParam.getGroovyScript());
-        rule.setJsonScript(ruleParam.getJsonScript());
+        rule.setJsonScript(JSON.toJSONString(ruleParam.getJsonScript()));
         rule.setLogicScript(ruleParam.getLogicScript());
+        String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), rule.getJsonScript());
+        rule.setGroovyScript(groovyScript);
         rule.setDecisionResult(ruleParam.getDecisionResult());
         rule.setExpiryTime(ruleParam.getExpiryTime());
         rule.setLabel(ruleParam.getLabel());
-        rule.setPenaltyAction(ruleParam.getPenaltyAction());
+        rule.setPenaltyAction(JSON.toJSONString(ruleParam.getPenaltyAction()));
         rule.setOperator(ruleParam.getOperator());
         rule.setResponsiblePerson(ruleParam.getResponsiblePerson());
         rule.setVersion(UUID.randomUUID().toString());
