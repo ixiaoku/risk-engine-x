@@ -1,8 +1,9 @@
 package risk.engine.service.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import risk.engine.common.util.DateTimeUtil;
 import risk.engine.db.dao.RuleMapper;
 import risk.engine.db.entity.Rule;
 import risk.engine.db.entity.RuleVersion;
@@ -45,6 +46,7 @@ public class RuleServiceImpl implements IRuleService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean insert(RuleParam ruleParam) {
         Rule rule = new Rule();
         rule.setIncidentCode(ruleParam.getIncidentCode());
@@ -52,14 +54,14 @@ public class RuleServiceImpl implements IRuleService {
         rule.setRuleName(ruleParam.getRuleName());
         rule.setStatus(ruleParam.getStatus());
         rule.setScore(ruleParam.getScore());
-        rule.setJsonScript(JSON.toJSONString(ruleParam.getJsonScript()));
+        rule.setJsonScript(ruleParam.getJsonScript());
         rule.setLogicScript(ruleParam.getLogicScript());
         String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), rule.getJsonScript());
         rule.setGroovyScript(groovyScript);
         rule.setDecisionResult(ruleParam.getDecisionResult());
         rule.setExpiryTime(ruleParam.getExpiryTime());
         rule.setLabel(ruleParam.getLabel());
-        rule.setPenaltyAction(JSON.toJSONString(ruleParam.getPenaltyAction()));
+        rule.setPenaltyAction(ruleParam.getPenaltyAction());
         rule.setResponsiblePerson(ruleParam.getResponsiblePerson());
         rule.setOperator("System");
         rule.setVersion(UUID.randomUUID().toString().replace("-", ""));
@@ -86,13 +88,15 @@ public class RuleServiceImpl implements IRuleService {
         return ruleList.stream().map(rule -> {
             RuleResult ruleResult = new RuleResult();
             IncidentDTO incidentDTO = guavaStartupCache.getIncident(rule.getIncidentCode());
+            ruleResult.setId(rule.getId());
+            ruleResult.setIncidentCode(rule.getIncidentCode());
             ruleResult.setIncidentName(incidentDTO.getIncidentName());
             ruleResult.setRuleCode(rule.getRuleCode());
             ruleResult.setRuleName(rule.getRuleName());
             ruleResult.setStatus(rule.getStatus());
             ruleResult.setOperator(rule.getOperator());
-            ruleResult.setCreateTime(rule.getCreateTime());
-            ruleResult.setUpdateTime(rule.getUpdateTime());
+            ruleResult.setCreateTime(DateTimeUtil.getTimeByLocalDateTime(rule.getCreateTime()));
+            ruleResult.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(rule.getUpdateTime()));
             return ruleResult;
         }).collect(Collectors.toList());
     }
@@ -103,20 +107,21 @@ public class RuleServiceImpl implements IRuleService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean update(RuleParam ruleParam) {
         Rule rule = new Rule();
         rule.setId(ruleParam.getId());
+        rule.setRuleCode(ruleParam.getRuleCode());
         rule.setRuleName(ruleParam.getRuleName());
         rule.setStatus(ruleParam.getStatus());
         rule.setScore(ruleParam.getScore());
-        rule.setJsonScript(JSON.toJSONString(ruleParam.getJsonScript()));
+        rule.setJsonScript(ruleParam.getJsonScript());
         rule.setLogicScript(ruleParam.getLogicScript());
         String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), rule.getJsonScript());
         rule.setGroovyScript(groovyScript);
         rule.setDecisionResult(ruleParam.getDecisionResult());
         rule.setExpiryTime(ruleParam.getExpiryTime());
         rule.setLabel(ruleParam.getLabel());
-        rule.setPenaltyAction(JSON.toJSONString(ruleParam.getPenaltyAction()));
         rule.setOperator(ruleParam.getOperator());
         rule.setResponsiblePerson(ruleParam.getResponsiblePerson());
         rule.setVersion(UUID.randomUUID().toString().replace("-", ""));
@@ -127,12 +132,17 @@ public class RuleServiceImpl implements IRuleService {
     }
 
     @Override
-    public RuleResult detail(RuleParam ruleParam) {
-        Rule rule = ruleMapper.selectByPrimaryKey(ruleParam.getId());
+    public RuleResult detail(Long id) {
+        Rule rule = ruleMapper.selectByPrimaryKey(id);
         if (Objects.isNull(rule)) {
             return null;
         }
+        return getRuleResult(rule);
+    }
+
+    private RuleResult getRuleResult(Rule rule) {
         RuleResult ruleResult = new RuleResult();
+        ruleResult.setId(rule.getId());
         ruleResult.setIncidentCode(rule.getIncidentCode());
         ruleResult.setRuleCode(rule.getRuleCode());
         ruleResult.setRuleName(rule.getRuleName());
@@ -147,7 +157,8 @@ public class RuleServiceImpl implements IRuleService {
         ruleResult.setPenaltyAction(rule.getPenaltyAction());
         ruleResult.setResponsiblePerson(rule.getResponsiblePerson());
         ruleResult.setOperator(rule.getOperator());
-        ruleResult.setUpdateTime(rule.getUpdateTime());
+        ruleResult.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(rule.getUpdateTime()));
+        ruleResult.setCreateTime(DateTimeUtil.getTimeByLocalDateTime(rule.getCreateTime()));
         return ruleResult;
     }
 

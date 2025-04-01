@@ -23,5 +23,5 @@ public interface IRuleService {
 
     Boolean update(RuleParam ruleParam);
 
-    RuleResult detail(RuleParam ruleParam);
+    RuleResult detail(Long id);
 }

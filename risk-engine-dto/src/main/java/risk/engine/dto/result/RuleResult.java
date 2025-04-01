@@ -2,8 +2,6 @@ package risk.engine.dto.result;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 /**
  * @Author: X
  * @Date: 2025/3/14 16:57
@@ -11,6 +9,8 @@ import java.time.LocalDateTime;
  */
 @Data
 public class RuleResult {
+
+    private Long id;
 
     /**
      * 事件code
@@ -90,11 +90,11 @@ public class RuleResult {
     /**
      * 创建时间
      */
-    private LocalDateTime createTime;
+    private String createTime;
 
     /**
      * 修改时间
      */
-    private LocalDateTime updateTime;
+    private String updateTime;
 
 }

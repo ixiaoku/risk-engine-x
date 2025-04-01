@@ -2,7 +2,6 @@ package risk.engine.rest.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import risk.engine.dto.param.DictionaryParam;
 import risk.engine.dto.param.RuleParam;
 import risk.engine.dto.result.ResponseResult;
 import risk.engine.service.service.IDictionaryService;
@@ -51,20 +50,9 @@ public class RuleController {
     }
 
     @GetMapping("/detail")
-    public ResponseResult detail(@RequestParam RuleParam ruleParam) {
-        log.info("detail rules: {}", ruleParam);
-        return ResponseResult.success(ruleService.detail(ruleParam));
-    }
-
-    @PostMapping("/options/indicators")
-    public ResponseResult indicatorOptions(@RequestBody DictionaryParam dictionaryParam) {
-        log.info("detail indicator: {}", dictionaryParam);
-        return ResponseResult.success(dictionaryService.getList(dictionaryParam.getDictKeyList(), dictionaryParam.getQueryCode()));
-    }
-
-    @GetMapping("/options")
-    public ResponseResult operationOptions(@RequestParam("dictKeyList") String[] dictKeyList) {
-        return ResponseResult.success(dictionaryService.getList(dictKeyList));
+    public ResponseResult detail(@RequestParam("id") Long id) {
+        log.info("detail rules: {}", id);
+        return ResponseResult.success(ruleService.detail(id));
     }
 
 }

@@ -82,15 +82,15 @@ public class OptionsHandler {
      */
     @Bean("indicatorList")
     public OptionsDbFunction<String> indicatorList() {
-        List<Indicator> incidentList = indicatorService.selectByExample(new Indicator());
-        if (CollectionUtils.isEmpty(incidentList)) {
+        List<Indicator> indicatorList = indicatorService.selectByExample(new Indicator());
+        if (CollectionUtils.isEmpty(indicatorList)) {
             return null;
         }
-        return value -> incidentList.stream()
+        return value -> indicatorList.stream()
                 .filter(i -> StringUtils.equals(value, i.getIncidentCode()))
                 .map(e -> {
                     Map<String, Object> options = new HashMap<>();
-                    options.put("code", e.getIncidentCode());
+                    options.put("code", e.getIndicatorCode());
                     options.put("msg", e.getIndicatorName());
                     return options;
                 }).collect(Collectors.toList());

@@ -1,7 +1,6 @@
 package risk.engine.dto.param;
 
 import lombok.Data;
-import risk.engine.dto.dto.penalty.RulePenaltyListDTO;
 import risk.engine.dto.dto.rule.RuleIndicatorDTO;
 
 import java.util.List;
@@ -44,12 +43,17 @@ public class RuleParam extends PageHelperQuery {
     /**
      * json结构指标
      */
-    private List<RuleIndicatorDTO> jsonScript;
+    private List<RuleIndicatorDTO> indicators;
 
     /**
      * 配置的表达式 1 && 2 || 3
      */
     private String logicScript;
+
+    /**
+     * json结构指标
+     */
+    private String jsonScript;;
 
     /**
      * 决策结果
@@ -69,7 +73,7 @@ public class RuleParam extends PageHelperQuery {
     /**
      * 处置动作
      */
-    private List<RulePenaltyListDTO> penaltyAction;
+    private String penaltyAction;
 
     /**
      * 责任人
