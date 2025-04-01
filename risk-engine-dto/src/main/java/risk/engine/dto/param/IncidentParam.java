@@ -3,6 +3,7 @@ package risk.engine.dto.param;
 import lombok.Data;
 import risk.engine.dto.dto.rule.IndicatorDTO;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -19,6 +20,7 @@ public class IncidentParam {
      *
      * 事件code
      */
+    @NotBlank(message = "incidentCode不能为空")
     private String incidentCode;
 
     /**
@@ -45,7 +47,7 @@ public class IncidentParam {
     /**
      * 操作人
      */
-    private String operator;
+    private String operator = "SYSTEM";
 
     /**
      * 业务方请求报文

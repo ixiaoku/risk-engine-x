@@ -58,6 +58,10 @@ public class DateTimeUtil {
         return localDateTime.format(DATETIME_FORMATTER);
     }
 
+    public static String getTimeByLocalDateTime(LocalDateTime localDateTime) {
+        return localDateTime.format(DATETIME_FORMATTER);
+    }
+
     /**
      * LocalDateTime 转时间戳（毫秒）
      */

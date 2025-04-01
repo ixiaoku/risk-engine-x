@@ -5,6 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import risk.engine.db.dao.RuleMapper;
 import risk.engine.db.entity.Rule;
+import risk.engine.db.entity.RuleVersion;
 import risk.engine.db.entity.example.RuleExample;
 import risk.engine.dto.dto.IncidentDTO;
 import risk.engine.dto.param.RuleParam;
@@ -12,6 +13,7 @@ import risk.engine.dto.result.RuleResult;
 import risk.engine.service.common.cache.GuavaStartupCache;
 import risk.engine.service.handler.GroovyExpressionParser;
 import risk.engine.service.service.IRuleService;
+import risk.engine.service.service.IRuleVersionService;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -33,6 +35,9 @@ public class RuleServiceImpl implements IRuleService {
 
     @Resource
     private GuavaStartupCache guavaStartupCache;
+
+    @Resource
+    private IRuleVersionService ruleVersionService;
 
     @Override
     public List<Rule> selectByIncidentCode(String incidentCode) {
@@ -60,7 +65,9 @@ public class RuleServiceImpl implements IRuleService {
         rule.setVersion(UUID.randomUUID().toString().replace("-", ""));
         rule.setCreateTime(LocalDateTime.now());
         rule.setUpdateTime(LocalDateTime.now());
-        return ruleMapper.insert(rule) > 0;
+        //规则版本
+        RuleVersion ruleVersion = getRuleVersion(rule);
+        return ruleMapper.insert(rule) > 0 && ruleVersionService.insert(ruleVersion);
     }
 
     @Override
@@ -112,9 +119,11 @@ public class RuleServiceImpl implements IRuleService {
         rule.setPenaltyAction(JSON.toJSONString(ruleParam.getPenaltyAction()));
         rule.setOperator(ruleParam.getOperator());
         rule.setResponsiblePerson(ruleParam.getResponsiblePerson());
-        rule.setVersion(UUID.randomUUID().toString());
+        rule.setVersion(UUID.randomUUID().toString().replace("-", ""));
         rule.setUpdateTime(LocalDateTime.now());
-        return ruleMapper.updateByPrimaryKey(rule) > 0;
+        //规则版本
+        RuleVersion ruleVersion = getRuleVersion(rule);
+        return ruleMapper.updateByPrimaryKey(rule) > 0 && ruleVersionService.insert(ruleVersion);
     }
 
     @Override
@@ -138,9 +147,23 @@ public class RuleServiceImpl implements IRuleService {
         ruleResult.setPenaltyAction(rule.getPenaltyAction());
         ruleResult.setResponsiblePerson(rule.getResponsiblePerson());
         ruleResult.setOperator(rule.getOperator());
-        ruleResult.setCreateTime(rule.getCreateTime());
         ruleResult.setUpdateTime(rule.getUpdateTime());
         return ruleResult;
     }
+
+    private RuleVersion getRuleVersion(Rule rule) {
+        RuleVersion ruleVersion = new RuleVersion();
+        ruleVersion.setRuleCode(rule.getRuleCode());
+        ruleVersion.setStatus(rule.getStatus());
+        ruleVersion.setLogicScript(rule.getLogicScript());
+        ruleVersion.setGroovyScript(rule.getGroovyScript());
+        ruleVersion.setJsonScript(rule.getJsonScript());
+        ruleVersion.setVersion(rule.getVersion());
+        ruleVersion.setOperator(rule.getOperator());
+        ruleVersion.setCreateTime(LocalDateTime.now());
+        ruleVersion.setUpdateTime(LocalDateTime.now());
+        return ruleVersion;
+    }
+
 
 }

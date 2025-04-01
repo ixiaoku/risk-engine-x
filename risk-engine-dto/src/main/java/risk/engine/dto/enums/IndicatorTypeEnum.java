@@ -34,9 +34,9 @@ public enum IndicatorTypeEnum {
     // 大小数类型
     BIG_DECIMAL(10, "BigDecimal"),
     // json对象
-    JSON_OBJECT(11, "BigDecimal"),
+    JSON_OBJECT(11, "JsonObject"),
     // jsonArray数组
-    JSON_ARRAY(12, "BigDecimal"),
+    JSON_ARRAY(12, "JsonArray"),
     ;
 
     /**

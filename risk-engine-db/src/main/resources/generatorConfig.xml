@@ -44,7 +44,8 @@
 <!--        <table tableName="penalty_record" domainObjectName="PenaltyRecord" />-->
 <!--        <table tableName="indicator" domainObjectName="Indicator" />-->
 
-        <table tableName="crawler_task" domainObjectName="CrawlerTask" />
+<!--        <table tableName="crawler_task" domainObjectName="CrawlerTask" />-->
+        <table tableName="rule_version" domainObjectName="RuleVersion" />
 
         <!-- 可以添加多个<table>元素来指定多个表 -->
     </context>

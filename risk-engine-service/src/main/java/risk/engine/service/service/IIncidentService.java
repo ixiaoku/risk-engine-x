@@ -1,6 +1,7 @@
 package risk.engine.service.service;
 
 import risk.engine.db.entity.Incident;
+import risk.engine.dto.dto.rule.IndicatorDTO;
 import risk.engine.dto.param.IncidentParam;
 import risk.engine.dto.result.IncidentResult;
 
@@ -22,6 +23,8 @@ public interface IIncidentService {
     Incident selectByIncidentCode(String incidentCode);
 
     IncidentResult selectByPrimaryKey(Long id);
+
+    List<IndicatorDTO> parseIndicator(String incidentCode, String requestPayload);
 
     boolean updateByPrimaryKey(IncidentParam incidentParam);
 

@@ -2,11 +2,11 @@ package risk.engine.service.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.google.gson.Gson;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import risk.engine.common.util.DateTimeUtil;
 import risk.engine.db.dao.IncidentMapper;
 import risk.engine.db.dao.IndicatorMapper;
 import risk.engine.db.entity.Incident;
@@ -19,6 +19,7 @@ import risk.engine.dto.result.IncidentResult;
 import risk.engine.service.service.IIncidentService;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,13 +42,18 @@ public class IIncidentServiceImpl implements IIncidentService {
     @Override
     public boolean deleteByPrimaryKey(Long id) {
         Incident incident = incidentMapper.selectByPrimaryKey(id);
-        indicatorMapper.deleteByIncidentCode(incident.getIncidentCode());
         return incidentMapper.deleteByPrimaryKey(id) > 0 && indicatorMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean insert(IncidentParam incidentParam) {
+        Incident incidentQuery = new Incident();
+        incidentQuery.setIncidentCode(incidentParam.getIncidentCode());
+        List<Incident> incidentList = incidentMapper.selectByExample(incidentQuery);
+        if (CollectionUtils.isNotEmpty(incidentList)) {
+            throw new RuntimeException("事件标识已存在");
+        }
         Incident incident = new Incident();
         incident.setIncidentCode(incidentParam.getIncidentCode());
         incident.setIncidentName(incidentParam.getIncidentName());
@@ -87,33 +93,81 @@ public class IIncidentServiceImpl implements IIncidentService {
     }
 
     @Override
+    public List<IndicatorDTO> parseIndicator(String incidentCode, String requestPayload) {
+
+        Indicator indicatorQuery = new Indicator();
+        indicatorQuery.setIncidentCode(incidentCode);
+        List<Indicator> indicatorList = indicatorMapper.selectByExample(indicatorQuery);
+        //新增
+        if (CollectionUtils.isEmpty(indicatorList)) {
+            JSONObject jsonObject = JSON.parseObject(requestPayload);
+            return jsonObject.entrySet().stream()
+                    .map(key -> {
+                        IndicatorDTO indicator = new IndicatorDTO();
+                        indicator.setIndicatorCode(key.getKey());
+                        indicator.setIndicatorName("指标名字");
+                        indicator.setIndicatorValue(key.getValue().toString());
+                        indicator.setIndicatorDesc("指标备注");
+                        if (key.getValue() instanceof Integer) {
+                            indicator.setIndicatorType(IndicatorTypeEnum.INTEGER.getCode());
+                        }  else if (key.getValue() instanceof BigDecimal) {
+                            indicator.setIndicatorType(IndicatorTypeEnum.BIG_DECIMAL.getCode());
+                        } else if (key.getValue() instanceof Boolean) {
+                            indicator.setIndicatorType(IndicatorTypeEnum.BOOLEAN.getCode());
+                        } else if (JSON.isValidArray(key.getValue().toString())) {
+                            indicator.setIndicatorType(IndicatorTypeEnum.JSON_ARRAY.getCode());
+                        } else if (JSON.isValidObject(key.getValue().toString())) {
+                            indicator.setIndicatorType(IndicatorTypeEnum.JSON_OBJECT.getCode());
+                        }else {
+                            indicator.setIndicatorType(IndicatorTypeEnum.STRING.getCode());
+                        }
+                        return indicator;
+                    }).collect(Collectors.toList());
+        }
+        //编辑
+        return indicatorList.stream().map(indicator -> {
+            IndicatorDTO indicatorDTO = new IndicatorDTO();
+            indicatorDTO.setIndicatorCode(indicator.getIndicatorCode());
+            indicatorDTO.setIndicatorName(indicator.getIndicatorName());
+            indicatorDTO.setIndicatorType(indicator.getIndicatorType());
+            indicatorDTO.setIndicatorDesc(indicator.getIndicatorDesc());
+            indicatorDTO.setIndicatorValue(indicator.getIndicatorValue());
+            return indicatorDTO;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean updateByPrimaryKey(IncidentParam param) {
         Incident incident = new Incident();
         BeanUtils.copyProperties(param, incident);
         incident.setUpdateTime(LocalDateTime.now());
-        incident.setRequestPayload(new Gson().toJson(param.getRequestPayload()));
+        incident.setRequestPayload(param.getRequestPayload());
         Boolean flag1 = incidentMapper.updateByPrimaryKey(incident) > 0;
         Boolean flag2 = indicatorMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
-        Boolean flag3 = indicatorMapper.batchInsert(null) > 0;
+        List<Indicator> indicatorList = getIndicatorList(param);
+        Boolean flag3 = indicatorMapper.batchInsert(indicatorList) > 0;
         return flag1 && flag2 && flag3;
     }
 
     @Override
     public List<IncidentResult> list(IncidentParam incidentParam) {
-        Incident incident = new Incident();
-        incident.setIncidentCode(incidentParam.getIncidentCode());
-        incident.setIncidentName(incidentParam.getIncidentName());
-        incident.setStatus(incidentParam.getStatus());
-        List<Incident> incidentList = incidentMapper.selectByExample(incident);
+        Incident incidentQuery = new Incident();
+        incidentQuery.setIncidentCode(incidentParam.getIncidentCode());
+        incidentQuery.setIncidentName(incidentParam.getIncidentName());
+        incidentQuery.setStatus(incidentParam.getStatus());
+        List<Incident> incidentList = incidentMapper.selectByExample(incidentQuery);
         if (CollectionUtils.isEmpty(incidentList)) {
             return List.of();
         }
-        return incidentList.stream().map(i -> {
+        return incidentList.stream().map(incident -> {
             IncidentResult incidentResult = new IncidentResult();
-            BeanUtils.copyProperties(i, incidentResult);
-            List<IndicatorDTO> indicators = JSON.parseArray(i.getRequestPayload(), IndicatorDTO.class);
-            incidentResult.setIndicators(indicators);
+            incidentResult.setIncidentCode(incident.getIncidentCode());
+            incidentResult.setIncidentName(incident.getIncidentName());
+            incidentResult.setStatus(incident.getStatus());
+            incidentResult.setOperator(incident.getOperator());
+            incidentResult.setCreateTime(DateTimeUtil.getTimeByLocalDateTime(incident.getCreateTime()));
+            incidentResult.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(incident.getUpdateTime()));
             return incidentResult;
         }).collect(Collectors.toList());
     }
@@ -124,21 +178,21 @@ public class IIncidentServiceImpl implements IIncidentService {
      * @return 结果
      */
     private List<Indicator> getIndicatorList(IncidentParam incidentParam) {
-        JSONObject jsonObject = JSON.parseObject(incidentParam.getRequestPayload());
-        return jsonObject.entrySet().stream()
-                .map(key -> {
+        return incidentParam.getIndicators().stream()
+                .map(indicatorDTO -> {
                     Indicator indicator = new Indicator();
                     indicator.setIncidentCode(incidentParam.getIncidentCode());
-                    indicator.setIndicatorCode(key.getKey());
-                    indicator.setIndicatorName("名字");
-                    indicator.setIndicatorValue(key.getValue().toString());
+                    indicator.setIndicatorCode(indicatorDTO.getIndicatorCode());
+                    indicator.setIndicatorName(indicatorDTO.getIndicatorName());
+                    indicator.setIndicatorValue(indicatorDTO.getIndicatorValue());
                     indicator.setIndicatorDesc("备注");
                     indicator.setIndicatorSource(IndictorSourceEnum.ATTRIBUTE.getCode());
-                    indicator.setIndicatorType(IndicatorTypeEnum.STRING.getCode());
+                    indicator.setIndicatorType(indicatorDTO.getIndicatorType());
                     indicator.setOperator(incidentParam.getOperator());
                     indicator.setCreateTime(LocalDateTime.now());
                     indicator.setUpdateTime(LocalDateTime.now());
                     return indicator;
                 }).collect(Collectors.toList());
+
     }
 }

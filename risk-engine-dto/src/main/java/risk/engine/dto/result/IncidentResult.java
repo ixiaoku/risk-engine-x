@@ -3,7 +3,6 @@ package risk.engine.dto.result;
 import lombok.Data;
 import risk.engine.dto.dto.rule.IndicatorDTO;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -61,11 +60,11 @@ public class IncidentResult {
     /**
      * 创建时间
      */
-    private LocalDateTime createTime;
+    private String createTime;
 
     /**
      * 修改时间
      */
-    private LocalDateTime updateTime;
+    private String updateTime;
 
 }

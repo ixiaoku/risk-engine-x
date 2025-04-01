@@ -70,13 +70,11 @@
 
   <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.Incident">
     update incident
-    set incident_code = #{incidentCode,jdbcType=VARCHAR},
-      incident_name = #{incidentName,jdbcType=VARCHAR},
+    set incident_name = #{incidentName,jdbcType=VARCHAR},
       decision_result = #{decisionResult,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
       responsible_person = #{responsiblePerson,jdbcType=VARCHAR},
       operator = #{operator,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>

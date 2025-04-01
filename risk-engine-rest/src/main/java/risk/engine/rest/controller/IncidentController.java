@@ -1,6 +1,7 @@
 package risk.engine.rest.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,10 +46,17 @@ public class IncidentController {
     }
 
     @PostMapping("/update")
-    public ResponseResult update(@RequestBody IncidentParam incidentParam) throws Exception {
+    public ResponseResult update(@RequestBody @Validated IncidentParam incidentParam) throws Exception {
         log.info("update incident: {}", incidentParam);
         ValidatorUtils.EmptyThrowException().validateException(incidentParam.getId());
         return ResponseResult.success(incidentService.updateByPrimaryKey(incidentParam));
+    }
+
+    @PostMapping("/parse")
+    public ResponseResult parseIndicator(@RequestBody @Validated IncidentParam incidentParam) throws Exception {
+        log.info("parse indicator: {}", incidentParam);
+        ValidatorUtils.EmptyThrowException().validateException(incidentParam.getRequestPayload());
+        return ResponseResult.success(incidentService.parseIndicator(incidentParam.getIncidentCode(), incidentParam.getRequestPayload()));
     }
 
     @PostMapping("/detail")
