@@ -9,7 +9,7 @@ mybatis:
   type-aliases-package: risk.engine.db.entity
 
 server:
-  port: 8889
+  port: 8089
 
 telegram:
   bot:

@@ -1,27 +1,17 @@
-FROM openjdk:11-jdk-slim
+# 使用更轻量化的基础镜像
+FROM openjdk:11-jre-slim
 
+# 设置工作目录
 WORKDIR /app
 
-# 创建子目录并复制 JAR 文件
+# 复制 JAR 文件
 COPY target/risk-engine-job-*.jar /app/risk-engine-job.jar
 
-# 安装 curl 和 netcat
-RUN apt-get update && apt-get install -y curl netcat-traditional
-
-# 设置环境变量
+# 设置环境变量，默认使用 `pro` 配置
 ENV SPRING_PROFILES_ACTIVE=pro
-ENV MYSQL_HOST=mysql-8.0
-ENV REDIS_HOST=redis-6.0
-ENV ROCKETMQ_NAMESRV_ADDR=rocketmq-namesrv:9876
-ENV ELASTICSEARCH_HOST=elasticsearch-7.17.4
 
-EXPOSE 8889
+# 暴露端口
+EXPOSE 8089
 
 # 启动命令
-CMD bash -c 'echo "Waiting for dependencies..." && \
-    while ! nc -z $MYSQL_HOST 3306; do echo "Waiting for $MYSQL_HOST:3306..."; sleep 1; done && \
-    while ! nc -z $REDIS_HOST 6379; do echo "Waiting for $REDIS_HOST:6379..."; sleep 1; done && \
-    while ! nc -z $(echo $ROCKETMQ_NAMESRV_ADDR | cut -d: -f1) $(echo $ROCKETMQ_NAMESRV_ADDR | cut -d: -f2); do echo "Waiting for $ROCKETMQ_NAMESRV_ADDR..."; sleep 1; done && \
-    while ! nc -z $ELASTICSEARCH_HOST 9200; do echo "Waiting for $ELASTICSEARCH_HOST:9200..."; sleep 1; done && \
-    echo "All dependencies are ready! Starting service..." && \
-    exec java -jar /app/risk-engine-job.jar'
+CMD ["exec", "java", "-jar", "/app/risk-engine-job.jar"]
