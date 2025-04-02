@@ -1,45 +1,8 @@
 spring:
   application:
     name: RISK-ENGINE-X-JOB
-  datasource:
-    url: jdbc:mysql://127.0.0.1:3306/risk?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useSSL=false
-    username: dcr
-    password: dcr
-  redis:
-    host: 127.0.0.1
-    password:
-    timeout: 2000ms
-    database: 1  #默认有16个db(集群模式用hash槽代替)，这里配置具体使用的db，默认是0
-rocketmq:
-  name-server: 127.0.0.1:9876
-  consumer:
-    group: consumer-group-test1
-  producer:
-    group: producer-test-group1
-    send-message-timeout: 3000
-
-elasticsearch:
-  url: http://106.55.233.79:9200
-  username: elastic
-  password: ELASTIC_dcr_0315
+  profiles:
+    active: dev
 
 server:
   port: 8889
-
-
-mybatis:
-  mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: risk.engine.db.entity
-
-xxl:
-  job:
-    admin:
-      addresses: http://106.55.233.79:8001/xxl-job-admin  # XXL-Job Admin 的地址
-      accessToken: xxl-job-token
-    executor:
-      appname: xxl-job-executor-x  # 执行器名称，需与 Admin 中配置一致
-      address: https://322f-39-146-24-84.ngrok-free.app # 可选，自动注册时留空
-      #ip: 103.167.134.66 # 可选，默认自动获取
-      #port: 9999  # 执行器端口，需与 Docker 配置一致
-      logpath: /Users/dongchunrong/Documents/project/data/logs/risk-engine-job  # 日志存储路径
-      logretentiondays: 7  # 日志保留天数
