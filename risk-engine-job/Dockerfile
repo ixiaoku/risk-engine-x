@@ -14,4 +14,4 @@ ENV SPRING_PROFILES_ACTIVE=pro
 EXPOSE 8089
 
 # 启动命令
-CMD ["exec", "java", "-jar", "/app/risk-engine-job.jar"]
+CMD ["java", "-jar", "/app/risk-engine-job.jar"]
