@@ -1,6 +1,8 @@
 package risk.engine.service.service;
 
 import risk.engine.db.entity.EngineResult;
+import risk.engine.dto.param.EngineExecutorParam;
+import risk.engine.dto.result.EngineExecutorResult;
 
 import java.util.List;
 
@@ -18,5 +20,8 @@ public interface IEngineResultService {
     List<EngineResult> selectByExample(EngineResult engineResult);
 
     EngineResult selectByPrimaryKey(Long id);
+
+    List<EngineExecutorResult> list(EngineExecutorParam executorParam);
+
 
 }

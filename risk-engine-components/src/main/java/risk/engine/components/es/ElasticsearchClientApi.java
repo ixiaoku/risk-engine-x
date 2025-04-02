@@ -1,14 +1,16 @@
 package risk.engine.components.es;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.xcontent.XContentType;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @Author: X
@@ -24,12 +27,30 @@ import java.util.Map;
  */
 @Slf4j
 @Component
-public class ElasticsearchRestApi {
-
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+public class ElasticsearchClientApi {
 
     @Resource
     private RestHighLevelClient client;
+
+    public SearchHit[] queryRestHighLevelClient(String index, BoolQueryBuilder boolQuery) {
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        sourceBuilder.query(boolQuery);
+        log.info(sourceBuilder.toString());
+        SearchRequest searchRequest = new SearchRequest(index);
+        searchRequest.source(sourceBuilder);
+        try {
+            SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+            log.info(searchResponse.getHits().toString());
+            if (Objects.isNull(searchResponse.getHits())) {
+                return null;
+            }
+            return searchResponse.getHits().getHits();
+        } catch (IOException e) {
+            log.error("Bulk response: {}", e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
 
     /**
      * 通用保存文档方法
@@ -40,8 +61,6 @@ public class ElasticsearchRestApi {
     public void saveDocument(String index, List<Map<String, Object>> mapList) {
         try {
             BulkRequest bulkRequest = new BulkRequest();
-            bulkRequest.add(new IndexRequest("users").id("1").source(Map.of("name", "Alice", "age", 25), XContentType.JSON));
-            bulkRequest.add(new IndexRequest("users").id("2").source(Map.of("name", "Bob", "age", 30), XContentType.JSON));
             mapList.forEach(map -> {
                 IndexRequest indexRequest = new IndexRequest(index)
                         .id(map.get("id").toString())
@@ -56,36 +75,6 @@ public class ElasticsearchRestApi {
         } catch (Exception e) {
             log.error("Bulk response: {}", e.getMessage(), e);
             throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * 通用查询文档方法
-     *
-     * @param index 索引名
-     * @param id    文档 ID
-     * @return Map<String, Object> 查询结果
-     * @throws IOException ES 交互异常
-     */
-    public Map<String, Object> getDocument(String index, String id) throws IOException {
-        GetRequest getRequest = new GetRequest(index, id);
-        GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
-
-        if (getResponse.isExists()) {
-            return getResponse.getSourceAsMap();
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * 关闭 ES 客户端
-     */
-    public void closeClient() {
-        try {
-            client.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

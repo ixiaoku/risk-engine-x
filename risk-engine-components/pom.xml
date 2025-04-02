@@ -50,5 +50,10 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>risk.engine.dto</groupId>
+            <artifactId>risk-engine-dto</artifactId>
+        </dependency>
+
     </dependencies>
 </project>

@@ -8,7 +8,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import risk.engine.common.util.DateTimeUtil;
-import risk.engine.components.es.ElasticsearchRestApi;
+import risk.engine.components.es.ElasticsearchClientApi;
 import risk.engine.db.entity.EngineResult;
 import risk.engine.db.entity.Penalty;
 import risk.engine.db.entity.PenaltyRecord;
@@ -43,7 +43,7 @@ public class RiskEngineHandler {
     private IEngineResultService engineResultService;
 
     @Resource
-    private ElasticsearchRestApi elasticsearchRestApi;
+    private ElasticsearchClientApi elasticsearchClientApi;
 
     @Resource
     private IPenaltyService penaltyService;
@@ -130,7 +130,7 @@ public class RiskEngineHandler {
         map.put("id", UUID.randomUUID().toString());
         map.put("createTime", DateTimeUtil.getTimeByTimestamp(System.currentTimeMillis()));
         mapList.add(map);
-        elasticsearchRestApi.saveDocument(BusinessConstant.ENGINE_INDEX, mapList);
+        elasticsearchClientApi.saveDocument(BusinessConstant.ENGINE_INDEX, mapList);
     }
 
     /**

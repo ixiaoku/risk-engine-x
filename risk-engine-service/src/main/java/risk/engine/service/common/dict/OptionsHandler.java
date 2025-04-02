@@ -6,10 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import risk.engine.db.entity.Incident;
 import risk.engine.db.entity.Indicator;
-import risk.engine.dto.enums.IncidentStatusEnum;
-import risk.engine.dto.enums.IndicatorTypeEnum;
-import risk.engine.dto.enums.OperationSymbolEnum;
-import risk.engine.dto.enums.RuleStatusEnum;
+import risk.engine.dto.enums.*;
 import risk.engine.service.service.IIncidentService;
 import risk.engine.service.service.IIndicatorService;
 
@@ -53,6 +50,21 @@ public class OptionsHandler {
     @Bean("ruleStatus")
     public OptionsEnumFunction ruleStatus() {
         return () -> Arrays.stream(RuleStatusEnum.values())
+                .map(e -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("code", e.getCode());
+                    options.put("msg", e.getDesc());
+                    return options;
+                }).collect(Collectors.toList());
+    }
+
+    /**
+     * 决策结果
+     * @return 结果
+     */
+    @Bean("decisionResult")
+    public OptionsEnumFunction decisionResult() {
+        return () -> Arrays.stream(DecisionResultEnum.values())
                 .map(e -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("code", e.getCode());
