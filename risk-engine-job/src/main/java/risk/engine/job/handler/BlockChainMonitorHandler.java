@@ -4,7 +4,6 @@ import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import risk.engine.job.task.BitcoinAnalysisTask;
 import risk.engine.job.task.EthereumAnalysisTask;
 import risk.engine.job.task.SolanaAnalysisTask;
 
@@ -20,9 +19,6 @@ import javax.annotation.Resource;
 public class BlockChainMonitorHandler {
 
     @Resource
-    private BitcoinAnalysisTask bitcoinAnalysisTask;
-
-    @Resource
     private EthereumAnalysisTask ethereumAnalysisTask;
 
     @Resource
@@ -32,7 +28,7 @@ public class BlockChainMonitorHandler {
     public void executeBitcoinMonitor() {
         try {
             String param = XxlJobHelper.getJobParam();
-            bitcoinAnalysisTask.execute();
+
             XxlJobHelper.log("bitcoinMonitorJob, param: " + param);
             log.info("bitcoinMonitorJob job executed successfully!");
         } catch (Exception e) {

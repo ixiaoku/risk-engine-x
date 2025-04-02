@@ -1,6 +1,8 @@
 package risk.engine.crawler.monitor.transfer;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.EthBlock;
@@ -11,13 +13,16 @@ import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 import risk.engine.common.util.CryptoUtils;
 import risk.engine.crawler.monitor.ICrawlerBlockChainHandler;
+import risk.engine.db.entity.CrawlerTask;
 import risk.engine.dto.constant.BlockChainConstant;
+import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.block.ChainTransferDTO;
+import risk.engine.service.service.ICrawlerTaskService;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,10 +35,13 @@ import java.util.List;
 @Component
 public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
 
+    @Resource
+    private ICrawlerTaskService crawlerTaskService;
+
     private Web3j web3j = null;
 
     @Override
-    public List<ChainTransferDTO> getTransactions() throws IOException {
+    public void start() throws IOException {
 
         String secretKey = CryptoUtils.getDesSecretKey();
         String key = CryptoUtils.desDecrypt(BlockChainConstant.ETH_DATA_KEY, secretKey);
@@ -50,7 +58,10 @@ public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
         EthBlock.Block block = ethBlock.getBlock();
 
         // 3. 遍历区块中的交易信息
-        List<ChainTransferDTO> transactions = new ArrayList<>();
+        List<CrawlerTask> crawlerTasks = new ArrayList<>();
+        if (CollectionUtils.isEmpty(block.getTransactions())) {
+            return;
+        }
         for (TransactionResult<?> txResult : block.getTransactions()) {
             Transaction transaction = (Transaction) txResult.get();
             // 4. 解析交易详情
@@ -74,11 +85,10 @@ public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
             chainTransferDTO.setToken("ETH");
             chainTransferDTO.setFee(gasFee);
             chainTransferDTO.setTransferTime(block.getTimestamp().longValue());
-            chainTransferDTO.setCreatedTime(LocalDateTime.now());
-            chainTransferDTO.setStatus(0);
-            transactions.add(chainTransferDTO);
+            CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(transaction.getHash(), CrawlerConstant.TRANSFER_CHAIN, JSON.toJSONString(chainTransferDTO));
+            crawlerTasks.add(crawlerTask);
         }
-        return transactions;
+        crawlerTaskService.batchInsert(crawlerTasks);
     }
     /**
      * 获取交易的 Gas 消耗量

@@ -26,7 +26,7 @@ public class ExecutorPenaltyHandler {
         try {
             String param = XxlJobHelper.getJobParam();
             penaltyExecuteTask.execute();
-            XxlJobHelper.log("binanceNoticeJob, param: " + param);
+            XxlJobHelper.log("penaltyExecuteTaskJob, param: " + param);
             log.info("penaltyExecuteTaskJob executed successfully!");
         } catch (Exception e) {
             log.error("penaltyExecuteTaskJob executed failed : {}", e.getMessage(), e);

@@ -1,9 +1,6 @@
 package risk.engine.crawler.monitor;
 
-import risk.engine.dto.dto.block.ChainTransferDTO;
-
 import java.io.IOException;
-import java.util.List;
 
 /**
  * 定义统一的解析器
@@ -13,5 +10,5 @@ import java.util.List;
  */
 public interface ICrawlerBlockChainHandler {
 
-    List<ChainTransferDTO> getTransactions() throws IOException;
+    void start() throws IOException;
 }

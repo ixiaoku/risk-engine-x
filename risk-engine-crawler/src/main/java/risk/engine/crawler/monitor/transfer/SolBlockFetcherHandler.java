@@ -1,17 +1,23 @@
 package risk.engine.crawler.monitor.transfer;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import risk.engine.common.util.OkHttpUtil;
 import risk.engine.crawler.monitor.ICrawlerBlockChainHandler;
+import risk.engine.db.entity.CrawlerTask;
+import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.block.ChainTransferDTO;
 import risk.engine.dto.dto.block.SolanaBlockDTO;
+import risk.engine.service.service.ICrawlerTaskService;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,25 +33,34 @@ import java.util.List;
 @Component
 public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
 
+    @Resource
+    private ICrawlerTaskService crawlerTaskService;
+
     private static final String RPC_URL = "https://api.devnet.solana.com";
 
     private static final String SLOT_JSON = "{\"jsonrpc\":\"2.0\",\"id\":1, \"method\":\"getSlot\"}";
 
     private static final Gson gson = new Gson();
 
-    public List<ChainTransferDTO> getTransactions() throws IOException {
+    @Override
+    public void start() throws IOException {
         //抓取最新slot
         long latestSlot = getLatestSlot();
         if (latestSlot == -1) {
-            return null;
+            return;
         }
         log.info("Latest Block Slot: {}", latestSlot);
         //抓取最新区块信息
         JsonObject blockData = getBlockDetails(latestSlot);
         if (blockData == null) {
-            return null;
+            return;
         }
-        return printTransactions(blockData);
+        //获取交易信息
+        List<CrawlerTask> crawlerTasks = getCrawlerTaskList(blockData);
+        if (CollectionUtils.isEmpty(crawlerTasks)) {
+            return;
+        }
+        crawlerTaskService.batchInsert(crawlerTasks);
     }
 
     // 获取最新区块高度
@@ -88,8 +103,8 @@ public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
      * @param blockData 区块信息
      */
 
-    private List<ChainTransferDTO> printTransactions(JsonObject blockData) {
-        List<ChainTransferDTO> transferDTOList = new ArrayList<>();
+    private List<CrawlerTask> getCrawlerTaskList(JsonObject blockData) {
+        List<CrawlerTask> crawlerTasks = new ArrayList<>();
         SolanaBlockDTO solanaBlockDTO = gson.fromJson(blockData, SolanaBlockDTO.class);
         JsonArray jsonArray = blockData.getAsJsonArray("transactions");
         jsonArray.forEach(tx -> {
@@ -146,8 +161,10 @@ public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
             chainTransferDTO.setTransferTime(0L);
             chainTransferDTO.setCreatedTime(LocalDateTime.now());
             chainTransferDTO.setStatus(0);
-            transferDTOList.add(chainTransferDTO);
+            //请求数据
+            CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(chainTransferDTO.getHash(), CrawlerConstant.TRANSFER_CHAIN, JSON.toJSONString(chainTransferDTO));
+            crawlerTasks.add(crawlerTask);
         });
-        return transferDTOList;
+        return crawlerTasks;
     }
 }
