@@ -4,8 +4,8 @@ import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import risk.engine.job.task.EthereumAnalysisTask;
-import risk.engine.job.task.SolanaAnalysisTask;
+import risk.engine.crawler.monitor.transfer.EthereumFetcherHandler;
+import risk.engine.crawler.monitor.transfer.SolBlockFetcherHandler;
 
 import javax.annotation.Resource;
 
@@ -19,16 +19,15 @@ import javax.annotation.Resource;
 public class BlockChainMonitorHandler {
 
     @Resource
-    private EthereumAnalysisTask ethereumAnalysisTask;
+    private EthereumFetcherHandler ethereumFetcherHandler;
 
     @Resource
-    private SolanaAnalysisTask solanaAnalysisTask;
+    private SolBlockFetcherHandler solBlockFetcherHandler;
 
     @XxlJob("bitcoinMonitorJob")
     public void executeBitcoinMonitor() {
         try {
             String param = XxlJobHelper.getJobParam();
-
             XxlJobHelper.log("bitcoinMonitorJob, param: " + param);
             log.info("bitcoinMonitorJob job executed successfully!");
         } catch (Exception e) {
@@ -42,7 +41,7 @@ public class BlockChainMonitorHandler {
     public void executeEthereumMonitor() {
         try {
             String param = XxlJobHelper.getJobParam();
-            ethereumAnalysisTask.execute();
+            ethereumFetcherHandler.start();
             XxlJobHelper.log("ethereumMonitorJob, param: " + param);
             log.info("ethereumMonitorJob job executed successfully!");
         } catch (Exception e) {
@@ -56,7 +55,7 @@ public class BlockChainMonitorHandler {
     public void executeSolMonitor() {
         try {
             String param = XxlJobHelper.getJobParam();
-            solanaAnalysisTask.execute();
+            solBlockFetcherHandler.start();
             XxlJobHelper.log("solMonitorJob, param: " + param);
             log.info("solMonitorJob job executed successfully!");
         } catch (Exception e) {
