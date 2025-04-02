@@ -24,4 +24,4 @@ CMD bash -c 'echo "Waiting for dependencies..." && \
     while ! nc -z $(echo $ROCKETMQ_NAMESRV_ADDR | cut -d: -f1) $(echo $ROCKETMQ_NAMESRV_ADDR | cut -d: -f2); do echo "Waiting for $ROCKETMQ_NAMESRV_ADDR..."; sleep 1; done && \
     while ! nc -z $ELASTICSEARCH_HOST 9200; do echo "Waiting for $ELASTICSEARCH_HOST:9200..."; sleep 1; done && \
     echo "All dependencies are ready! Starting service..." && \
-    exec java -jar /app/service.jar'
+    exec java -jar /app/risk-engine-rest.jar'

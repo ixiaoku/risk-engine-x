@@ -70,7 +70,7 @@ jobs:
           push: true
           tags: |
             ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:job-latest
-            ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:job-${{ github.sha }}
+#            ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:job-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -84,6 +84,6 @@ jobs:
           push: true
           tags: |
             ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:rest-latest
-            ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:rest-${{ github.sha }}
+#            ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:rest-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
