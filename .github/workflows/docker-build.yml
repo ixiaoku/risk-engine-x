@@ -29,14 +29,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 调试步骤：检查 Secrets  是否正确加载
-      - name: Debug Secrets
-        run: |
-          echo "Username: ${{ secrets.DOCKER_HUB_USERNAME }}"
-          echo "Token length: ${#DOCKER_HUB_ACCESS_TOKEN}"
-        env:
-          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
       # 4. 登录 Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -59,20 +51,26 @@ jobs:
       # 6. 构建并推送 risk-engine-job 镜像
       - name: Build and Push risk-engine-job
         uses: docker/build-push-action@v5
-        with: { context: risk-engine-job/, file: risk-engine-job/Dockerfile, platforms: linux/amd64, push: true, tags: "|
+        with:
+          context: risk-engine-job/
+          file: risk-engine-job/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
             ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:job-latest
-            ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:job-${{ github.sha }}", cache-from: type=gha, cache-to: "type=gha,mode=max" }
+            ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:job-${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      # 7. 构建并推送 risk-engine-rest 镜像
       - name: Build and Push risk-engine-rest
         uses: docker/build-push-action@v5
         with:
           context: risk-engine-rest/
           file: risk-engine-rest/Dockerfile
-          platforms: linux/amd64  # 可选：支持多平台，添加 linux/arm64 等
+          platforms: linux/amd64
           push: true
           tags: |
             ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:rest-latest
             ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:rest-${{ github.sha }}
-          cache-from: type=gha  # 使用 GitHub Actions 缓存
+          cache-from: type=gha
           cache-to: type=gha,mode=max
