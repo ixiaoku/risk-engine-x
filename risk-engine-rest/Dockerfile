@@ -6,6 +6,7 @@ COPY target/risk-engine-job.jar /app/service.jar
 
 RUN apt-get update && apt-get install -y curl netcat
 
+ENV SPRING_PROFILES_ACTIVE=pro
 ENV MYSQL_HOST=mysql-8.0
 ENV REDIS_HOST=redis-6.0
 ENV ROCKETMQ_NAMESRV_ADDR=rocketmq-namesrv:9876
