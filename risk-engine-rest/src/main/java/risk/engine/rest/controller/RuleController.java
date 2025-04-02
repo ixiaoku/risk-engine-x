@@ -2,9 +2,9 @@ package risk.engine.rest.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import risk.engine.common.function.ValidatorUtils;
 import risk.engine.dto.param.RuleParam;
 import risk.engine.dto.result.ResponseResult;
-import risk.engine.service.service.IDictionaryService;
 import risk.engine.service.service.IRuleService;
 
 import javax.annotation.Resource;
@@ -22,12 +22,12 @@ public class RuleController {
     @Resource
     private IRuleService ruleService;
 
-    @Resource
-    private IDictionaryService dictionaryService;
-
     @PostMapping("/insert")
-    public ResponseResult insert(@RequestBody RuleParam ruleParam) {
+    public ResponseResult insert(@RequestBody RuleParam ruleParam) throws Exception {
         log.info("Inserting rule: {}", ruleParam);
+        ValidatorUtils.EmptyThrowException().validateException(ruleParam.getIncidentCode());
+        ValidatorUtils.EmptyThrowException().validateException(ruleParam.getRuleCode());
+        ValidatorUtils.EmptyThrowException().validateException(ruleParam.getRuleName());
         return ResponseResult.success(ruleService.insert(ruleParam));
     }
 
