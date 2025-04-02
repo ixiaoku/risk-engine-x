@@ -4,5 +4,22 @@ spring:
   profiles:
     active: dev
 
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: risk.engine.db.entity
+
 server:
   port: 8889
+
+telegram:
+  bot:
+    token: 7617341376:AAHZ5Gw7X6fAF4myY7JuAXrT-vLJ3S7Pt_Y
+    username: xxbit_bot
+  channel:
+    username: BWEnews
+  group:
+    chat:
+      id: -1002512873791
+  target:
+    bot:
+      username: btcismoonflyqaq

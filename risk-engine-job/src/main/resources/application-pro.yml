@@ -21,10 +21,6 @@ elasticsearch:
   username: elastic
   password: ELASTIC_dcr_0315
 
-mybatis:
-  mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: risk.engine.db.entity
-
 xxl:
   job:
     admin:
@@ -37,16 +33,3 @@ xxl:
       #port: 9999  # 执行器端口，需与 Docker 配置一致
       logpath: /Users/dongchunrong/Documents/project/data/logs/risk-engine-job  # 日志存储路径
       logretentiondays: 7  # 日志保留天数
-
-telegram:
-  bot:
-    token: 7617341376:AAHZ5Gw7X6fAF4myY7JuAXrT-vLJ3S7Pt_Y
-    username: xxbit_bot
-  channel:
-    username: BWEnews
-  group:
-    chat:
-      id: -1002512873791
-  target:
-    bot:
-      username: btcismoonflyqaq

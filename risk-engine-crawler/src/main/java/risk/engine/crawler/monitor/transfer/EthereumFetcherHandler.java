@@ -6,7 +6,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.EthBlock;
-import org.web3j.protocol.core.methods.response.EthBlock.TransactionResult;
 import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
 import org.web3j.protocol.core.methods.response.Transaction;
 import org.web3j.protocol.http.HttpService;
@@ -42,27 +41,36 @@ public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
 
     @Override
     public void start() throws IOException {
-
         String secretKey = CryptoUtils.getDesSecretKey();
         String key = CryptoUtils.desDecrypt(BlockChainConstant.ETH_DATA_KEY, secretKey);
         web3j = Web3j.build(new HttpService(BlockChainConstant.INFURA_URL + key));
         // 1. 获取最新区块高度
         BigInteger latestBlockNumber = web3j.ethBlockNumber().send().getBlockNumber();
         log.info("Ethereum链 最新区块高度: {}", latestBlockNumber);
-
         // 2. 通过区块高度获取区块信息
         EthBlock ethBlock = web3j
                 .ethGetBlockByNumber(org.web3j.protocol.core.DefaultBlockParameter.valueOf(latestBlockNumber), true)
                 .send();
-
         EthBlock.Block block = ethBlock.getBlock();
-
         // 3. 遍历区块中的交易信息
+        List<CrawlerTask> crawlerTasks = getCrawlerTaskList(block, latestBlockNumber);
+        log.info("交易信息笔数：{}", crawlerTasks.size());
+        crawlerTaskService.batchInsert(crawlerTasks);
+    }
+
+    /**
+     * 获取交易信息
+     * @param block 区块
+     * @param latestBlockNumber 区块高度
+     * @return 结果
+     * @throws IOException 异常
+     */
+    private List<CrawlerTask> getCrawlerTaskList (EthBlock.Block block, BigInteger latestBlockNumber) throws IOException {
         List<CrawlerTask> crawlerTasks = new ArrayList<>();
         if (CollectionUtils.isEmpty(block.getTransactions())) {
-            return;
+            return List.of();
         }
-        for (TransactionResult<?> txResult : block.getTransactions()) {
+        for (EthBlock.TransactionResult<?> txResult : block.getTransactions()) {
             Transaction transaction = (Transaction) txResult.get();
             // 4. 解析交易详情
             String from = transaction.getFrom();
@@ -88,8 +96,9 @@ public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
             CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(transaction.getHash(), CrawlerConstant.TRANSFER_CHAIN, JSON.toJSONString(chainTransferDTO));
             crawlerTasks.add(crawlerTask);
         }
-        crawlerTaskService.batchInsert(crawlerTasks);
+        return crawlerTasks;
     }
+
     /**
      * 获取交易的 Gas 消耗量
      */
