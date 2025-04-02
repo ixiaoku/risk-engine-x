@@ -2,7 +2,9 @@ FROM openjdk:11-jdk-slim
 
 WORKDIR /app
 
-COPY target/risk-engine-job.jar /app/service.jar
+COPY target/*.jar /app/
+
+RUN mv /app/*.jar /app/service.jar
 
 RUN apt-get update && apt-get install -y curl netcat
 
