@@ -29,6 +29,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # 调试步骤：检查 Secrets 是否正确加载
+      - name: Debug Secrets
+        run: |
+          echo "Username: ${{ secrets.DOCKER_HUB_USERNAME }}"
+          echo "Token length: ${#DOCKER_HUB_ACCESS_TOKEN}"
+        env:
+          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
       # 4. 登录 Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
