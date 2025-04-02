@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: jdbc:mysql://mysql-8.0:3306/risk?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false
+    username: root
+    password:
+  redis:
+    host: redis-6.0
+    password: dcr
+    timeout: 2000ms
+    database: 1  #默认有16个db(集群模式用hash槽代替)，这里配置具体使用的db，默认是0
+rocketmq:
+  name-server: rocketmq-namesrv
+  consumer:
+    group: consumer-group-test1
+  producer:
+    group: producer-test-group1
+    send-message-timeout: 3000
+
+elasticsearch:
+  url: http://elasticsearch-7.17.4:9200
+  username: elastic
+  password: ELASTIC_dcr_0315
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: risk.engine.db.entity
+
+logging:
+  file:
+    path: /opt/risk-engine-x/logs
