@@ -102,7 +102,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             //异步保存数据和发送mq消息 规则熔断
             CompletableFuture.runAsync(() -> {
                 // 异步发消息 分消费者组监听 1mysql保存引擎执行结果并且同步es 2执行处罚 加名单以及调三方接口
-                producer.sendMessage("test_topic1", JSON.toJSONString(executeEngineDTO));
+                producer.sendMessage("engine_result_topic", JSON.toJSONString(executeEngineDTO));
             }).exceptionally(ex -> {
                 log.error("引擎执行 异步任务失败: {}, 异常: {}", riskEngineParam.getIncidentCode(), ex.getMessage(), ex);
                 //处理失败逻辑 发送告警消息 本来是打算目前mq发送失败 然后写消息表再重试 有时间再加吧
