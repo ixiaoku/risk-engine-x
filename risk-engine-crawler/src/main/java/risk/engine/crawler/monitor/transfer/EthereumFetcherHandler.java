@@ -14,8 +14,8 @@ import risk.engine.common.util.CryptoUtils;
 import risk.engine.crawler.monitor.ICrawlerBlockChainHandler;
 import risk.engine.db.entity.CrawlerTask;
 import risk.engine.dto.constant.BlockChainConstant;
-import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.block.ChainTransferDTO;
+import risk.engine.dto.enums.IncidentCodeEnum;
 import risk.engine.service.service.ICrawlerTaskService;
 
 import javax.annotation.Resource;
@@ -93,7 +93,7 @@ public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
             chainTransferDTO.setToken("ETH");
             chainTransferDTO.setFee(gasFee);
             chainTransferDTO.setTransferTime(block.getTimestamp().longValue());
-            CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(transaction.getHash(), CrawlerConstant.TRANSFER_CHAIN, JSON.toJSONString(chainTransferDTO));
+            CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(transaction.getHash(), IncidentCodeEnum.TRANSFER_CHAIN.getCode(), JSON.toJSONString(chainTransferDTO));
             crawlerTasks.add(crawlerTask);
         }
         return crawlerTasks;

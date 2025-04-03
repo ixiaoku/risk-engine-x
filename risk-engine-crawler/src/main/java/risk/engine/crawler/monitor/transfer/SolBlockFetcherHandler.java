@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 import risk.engine.common.util.OkHttpUtil;
 import risk.engine.crawler.monitor.ICrawlerBlockChainHandler;
 import risk.engine.db.entity.CrawlerTask;
-import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.block.ChainTransferDTO;
 import risk.engine.dto.dto.block.SolanaBlockDTO;
+import risk.engine.dto.enums.IncidentCodeEnum;
 import risk.engine.service.service.ICrawlerTaskService;
 
 import javax.annotation.Resource;
@@ -162,7 +162,7 @@ public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
             chainTransferDTO.setCreatedTime(LocalDateTime.now());
             chainTransferDTO.setStatus(0);
             //请求数据
-            CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(chainTransferDTO.getHash(), CrawlerConstant.TRANSFER_CHAIN, JSON.toJSONString(chainTransferDTO));
+            CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(chainTransferDTO.getHash(), IncidentCodeEnum.TRANSFER_CHAIN.getCode(), JSON.toJSONString(chainTransferDTO));
             crawlerTasks.add(crawlerTask);
         });
         return crawlerTasks;

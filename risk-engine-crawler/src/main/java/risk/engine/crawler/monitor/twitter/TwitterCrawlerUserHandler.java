@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 import risk.engine.common.util.CryptoUtils;
 import risk.engine.db.entity.CrawlerTask;
 import risk.engine.dto.constant.BlockChainConstant;
-import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.crawler.CrawlerNoticeDTO;
+import risk.engine.dto.enums.IncidentCodeEnum;
 import risk.engine.dto.enums.TwitterUserEnum;
 import risk.engine.service.service.ICrawlerTaskService;
 
@@ -65,7 +65,7 @@ public class TwitterCrawlerUserHandler {
                 noticeDTO.setFlowNo(flowNo);
                 noticeDTO.setTitle(title);
                 noticeDTO.setCreatedAt(createdAt);
-                CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(flowNo, CrawlerConstant.TWITTER_USER_RELEASE_LIST, JSON.toJSONString(noticeDTO));
+                CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(flowNo, IncidentCodeEnum.TWITTER_USER_RELEASE_LIST.getCode(), JSON.toJSONString(noticeDTO));
                 if (Objects.isNull(crawlerTask)) {
                     continue;
                 }

@@ -14,6 +14,7 @@ import risk.engine.common.util.OkHttpUtil;
 import risk.engine.db.entity.CrawlerTask;
 import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.crawler.CrawlerNoticeDTO;
+import risk.engine.dto.enums.IncidentCodeEnum;
 import risk.engine.service.service.ICrawlerTaskService;
 
 import javax.annotation.Resource;
@@ -81,7 +82,7 @@ public class MarketNoticeMonitorHandler {
                 noticeDTO.setFlowNo(flowNo);
                 noticeDTO.setTitle(title);
                 noticeDTO.setCreatedAt(createdAt);
-                CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(flowNo, CrawlerConstant.BINANCE_NOTICE_LIST, JSON.toJSONString(noticeDTO));
+                CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(flowNo, IncidentCodeEnum.BINANCE_NOTICE_LIST.getCode(), JSON.toJSONString(noticeDTO));
                 if (Objects.isNull(crawlerTask)) {
                     continue;
                 }
