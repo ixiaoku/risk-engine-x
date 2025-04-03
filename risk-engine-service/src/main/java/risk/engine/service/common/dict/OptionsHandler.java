@@ -74,6 +74,21 @@ public class OptionsHandler {
     }
 
     /**
+     * 决策结果
+     * @return 结果
+     */
+    @Bean("ruleLabel")
+    public OptionsEnumFunction ruleLabel() {
+        return () -> Arrays.stream(RuleLabelEnum.values())
+                .map(e -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("code", e.getCode());
+                    options.put("msg", e.getDesc());
+                    return options;
+                }).collect(Collectors.toList());
+    }
+
+    /**
      * 指标类型字典
      * @return 结果
      */
@@ -103,7 +118,7 @@ public class OptionsHandler {
                 .map(e -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("code", e.getIndicatorCode());
-                    options.put("msg", e.getIndicatorName());
+                    options.put("msg", e.getIndicatorName() + "(" + e.getIndicatorType() + ")");
                     return options;
                 }).collect(Collectors.toList());
     }

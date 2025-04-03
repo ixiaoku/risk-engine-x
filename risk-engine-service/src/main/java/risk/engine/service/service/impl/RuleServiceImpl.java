@@ -1,26 +1,33 @@
 package risk.engine.service.service.impl;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.db.dao.RuleMapper;
+import risk.engine.db.entity.Indicator;
 import risk.engine.db.entity.Rule;
 import risk.engine.db.entity.RuleVersion;
 import risk.engine.db.entity.example.RuleExample;
 import risk.engine.dto.dto.IncidentDTO;
+import risk.engine.dto.dto.rule.RuleIndicatorDTO;
 import risk.engine.dto.param.RuleParam;
 import risk.engine.dto.result.RuleResult;
 import risk.engine.service.common.cache.GuavaStartupCache;
 import risk.engine.service.handler.GroovyExpressionParser;
+import risk.engine.service.service.IIndicatorService;
 import risk.engine.service.service.IRuleService;
 import risk.engine.service.service.IRuleVersionService;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +47,9 @@ public class RuleServiceImpl implements IRuleService {
     @Resource
     private IRuleVersionService ruleVersionService;
 
+    @Resource
+    private IIndicatorService indicatorService;
+
     @Override
     public List<Rule> selectByIncidentCode(String incidentCode) {
         return ruleMapper.selectByIncidentCode(incidentCode);
@@ -54,9 +64,10 @@ public class RuleServiceImpl implements IRuleService {
         rule.setRuleName(ruleParam.getRuleName());
         rule.setStatus(ruleParam.getStatus());
         rule.setScore(ruleParam.getScore());
-        rule.setJsonScript(ruleParam.getJsonScript());
+        List<RuleIndicatorDTO> indicatorDTOList = getRuleIndicatorDTOList(ruleParam.getIncidentCode(), ruleParam.getJsonScript());
+        rule.setJsonScript(new Gson().toJson(indicatorDTOList));
         rule.setLogicScript(ruleParam.getLogicScript());
-        String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), rule.getJsonScript());
+        String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), indicatorDTOList);
         rule.setGroovyScript(groovyScript);
         rule.setDecisionResult(ruleParam.getDecisionResult());
         rule.setExpiryTime(ruleParam.getExpiryTime());
@@ -70,6 +81,31 @@ public class RuleServiceImpl implements IRuleService {
         //规则版本
         RuleVersion ruleVersion = getRuleVersion(rule);
         return ruleMapper.insert(rule) > 0 && ruleVersionService.insert(ruleVersion);
+    }
+
+    private List<RuleIndicatorDTO> getRuleIndicatorDTOList(String incidentCode, String jsonScript) {
+        //获取完整的特征类型和名称
+        Indicator indicatorQuery = new Indicator();
+        indicatorQuery.setIncidentCode(incidentCode);
+        List<Indicator> indicatorList = indicatorService.selectByExample(indicatorQuery);
+        if (CollectionUtils.isEmpty(indicatorList)) {
+            throw new RuntimeException();
+        }
+        Map<String, Indicator> resultMap = indicatorList.stream().collect(Collectors.toMap(Indicator::getIndicatorCode, Function.identity()));
+        List<RuleIndicatorDTO> conditions = new Gson().fromJson(jsonScript, new TypeToken<List<RuleIndicatorDTO>>(){}.getType());
+        return conditions.stream()
+                .filter(i -> Objects.nonNull(resultMap.get(i.getIndicatorCode())))
+                .map(indicatorDTO -> {
+                    RuleIndicatorDTO ruleIndicatorDTO = new RuleIndicatorDTO();
+                    ruleIndicatorDTO.setIndicatorCode(indicatorDTO.getIndicatorCode());
+                    ruleIndicatorDTO.setIndicatorValue(indicatorDTO.getIndicatorValue());
+                    ruleIndicatorDTO.setOperationSymbol(indicatorDTO.getOperationSymbol());
+                    ruleIndicatorDTO.setSerialNumber(indicatorDTO.getSerialNumber());
+                    Indicator indicator = resultMap.get(indicatorDTO.getIndicatorCode());
+                    ruleIndicatorDTO.setIndicatorType(indicator.getIndicatorType());
+                    ruleIndicatorDTO.setIndicatorName(indicator.getIndicatorName());
+                    return ruleIndicatorDTO;
+                }).collect(Collectors.toList());
     }
 
     @Override
@@ -115,9 +151,10 @@ public class RuleServiceImpl implements IRuleService {
         rule.setRuleName(ruleParam.getRuleName());
         rule.setStatus(ruleParam.getStatus());
         rule.setScore(ruleParam.getScore());
-        rule.setJsonScript(ruleParam.getJsonScript());
+        List<RuleIndicatorDTO> indicatorDTOList = getRuleIndicatorDTOList(ruleParam.getIncidentCode(), ruleParam.getJsonScript());
+        rule.setJsonScript(new Gson().toJson(indicatorDTOList));
         rule.setLogicScript(ruleParam.getLogicScript());
-        String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), rule.getJsonScript());
+        String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), indicatorDTOList);
         rule.setGroovyScript(groovyScript);
         rule.setDecisionResult(ruleParam.getDecisionResult());
         rule.setExpiryTime(ruleParam.getExpiryTime());

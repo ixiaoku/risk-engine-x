@@ -2,6 +2,7 @@ package risk.engine.service.handler;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -75,7 +76,8 @@ public class RiskEngineHandler {
         List<PenaltyRecord> recordList = new ArrayList<>();
         executeEngineDTO
                 .getHitOnlineRules()
-                .stream().filter(e -> StringUtils.isNoneBlank(e.getPenaltyAction()))
+                .stream()
+                .filter(hit -> StringUtils.isNotBlank(hit.getPenaltyAction()))
                 .forEach(hitOnlineRule -> {
                     String penaltyJson = hitOnlineRule.getPenaltyAction();
                     List<RulePenaltyListDTO> penaltyListDTOList = JSON.parseArray(penaltyJson, RulePenaltyListDTO.class);
@@ -106,8 +108,15 @@ public class RiskEngineHandler {
                     }).collect(Collectors.toList());
                     recordList.addAll(penaltyRecordList);
                 });
-        //保存处罚记录
-        penaltyRecordService.batchInsert(recordList);
+        if (CollectionUtils.isEmpty(recordList)) {
+            return;
+        }
+        //进行分组处理
+        List<List<PenaltyRecord>> list = Lists.partition(recordList, 200);
+        list.forEach(penaltyRecords -> {
+            //保存处罚记录
+            penaltyRecordService.batchInsert(penaltyRecords);
+        });
         log.info("PenaltyRecord 保存成功");
     }
 
