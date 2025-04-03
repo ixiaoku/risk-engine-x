@@ -6,6 +6,8 @@ spring:
 
 server:
   port: 8088
+  servlet:
+    context-path: /api
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
