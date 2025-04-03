@@ -25,4 +25,4 @@ elasticsearch:
 
 logging:
   file:
-    path: /opt/risk-engine-x/logs
+    path: /app/logs

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="true">
     <!-- 读取 Spring Boot 的日志基础目录 -->
-    <springProperty name="LOG_PATH" source="logging.file.path" defaultValue="/tmp/logs"/>
+    <springProperty name="LOG_PATH" source="logging.file.path" defaultValue="/app/logs"/>
     <!-- 服务名 -->
     <springProperty name="APP_NAME" source="spring.application.name" defaultValue="risk-engine-rest"/>
 
