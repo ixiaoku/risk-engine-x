@@ -1,7 +1,7 @@
-package risk.engine.dto.result;
+package risk.engine.dto.vo;
 
 import lombok.Data;
-import risk.engine.dto.dto.rule.IndicatorDTO;
+import risk.engine.dto.dto.rule.MetricDTO;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @Version: 1.0
  */
 @Data
-public class IncidentResult {
+public class IncidentVO {
 
     private Long id;
 
@@ -55,7 +55,7 @@ public class IncidentResult {
     /**
      * 事件接入配置的字段 和关联requestPayload
      */
-    private List<IndicatorDTO> indicators;
+    private List<MetricDTO> indicators;
 
     /**
      * 创建时间

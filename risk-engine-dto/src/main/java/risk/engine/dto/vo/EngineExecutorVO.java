@@ -1,4 +1,4 @@
-package risk.engine.dto.result;
+package risk.engine.dto.vo;
 
 import lombok.Data;
 import risk.engine.dto.dto.rule.HitRuleDTO;
@@ -12,7 +12,7 @@ import java.util.Map;
  * @Version: 1.0
  */
 @Data
-public class EngineExecutorResult {
+public class EngineExecutorVO {
 
     /**
      * 业务方唯一id

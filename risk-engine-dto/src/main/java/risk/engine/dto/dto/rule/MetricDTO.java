@@ -1,7 +1,7 @@
 package risk.engine.dto.dto.rule;
 
 import lombok.Data;
-import risk.engine.dto.enums.IndicatorTypeEnum;
+import risk.engine.dto.enums.MetricTypeEnum;
 
 /**
  * @Author: X
@@ -9,32 +9,32 @@ import risk.engine.dto.enums.IndicatorTypeEnum;
  * @Version: 1.0
  */
 @Data
-public class IndicatorDTO {
+public class MetricDTO {
 
     /**
      * 指标code
      */
-    private String indicatorCode;
+    private String metricCode;
 
     /**
      * 指标名称
      */
-    private String indicatorName;
+    private String metricName;
 
     /**
      * 指标数据类型
-     * @see IndicatorTypeEnum
+     * @see MetricTypeEnum
      */
-    private Integer indicatorType;
+    private Integer metricType;
 
     /**
      * 指标描述
      */
-    private String indicatorDesc;
+    private String metricDesc;
 
     /**
      * 指标示例值
      */
-    private String indicatorValue;
+    private String metricValue;
 
 }

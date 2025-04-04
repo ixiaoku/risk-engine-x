@@ -10,7 +10,7 @@ import risk.engine.db.dao.EngineResultMapper;
 import risk.engine.db.entity.EngineResult;
 import risk.engine.dto.constant.BusinessConstant;
 import risk.engine.dto.param.EngineExecutorParam;
-import risk.engine.dto.result.EngineExecutorResult;
+import risk.engine.dto.vo.EngineExecutorVO;
 import risk.engine.service.service.IEngineResultService;
 
 import javax.annotation.Resource;
@@ -53,14 +53,14 @@ public class EngineResultServiceImpl implements IEngineResultService {
     }
 
     @Override
-    public List<EngineExecutorResult> list(EngineExecutorParam executorParam) {
+    public List<EngineExecutorVO> list(EngineExecutorParam executorParam) {
         BoolQueryBuilder boolQuery = EngineExecutorBoolQuery.getBoolQuery(executorParam);
         SearchHit[] searchHits = elasticsearchClientApi.queryRestHighLevelClient(BusinessConstant.ENGINE_INDEX, boolQuery);
         if (searchHits == null || searchHits.length == 0) {
             return List.of();
         }
         return Arrays.stream(searchHits)
-                .map(searchHit -> JSON.parseObject(searchHit.getSourceAsString(), EngineExecutorResult.class))
+                .map(searchHit -> JSON.parseObject(searchHit.getSourceAsString(), EngineExecutorVO.class))
                 .collect(Collectors.toList());
 
     }

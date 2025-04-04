@@ -1,8 +1,8 @@
 package risk.engine.service.handler;
 
 import risk.engine.common.grovvy.ExpressionParser;
-import risk.engine.dto.dto.rule.RuleIndicatorDTO;
-import risk.engine.dto.enums.IndicatorTypeEnum;
+import risk.engine.dto.dto.rule.RuleMetricDTO;
+import risk.engine.dto.enums.MetricTypeEnum;
 import risk.engine.dto.enums.OperationSymbolEnum;
 
 import java.util.HashMap;
@@ -23,10 +23,10 @@ public class GroovyExpressionParser {
      * @param indicatorDTOList json指标结构
      * @return 返回groovy可执行表达式 amount > 5
      */
-    public static String parseToGroovyExpression(String logicString, List<RuleIndicatorDTO> indicatorDTOList) {
+    public static String parseToGroovyExpression(String logicString, List<RuleMetricDTO> indicatorDTOList) {
         // 构建条件映射
         Map<Integer, String> conditionMap = new HashMap<>();
-        for (RuleIndicatorDTO condition : indicatorDTOList) {
+        for (RuleMetricDTO condition : indicatorDTOList) {
             String expr = buildConditionExpression(condition);
             conditionMap.put(condition.getSerialNumber(), expr);
         }
@@ -40,13 +40,13 @@ public class GroovyExpressionParser {
      * @param expressionDTO 指标
      * @return 返回指标表达式
      */
-    private static String buildConditionExpression(RuleIndicatorDTO expressionDTO) {
+    private static String buildConditionExpression(RuleMetricDTO expressionDTO) {
         String attributeCode = expressionDTO.getIndicatorCode();
         String attributeValue = expressionDTO.getIndicatorValue();
         //操作逻辑符号
         String operator = OperationSymbolEnum.getOperationSymbolEnumByCode(expressionDTO.getOperationSymbol()).getName();
         //指标类型
-        boolean isString = Objects.equals(expressionDTO.getIndicatorType(), IndicatorTypeEnum.STRING.getCode());
+        boolean isString = Objects.equals(expressionDTO.getIndicatorType(), MetricTypeEnum.STRING.getCode());
         String value = isString ? "'" + attributeValue + "'" : attributeValue;
         return attributeCode + " " + operator + " " + value;
     }

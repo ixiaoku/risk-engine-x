@@ -12,9 +12,9 @@ import risk.engine.db.entity.Rule;
 import risk.engine.db.entity.RuleVersion;
 import risk.engine.db.entity.example.RuleExample;
 import risk.engine.dto.dto.IncidentDTO;
-import risk.engine.dto.dto.rule.RuleIndicatorDTO;
+import risk.engine.dto.dto.rule.RuleMetricDTO;
 import risk.engine.dto.param.RuleParam;
-import risk.engine.dto.result.RuleResult;
+import risk.engine.dto.vo.RuleVO;
 import risk.engine.service.common.cache.GuavaStartupCache;
 import risk.engine.service.handler.GroovyExpressionParser;
 import risk.engine.service.service.IMetricService;
@@ -64,7 +64,7 @@ public class RuleServiceImpl implements IRuleService {
         rule.setRuleName(ruleParam.getRuleName());
         rule.setStatus(ruleParam.getStatus());
         rule.setScore(ruleParam.getScore());
-        List<RuleIndicatorDTO> indicatorDTOList = getRuleIndicatorDTOList(ruleParam.getIncidentCode(), ruleParam.getJsonScript());
+        List<RuleMetricDTO> indicatorDTOList = getRuleIndicatorDTOList(ruleParam.getIncidentCode(), ruleParam.getJsonScript());
         rule.setJsonScript(new Gson().toJson(indicatorDTOList));
         rule.setLogicScript(ruleParam.getLogicScript());
         String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), indicatorDTOList);
@@ -83,7 +83,7 @@ public class RuleServiceImpl implements IRuleService {
         return ruleMapper.insert(rule) > 0 && ruleVersionService.insert(ruleVersion);
     }
 
-    private List<RuleIndicatorDTO> getRuleIndicatorDTOList(String incidentCode, String jsonScript) {
+    private List<RuleMetricDTO> getRuleIndicatorDTOList(String incidentCode, String jsonScript) {
         //获取完整的特征类型和名称
         Metric metricQuery = new Metric();
         metricQuery.setIncidentCode(incidentCode);
@@ -92,24 +92,24 @@ public class RuleServiceImpl implements IRuleService {
             throw new RuntimeException();
         }
         Map<String, Metric> resultMap = metricList.stream().collect(Collectors.toMap(Metric::getMetricCode, Function.identity()));
-        List<RuleIndicatorDTO> conditions = new Gson().fromJson(jsonScript, new TypeToken<List<RuleIndicatorDTO>>(){}.getType());
+        List<RuleMetricDTO> conditions = new Gson().fromJson(jsonScript, new TypeToken<List<RuleMetricDTO>>(){}.getType());
         return conditions.stream()
                 .filter(i -> Objects.nonNull(resultMap.get(i.getIndicatorCode())))
                 .map(indicatorDTO -> {
-                    RuleIndicatorDTO ruleIndicatorDTO = new RuleIndicatorDTO();
-                    ruleIndicatorDTO.setIndicatorCode(indicatorDTO.getIndicatorCode());
-                    ruleIndicatorDTO.setIndicatorValue(indicatorDTO.getIndicatorValue());
-                    ruleIndicatorDTO.setOperationSymbol(indicatorDTO.getOperationSymbol());
-                    ruleIndicatorDTO.setSerialNumber(indicatorDTO.getSerialNumber());
+                    RuleMetricDTO ruleMetricDTO = new RuleMetricDTO();
+                    ruleMetricDTO.setIndicatorCode(indicatorDTO.getIndicatorCode());
+                    ruleMetricDTO.setIndicatorValue(indicatorDTO.getIndicatorValue());
+                    ruleMetricDTO.setOperationSymbol(indicatorDTO.getOperationSymbol());
+                    ruleMetricDTO.setSerialNumber(indicatorDTO.getSerialNumber());
                     Metric metric = resultMap.get(indicatorDTO.getIndicatorCode());
-                    ruleIndicatorDTO.setIndicatorType(metric.getMetricType());
-                    ruleIndicatorDTO.setIndicatorName(metric.getMetricName());
-                    return ruleIndicatorDTO;
+                    ruleMetricDTO.setIndicatorType(metric.getMetricType());
+                    ruleMetricDTO.setIndicatorName(metric.getMetricName());
+                    return ruleMetricDTO;
                 }).collect(Collectors.toList());
     }
 
     @Override
-    public List<RuleResult> list(RuleParam ruleParam) {
+    public List<RuleVO> list(RuleParam ruleParam) {
         RuleExample example = new RuleExample();
         example.setPageSize(ruleParam.getPageSize());
         example.setPageNum(ruleParam.getPageNum());
@@ -122,18 +122,18 @@ public class RuleServiceImpl implements IRuleService {
             return List.of();
         }
         return ruleList.stream().map(rule -> {
-            RuleResult ruleResult = new RuleResult();
+            RuleVO ruleVO = new RuleVO();
             IncidentDTO incidentDTO = guavaStartupCache.getIncident(rule.getIncidentCode());
-            ruleResult.setId(rule.getId());
-            ruleResult.setIncidentCode(rule.getIncidentCode());
-            ruleResult.setIncidentName(incidentDTO.getIncidentName());
-            ruleResult.setRuleCode(rule.getRuleCode());
-            ruleResult.setRuleName(rule.getRuleName());
-            ruleResult.setStatus(rule.getStatus());
-            ruleResult.setOperator(rule.getOperator());
-            ruleResult.setCreateTime(DateTimeUtil.getTimeByLocalDateTime(rule.getCreateTime()));
-            ruleResult.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(rule.getUpdateTime()));
-            return ruleResult;
+            ruleVO.setId(rule.getId());
+            ruleVO.setIncidentCode(rule.getIncidentCode());
+            ruleVO.setIncidentName(incidentDTO.getIncidentName());
+            ruleVO.setRuleCode(rule.getRuleCode());
+            ruleVO.setRuleName(rule.getRuleName());
+            ruleVO.setStatus(rule.getStatus());
+            ruleVO.setOperator(rule.getOperator());
+            ruleVO.setCreateTime(DateTimeUtil.getTimeByLocalDateTime(rule.getCreateTime()));
+            ruleVO.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(rule.getUpdateTime()));
+            return ruleVO;
         }).collect(Collectors.toList());
     }
 
@@ -151,7 +151,7 @@ public class RuleServiceImpl implements IRuleService {
         rule.setRuleName(ruleParam.getRuleName());
         rule.setStatus(ruleParam.getStatus());
         rule.setScore(ruleParam.getScore());
-        List<RuleIndicatorDTO> indicatorDTOList = getRuleIndicatorDTOList(ruleParam.getIncidentCode(), ruleParam.getJsonScript());
+        List<RuleMetricDTO> indicatorDTOList = getRuleIndicatorDTOList(ruleParam.getIncidentCode(), ruleParam.getJsonScript());
         rule.setJsonScript(new Gson().toJson(indicatorDTOList));
         rule.setLogicScript(ruleParam.getLogicScript());
         String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), indicatorDTOList);
@@ -169,7 +169,7 @@ public class RuleServiceImpl implements IRuleService {
     }
 
     @Override
-    public RuleResult detail(Long id) {
+    public RuleVO detail(Long id) {
         Rule rule = ruleMapper.selectByPrimaryKey(id);
         if (Objects.isNull(rule)) {
             return null;
@@ -177,26 +177,26 @@ public class RuleServiceImpl implements IRuleService {
         return getRuleResult(rule);
     }
 
-    private RuleResult getRuleResult(Rule rule) {
-        RuleResult ruleResult = new RuleResult();
-        ruleResult.setId(rule.getId());
-        ruleResult.setIncidentCode(rule.getIncidentCode());
-        ruleResult.setRuleCode(rule.getRuleCode());
-        ruleResult.setRuleName(rule.getRuleName());
-        ruleResult.setStatus(rule.getStatus());
-        ruleResult.setScore(rule.getScore());
-        ruleResult.setGroovyScript(rule.getGroovyScript());
-        ruleResult.setJsonScript(rule.getJsonScript());
-        ruleResult.setLogicScript(rule.getLogicScript());
-        ruleResult.setDecisionResult(rule.getDecisionResult());
-        ruleResult.setExpiryTime(rule.getExpiryTime());
-        ruleResult.setLabel(rule.getLabel());
-        ruleResult.setPenaltyAction(rule.getPenaltyAction());
-        ruleResult.setResponsiblePerson(rule.getResponsiblePerson());
-        ruleResult.setOperator(rule.getOperator());
-        ruleResult.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(rule.getUpdateTime()));
-        ruleResult.setCreateTime(DateTimeUtil.getTimeByLocalDateTime(rule.getCreateTime()));
-        return ruleResult;
+    private RuleVO getRuleResult(Rule rule) {
+        RuleVO ruleVO = new RuleVO();
+        ruleVO.setId(rule.getId());
+        ruleVO.setIncidentCode(rule.getIncidentCode());
+        ruleVO.setRuleCode(rule.getRuleCode());
+        ruleVO.setRuleName(rule.getRuleName());
+        ruleVO.setStatus(rule.getStatus());
+        ruleVO.setScore(rule.getScore());
+        ruleVO.setGroovyScript(rule.getGroovyScript());
+        ruleVO.setJsonScript(rule.getJsonScript());
+        ruleVO.setLogicScript(rule.getLogicScript());
+        ruleVO.setDecisionResult(rule.getDecisionResult());
+        ruleVO.setExpiryTime(rule.getExpiryTime());
+        ruleVO.setLabel(rule.getLabel());
+        ruleVO.setPenaltyAction(rule.getPenaltyAction());
+        ruleVO.setResponsiblePerson(rule.getResponsiblePerson());
+        ruleVO.setOperator(rule.getOperator());
+        ruleVO.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(rule.getUpdateTime()));
+        ruleVO.setCreateTime(DateTimeUtil.getTimeByLocalDateTime(rule.getCreateTime()));
+        return ruleVO;
     }
 
     private RuleVersion getRuleVersion(Rule rule) {

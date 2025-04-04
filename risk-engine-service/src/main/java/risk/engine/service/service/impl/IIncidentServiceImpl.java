@@ -11,11 +11,11 @@ import risk.engine.db.dao.IncidentMapper;
 import risk.engine.db.dao.MetricMapper;
 import risk.engine.db.entity.Incident;
 import risk.engine.db.entity.Metric;
-import risk.engine.dto.dto.rule.IndicatorDTO;
-import risk.engine.dto.enums.IndicatorTypeEnum;
-import risk.engine.dto.enums.IndictorSourceEnum;
+import risk.engine.dto.dto.rule.MetricDTO;
+import risk.engine.dto.enums.MetricTypeEnum;
+import risk.engine.dto.enums.MetricSourceEnum;
 import risk.engine.dto.param.IncidentParam;
-import risk.engine.dto.result.IncidentResult;
+import risk.engine.dto.vo.IncidentVO;
 import risk.engine.service.service.IIncidentService;
 
 import javax.annotation.Resource;
@@ -94,19 +94,19 @@ public class IIncidentServiceImpl implements IIncidentService {
     }
 
     @Override
-    public IncidentResult selectByPrimaryKey(Long id) {
+    public IncidentVO selectByPrimaryKey(Long id) {
         Incident incident = incidentMapper.selectByPrimaryKey(id);
         if (incident == null) {
             return null;
         }
-        IncidentResult incidentResult = getIncidentResult(incident);
-        List<IndicatorDTO> indicators = JSON.parseArray(incident.getRequestPayload(), IndicatorDTO.class);
-        incidentResult.setIndicators(indicators);
-        return incidentResult;
+        IncidentVO incidentVO = getIncidentResult(incident);
+        List<MetricDTO> indicators = JSON.parseArray(incident.getRequestPayload(), MetricDTO.class);
+        incidentVO.setIndicators(indicators);
+        return incidentVO;
     }
 
     @Override
-    public List<IndicatorDTO> parseIndicator(String incidentCode, String requestPayload) {
+    public List<MetricDTO> parseIndicator(String incidentCode, String requestPayload) {
         Metric metricQuery = new Metric();
         metricQuery.setIncidentCode(incidentCode);
         List<Metric> metricList = metricMapper.selectByExample(metricQuery);
@@ -115,41 +115,41 @@ public class IIncidentServiceImpl implements IIncidentService {
             JSONObject jsonObject = JSON.parseObject(requestPayload);
             return jsonObject.entrySet().stream()
                     .map(key -> {
-                        IndicatorDTO indicator = new IndicatorDTO();
-                        indicator.setIndicatorCode(key.getKey());
-                        indicator.setIndicatorName("指标名字");
-                        indicator.setIndicatorValue(key.getValue().toString());
-                        indicator.setIndicatorDesc("指标备注");
+                        MetricDTO indicator = new MetricDTO();
+                        indicator.setMetricCode(key.getKey());
+                        indicator.setMetricName("指标名字");
+                        indicator.setMetricValue(key.getValue().toString());
+                        indicator.setMetricDesc("备注");
                         if (key.getValue() instanceof Integer) {
-                            indicator.setIndicatorType(IndicatorTypeEnum.INTEGER.getCode());
+                            indicator.setMetricType(MetricTypeEnum.INTEGER.getCode());
                         }  else if (key.getValue() instanceof BigDecimal) {
-                            indicator.setIndicatorType(IndicatorTypeEnum.BIG_DECIMAL.getCode());
+                            indicator.setMetricType(MetricTypeEnum.BIG_DECIMAL.getCode());
                         } else if (key.getValue() instanceof Boolean) {
-                            indicator.setIndicatorType(IndicatorTypeEnum.BOOLEAN.getCode());
+                            indicator.setMetricType(MetricTypeEnum.BOOLEAN.getCode());
                         } else if (JSON.isValidArray(key.getValue().toString())) {
-                            indicator.setIndicatorType(IndicatorTypeEnum.JSON_ARRAY.getCode());
+                            indicator.setMetricType(MetricTypeEnum.JSON_ARRAY.getCode());
                         } else if (JSON.isValidObject(key.getValue().toString())) {
-                            indicator.setIndicatorType(IndicatorTypeEnum.JSON_OBJECT.getCode());
+                            indicator.setMetricType(MetricTypeEnum.JSON_OBJECT.getCode());
                         }else {
-                            indicator.setIndicatorType(IndicatorTypeEnum.STRING.getCode());
+                            indicator.setMetricType(MetricTypeEnum.STRING.getCode());
                         }
                         return indicator;
                     }).collect(Collectors.toList());
         }
         //编辑
         return metricList.stream().map(indicator -> {
-            IndicatorDTO indicatorDTO = new IndicatorDTO();
-            indicatorDTO.setIndicatorCode(indicator.getMetricCode());
-            indicatorDTO.setIndicatorName(indicator.getMetricName());
-            indicatorDTO.setIndicatorType(indicator.getMetricType());
-            indicatorDTO.setIndicatorDesc(indicator.getMetricDesc());
-            indicatorDTO.setIndicatorValue(indicator.getSampleValue());
-            return indicatorDTO;
+            MetricDTO metricDTO = new MetricDTO();
+            metricDTO.setMetricCode(indicator.getMetricCode());
+            metricDTO.setMetricName(indicator.getMetricName());
+            metricDTO.setMetricType(indicator.getMetricType());
+            metricDTO.setMetricDesc(indicator.getMetricDesc());
+            metricDTO.setMetricValue(indicator.getSampleValue());
+            return metricDTO;
         }).collect(Collectors.toList());
     }
 
     @Override
-    public List<IncidentResult> list(IncidentParam incidentParam) {
+    public List<IncidentVO> list(IncidentParam incidentParam) {
         Incident incidentQuery = new Incident();
         incidentQuery.setIncidentCode(incidentParam.getIncidentCode());
         incidentQuery.setIncidentName(incidentParam.getIncidentName());
@@ -166,19 +166,19 @@ public class IIncidentServiceImpl implements IIncidentService {
      * @param incident 实体类
      * @return 结果
      */
-    private IncidentResult getIncidentResult(Incident incident) {
-        IncidentResult incidentResult = new IncidentResult();
-        incidentResult.setId(incident.getId());
-        incidentResult.setIncidentCode(incident.getIncidentCode());
-        incidentResult.setIncidentName(incident.getIncidentName());
-        incidentResult.setRequestPayload(incident.getRequestPayload());
-        incidentResult.setStatus(incident.getStatus());
-        incidentResult.setDecisionResult(incident.getDecisionResult());
-        incidentResult.setResponsiblePerson(incident.getResponsiblePerson());
-        incidentResult.setOperator(incident.getOperator());
-        incidentResult.setCreateTime(DateTimeUtil.getTimeByLocalDateTime(incident.getCreateTime()));
-        incidentResult.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(incident.getUpdateTime()));
-        return incidentResult;
+    private IncidentVO getIncidentResult(Incident incident) {
+        IncidentVO incidentVO = new IncidentVO();
+        incidentVO.setId(incident.getId());
+        incidentVO.setIncidentCode(incident.getIncidentCode());
+        incidentVO.setIncidentName(incident.getIncidentName());
+        incidentVO.setRequestPayload(incident.getRequestPayload());
+        incidentVO.setStatus(incident.getStatus());
+        incidentVO.setDecisionResult(incident.getDecisionResult());
+        incidentVO.setResponsiblePerson(incident.getResponsiblePerson());
+        incidentVO.setOperator(incident.getOperator());
+        incidentVO.setCreateTime(DateTimeUtil.getTimeByLocalDateTime(incident.getCreateTime()));
+        incidentVO.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(incident.getUpdateTime()));
+        return incidentVO;
     }
 
     /**
@@ -188,15 +188,15 @@ public class IIncidentServiceImpl implements IIncidentService {
      */
     private List<Metric> getIndicatorList(IncidentParam incidentParam) {
         return incidentParam.getIndicators().stream()
-                .map(indicatorDTO -> {
+                .map(metricDTO -> {
                     Metric metric = new Metric();
                     metric.setIncidentCode(incidentParam.getIncidentCode());
-                    metric.setMetricCode(indicatorDTO.getIndicatorCode());
-                    metric.setMetricName(indicatorDTO.getIndicatorName());
-                    metric.setSampleValue(indicatorDTO.getIndicatorValue());
+                    metric.setMetricCode(metricDTO.getMetricCode());
+                    metric.setMetricName(metricDTO.getMetricName());
+                    metric.setSampleValue(metricDTO.getMetricValue());
                     metric.setMetricDesc("备注");
-                    metric.setMetricSource(IndictorSourceEnum.ATTRIBUTE.getCode());
-                    metric.setMetricType(indicatorDTO.getIndicatorType());
+                    metric.setMetricSource(MetricSourceEnum.ATTRIBUTE.getCode());
+                    metric.setMetricType(metricDTO.getMetricType());
                     metric.setOperator(incidentParam.getOperator());
                     metric.setCreateTime(LocalDateTime.now());
                     metric.setUpdateTime(LocalDateTime.now());

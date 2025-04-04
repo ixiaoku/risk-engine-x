@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import risk.engine.common.function.ValidatorUtils;
 import risk.engine.dto.param.RuleParam;
-import risk.engine.dto.result.ResponseResult;
+import risk.engine.dto.vo.ResponseVO;
 import risk.engine.service.service.IRuleService;
 
 import javax.annotation.Resource;
@@ -23,36 +23,36 @@ public class RuleController {
     private IRuleService ruleService;
 
     @PostMapping("/insert")
-    public ResponseResult insert(@RequestBody RuleParam ruleParam) throws Exception {
+    public ResponseVO insert(@RequestBody RuleParam ruleParam) throws Exception {
         log.info("Inserting rule: {}", ruleParam);
         ValidatorUtils.EmptyThrowException().validateException(ruleParam.getIncidentCode());
         ValidatorUtils.EmptyThrowException().validateException(ruleParam.getRuleCode());
         ValidatorUtils.EmptyThrowException().validateException(ruleParam.getRuleName());
-        return ResponseResult.success(ruleService.insert(ruleParam));
+        return ResponseVO.success(ruleService.insert(ruleParam));
     }
 
     @PostMapping("/list")
-    public ResponseResult list(@RequestBody RuleParam ruleParam) {
+    public ResponseVO list(@RequestBody RuleParam ruleParam) {
         log.info("list rules: {}", ruleParam);
-        return ResponseResult.success(ruleService.list(ruleParam));
+        return ResponseVO.success(ruleService.list(ruleParam));
     }
 
     @PostMapping("/delete")
-    public ResponseResult delete(@RequestBody RuleParam ruleParam) {
+    public ResponseVO delete(@RequestBody RuleParam ruleParam) {
         log.info("delete rules: {}", ruleParam);
-        return ResponseResult.success(ruleService.delete(ruleParam));
+        return ResponseVO.success(ruleService.delete(ruleParam));
     }
 
     @PostMapping("/update")
-    public ResponseResult update(@RequestBody RuleParam ruleParam) {
+    public ResponseVO update(@RequestBody RuleParam ruleParam) {
         log.info("update rules: {}", ruleParam);
-        return ResponseResult.success(ruleService.update(ruleParam));
+        return ResponseVO.success(ruleService.update(ruleParam));
     }
 
     @GetMapping("/detail")
-    public ResponseResult detail(@RequestParam("id") Long id) {
+    public ResponseVO detail(@RequestParam("id") Long id) {
         log.info("detail rules: {}", id);
-        return ResponseResult.success(ruleService.detail(id));
+        return ResponseVO.success(ruleService.detail(id));
     }
 
 }

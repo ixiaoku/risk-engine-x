@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import risk.engine.dto.PageResult;
 import risk.engine.dto.param.EngineExecutorParam;
-import risk.engine.dto.result.EngineExecutorResult;
-import risk.engine.dto.result.ResponseResult;
+import risk.engine.dto.vo.EngineExecutorVO;
+import risk.engine.dto.vo.ResponseVO;
 import risk.engine.service.service.IEngineResultService;
 
 import javax.annotation.Resource;
@@ -28,16 +28,16 @@ public class EngineResultController {
     private IEngineResultService engineResultService;
 
     @PostMapping("/result/list")
-    public ResponseResult list(@RequestBody EngineExecutorParam executorParam) {
-        PageResult<EngineExecutorResult> pageResult = new PageResult<>();
+    public ResponseVO list(@RequestBody EngineExecutorParam executorParam) {
+        PageResult<EngineExecutorVO> pageResult = new PageResult<>();
         pageResult.setList(engineResultService.list(executorParam));
         pageResult.setTotal(engineResultService.list(executorParam).size());
-        return ResponseResult.success(pageResult);
+        return ResponseVO.success(pageResult);
     }
 
     @PostMapping("/result/dashboard")
-    public ResponseResult dashboard(@RequestBody EngineExecutorParam executorParam) {
-        return ResponseResult.success(Map.of());
+    public ResponseVO dashboard(@RequestBody EngineExecutorParam executorParam) {
+        return ResponseVO.success(Map.of());
     }
 
 }

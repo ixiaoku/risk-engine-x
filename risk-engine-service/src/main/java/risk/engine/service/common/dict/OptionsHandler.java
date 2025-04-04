@@ -64,7 +64,7 @@ public class OptionsHandler {
      */
     @Bean("decisionResult")
     public OptionsEnumFunction decisionResult() {
-        return () -> Arrays.stream(DecisionResultEnum.values())
+        return () -> Arrays.stream(RuleDecisionResultEnum.values())
                 .map(e -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("code", e.getCode());
@@ -94,7 +94,7 @@ public class OptionsHandler {
      */
     @Bean("indicatorType")
     public OptionsEnumFunction indicatorType() {
-        return () -> Arrays.stream(IndicatorTypeEnum.values())
+        return () -> Arrays.stream(MetricTypeEnum.values())
                 .map(e -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("code", e.getCode());
@@ -118,8 +118,8 @@ public class OptionsHandler {
                 .map(e -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("code", e.getMetricCode());
-                    IndicatorTypeEnum indicatorTypeEnum = IndicatorTypeEnum.getIncidentStatusEnumByCode(e.getMetricType());
-                    options.put("msg", e.getMetricName() + "(" + indicatorTypeEnum.getDesc() + ")");
+                    MetricTypeEnum metricTypeEnum = MetricTypeEnum.getIncidentStatusEnumByCode(e.getMetricType());
+                    options.put("msg", e.getMetricName() + "(" + metricTypeEnum.getDesc() + ")");
                     return options;
                 }).collect(Collectors.toList());
     }

@@ -2,7 +2,7 @@ package risk.engine.service.service;
 
 import risk.engine.db.entity.Rule;
 import risk.engine.dto.param.RuleParam;
-import risk.engine.dto.result.RuleResult;
+import risk.engine.dto.vo.RuleVO;
 
 import java.util.List;
 
@@ -17,11 +17,11 @@ public interface IRuleService {
 
     Boolean insert(RuleParam ruleParam);
 
-    List<RuleResult> list(RuleParam ruleParam);
+    List<RuleVO> list(RuleParam ruleParam);
 
     Boolean delete(RuleParam ruleParam);
 
     Boolean update(RuleParam ruleParam);
 
-    RuleResult detail(Long id);
+    RuleVO detail(Long id);
 }

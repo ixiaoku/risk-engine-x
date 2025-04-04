@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import risk.engine.db.entity.TransferRecord;
 import risk.engine.dto.param.RiskEngineParam;
-import risk.engine.dto.result.RiskEngineExecuteResult;
+import risk.engine.dto.vo.RiskEngineExecuteVO;
 import risk.engine.service.service.IRiskEngineExecuteService;
 import risk.engine.service.service.ITransferRecordService;
 
@@ -47,7 +47,7 @@ public class BusinessController {
                 engineParam.setFlowNo(UUID.randomUUID().toString());
                 engineParam.setIncidentCode("ChainTransfer");
                 engineParam.setRequestPayload(new Gson().toJson(transferRecord1));
-                RiskEngineExecuteResult result = engineExecuteService.execute(engineParam);
+                RiskEngineExecuteVO result = engineExecuteService.execute(engineParam);
                 log.info("风控引擎执行 RiskEngineController execute result {}", result.getDecisionResult());
             });
         } catch (Exception e) {

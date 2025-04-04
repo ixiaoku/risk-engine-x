@@ -8,7 +8,7 @@ import lombok.Getter;
  * @Version: 1.0
  */
 @Getter
-public enum DecisionResultEnum {
+public enum RuleDecisionResultEnum {
 
     REJECT("0","拒绝"),
     SUCCESS("1","通过"),
@@ -24,7 +24,7 @@ public enum DecisionResultEnum {
     private final String desc;
 
     // 枚举的构造函数，用于设置整数值
-    DecisionResultEnum(String value, String desc) {
+    RuleDecisionResultEnum(String value, String desc) {
         this.code = value;
         this.desc = desc;
     }
@@ -34,8 +34,8 @@ public enum DecisionResultEnum {
      * @param code 参数
      * @return 返回枚举
      */
-    public static DecisionResultEnum getIncidentStatusEnumByCode(String code) {
-        for (DecisionResultEnum status : DecisionResultEnum.values()) {
+    public static RuleDecisionResultEnum getIncidentStatusEnumByCode(String code) {
+        for (RuleDecisionResultEnum status : RuleDecisionResultEnum.values()) {
             if (status.getCode().equals(code)) {
                 return status;
             }

@@ -11,7 +11,7 @@ import java.util.Objects;
  * @Version: 1.0
  */
 @Getter
-public enum IndicatorTypeEnum {
+public enum MetricTypeEnum {
 
     // 字符串类型
     STRING(1, "String"),
@@ -49,7 +49,7 @@ public enum IndicatorTypeEnum {
     private final String desc;
 
     // 枚举的构造函数，用于设置整数值
-    IndicatorTypeEnum(Integer value, String desc) {
+    MetricTypeEnum(Integer value, String desc) {
         this.code = value;
         this.desc = desc;
     }
@@ -59,8 +59,8 @@ public enum IndicatorTypeEnum {
      * @param code 参数
      * @return 返回枚举
      */
-    public static IndicatorTypeEnum getIncidentStatusEnumByCode(Integer code) {
-        for (IndicatorTypeEnum status : IndicatorTypeEnum.values()) {
+    public static MetricTypeEnum getIncidentStatusEnumByCode(Integer code) {
+        for (MetricTypeEnum status : MetricTypeEnum.values()) {
             if (Objects.equals(status.getCode(), code)) {
                 return status;
             }

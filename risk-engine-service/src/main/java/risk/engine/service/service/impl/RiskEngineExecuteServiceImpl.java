@@ -11,12 +11,12 @@ import risk.engine.db.entity.Incident;
 import risk.engine.db.entity.Rule;
 import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;
 import risk.engine.dto.dto.rule.HitRuleDTO;
-import risk.engine.dto.dto.rule.RuleIndicatorDTO;
-import risk.engine.dto.enums.DecisionResultEnum;
+import risk.engine.dto.dto.rule.RuleMetricDTO;
+import risk.engine.dto.enums.RuleDecisionResultEnum;
 import risk.engine.dto.enums.IncidentStatusEnum;
 import risk.engine.dto.enums.RuleStatusEnum;
 import risk.engine.dto.param.RiskEngineParam;
-import risk.engine.dto.result.RiskEngineExecuteResult;
+import risk.engine.dto.vo.RiskEngineExecuteVO;
 import risk.engine.service.service.IIncidentService;
 import risk.engine.service.service.IRiskEngineExecuteService;
 import risk.engine.service.service.IRuleService;
@@ -51,10 +51,10 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
      * @return 返回决策结果
      */
     @Override
-    public RiskEngineExecuteResult execute(RiskEngineParam riskEngineParam) {
+    public RiskEngineExecuteVO execute(RiskEngineParam riskEngineParam) {
         //初始化引擎结果 默认通过
-        RiskEngineExecuteResult result = new RiskEngineExecuteResult();
-        result.setDecisionResult(DecisionResultEnum.SUCCESS.getCode());
+        RiskEngineExecuteVO result = new RiskEngineExecuteVO();
+        result.setDecisionResult(RuleDecisionResultEnum.SUCCESS.getCode());
         try {
             //查询事件
             Incident incident = incidentService.selectByIncidentCode(riskEngineParam.getIncidentCode());
@@ -146,7 +146,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
         executeEngineDTO.setRuleLabel(hitRule.getLabel());
         executeEngineDTO.setRulePenaltyAction(hitRule.getPenaltyAction());
         executeEngineDTO.setRuleVersion(hitRule.getVersion());
-        List<RuleIndicatorDTO> indicatorDTOList = JSON.parseArray(hitRule.getJsonScript(), RuleIndicatorDTO.class);
+        List<RuleMetricDTO> indicatorDTOList = JSON.parseArray(hitRule.getJsonScript(), RuleMetricDTO.class);
         if (CollectionUtils.isNotEmpty(indicatorDTOList)) {
             Map<String, Object> map = new HashMap<>();
             indicatorDTOList.forEach(indicatorDTO -> map.put(indicatorDTO.getIndicatorCode(), paramMap.get(indicatorDTO.getIndicatorCode())));
@@ -185,7 +185,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
     }
 
     @Override
-    public RiskEngineExecuteResult executeBatch(List<RiskEngineParam> riskEngineParam) {
+    public RiskEngineExecuteVO executeBatch(List<RiskEngineParam> riskEngineParam) {
         return null;
     }
 }

@@ -1,7 +1,7 @@
 package risk.engine.dto.param;
 
 import lombok.Data;
-import risk.engine.dto.dto.rule.IndicatorDTO;
+import risk.engine.dto.dto.rule.MetricDTO;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -57,6 +57,6 @@ public class IncidentParam {
     /**
      * 事件接入配置的字段 和关联requestPayload
      */
-    private List<IndicatorDTO> indicators;
+    private List<MetricDTO> indicators;
 
 }

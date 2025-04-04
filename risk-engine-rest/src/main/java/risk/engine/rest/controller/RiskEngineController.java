@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import risk.engine.common.function.ValidatorUtils;
 import risk.engine.dto.param.RiskEngineParam;
-import risk.engine.dto.result.RiskEngineExecuteResult;
+import risk.engine.dto.vo.RiskEngineExecuteVO;
 import risk.engine.service.service.IRiskEngineExecuteService;
 
 import javax.annotation.Resource;
@@ -28,7 +28,7 @@ public class RiskEngineController {
     private IRiskEngineExecuteService executeService;
 
     @PostMapping("/engine")
-    public RiskEngineExecuteResult execute(@RequestBody RiskEngineParam riskEngineParam) throws Exception {
+    public RiskEngineExecuteVO execute(@RequestBody RiskEngineParam riskEngineParam) throws Exception {
 
         log.info("RiskEngineController execute request：{}", new Gson().toJson(riskEngineParam));
         //不为空校验

@@ -1,7 +1,7 @@
 package risk.engine.dto.param;
 
 import lombok.Data;
-import risk.engine.dto.dto.rule.RuleIndicatorDTO;
+import risk.engine.dto.dto.rule.RuleMetricDTO;
 
 import java.util.List;
 
@@ -43,7 +43,7 @@ public class RuleParam extends PageHelperQuery {
     /**
      * json结构指标
      */
-    private List<RuleIndicatorDTO> indicators;
+    private List<RuleMetricDTO> indicators;
 
     /**
      * 配置的表达式 1 && 2 || 3

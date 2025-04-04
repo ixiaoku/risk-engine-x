@@ -11,7 +11,7 @@ import java.util.Objects;
  * @Version: 1.0
  */
 @Getter
-public enum IndictorSourceEnum {
+public enum MetricSourceEnum {
 
     // 事件定义
     ATTRIBUTE(1, "属性指标"),
@@ -33,7 +33,7 @@ public enum IndictorSourceEnum {
     private final String desc;
 
     // 枚举的构造函数，用于设置整数值
-    IndictorSourceEnum(Integer value, String desc) {
+    MetricSourceEnum(Integer value, String desc) {
         this.code = value;
         this.desc = desc;
     }
@@ -43,8 +43,8 @@ public enum IndictorSourceEnum {
      * @param code 参数
      * @return 返回枚举
      */
-    public static IndictorSourceEnum getIncidentSourceEnumByCode(Integer code) {
-        for (IndictorSourceEnum status : IndictorSourceEnum.values()) {
+    public static MetricSourceEnum getIncidentSourceEnumByCode(Integer code) {
+        for (MetricSourceEnum status : MetricSourceEnum.values()) {
             if (Objects.equals(status.getCode(), code)) {
                 return status;
             }

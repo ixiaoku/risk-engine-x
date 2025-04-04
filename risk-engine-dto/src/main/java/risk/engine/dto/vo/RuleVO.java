@@ -1,4 +1,4 @@
-package risk.engine.dto.result;
+package risk.engine.dto.vo;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import lombok.Data;
  * @Version: 1.0
  */
 @Data
-public class RuleResult {
+public class RuleVO {
 
     private Long id;
 

@@ -1,7 +1,7 @@
 package risk.engine.service.service;
 
 import risk.engine.dto.param.RiskEngineParam;
-import risk.engine.dto.result.RiskEngineExecuteResult;
+import risk.engine.dto.vo.RiskEngineExecuteVO;
 
 import java.util.List;
 
@@ -12,8 +12,8 @@ import java.util.List;
  */
 public interface IRiskEngineExecuteService {
 
-    RiskEngineExecuteResult execute(RiskEngineParam riskEngineParam);
+    RiskEngineExecuteVO execute(RiskEngineParam riskEngineParam);
 
-    RiskEngineExecuteResult executeBatch(List<RiskEngineParam> riskEngineParam);
+    RiskEngineExecuteVO executeBatch(List<RiskEngineParam> riskEngineParam);
 
 }
