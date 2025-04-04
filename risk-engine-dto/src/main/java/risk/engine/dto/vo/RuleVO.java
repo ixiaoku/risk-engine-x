@@ -79,6 +79,7 @@ public class RuleVO {
      */
     private List<PenaltyActionVO> penaltyActions;
 
+    private String penaltyAction;
     /**
      * 责任人
      */

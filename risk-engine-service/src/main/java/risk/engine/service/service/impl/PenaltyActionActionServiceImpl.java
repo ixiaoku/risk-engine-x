@@ -1,6 +1,7 @@
 package risk.engine.service.service.impl;
 
 import com.alibaba.fastjson2.JSON;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import risk.engine.db.dao.PenaltyActionMapper;
 import risk.engine.db.entity.PenaltyActionPO;
@@ -49,6 +50,9 @@ public class PenaltyActionActionServiceImpl implements IPenaltyActionService {
         penaltyActionQuery.setPenaltyCode(penalty.getPenaltyCode());
         penaltyActionQuery.setStatus(1);
         List<PenaltyActionPO> penaltyActionPOS = penaltyActionMapper.selectByExample(penaltyActionQuery);
+        if (CollectionUtils.isEmpty(penaltyActionPOS)) {
+            return List.of();
+        }
         PenaltyActionPO actionPO = penaltyActionPOS.get(0);
         return JSON.parseArray(actionPO.getPenaltyJson(), PenaltyFieldVO.class);
     }

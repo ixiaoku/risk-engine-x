@@ -81,6 +81,8 @@ public class RuleParam extends PageHelperQuery {
      */
     private List<PenaltyActionVO> penaltyActions;
 
+    private String penaltyAction;
+
     /**
      * 责任人
      */
