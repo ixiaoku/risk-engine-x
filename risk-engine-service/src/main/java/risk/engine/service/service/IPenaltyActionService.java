@@ -1,6 +1,8 @@
 package risk.engine.service.service;
 
 import risk.engine.db.entity.PenaltyActionPO;
+import risk.engine.dto.param.PenaltyActionParam;
+import risk.engine.dto.vo.PenaltyActionVO;
 
 import java.util.List;
 
@@ -17,7 +19,9 @@ public interface IPenaltyActionService {
 
     PenaltyActionPO selectByPrimaryKey(Long id);
 
-    List<PenaltyActionPO> selectByExample(PenaltyActionPO penalty);
+    List<PenaltyActionPO> selectByExample(PenaltyActionPO penaltyAction);
+
+    List<PenaltyActionVO> getPenaltyFields(PenaltyActionParam penalty);
 
     boolean updateByPrimaryKey(PenaltyActionPO record);
 

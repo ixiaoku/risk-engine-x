@@ -66,9 +66,9 @@ public class RiskEngineHandler {
      * @param executeEngineDTO 参数
      */
     public void savePenalty(RiskExecuteEngineDTO executeEngineDTO) {
-        PenaltyActionPO p = new PenaltyActionPO();
-        p.setStatus(1);
-        List<PenaltyActionPO> penalties = penaltyService.selectByExample(p);
+        PenaltyActionPO actionPO = new PenaltyActionPO();
+        actionPO.setStatus(1);
+        List<PenaltyActionPO> penalties = penaltyService.selectByExample(actionPO);
         if (CollectionUtils.isEmpty(penalties)) {
             return;
         }

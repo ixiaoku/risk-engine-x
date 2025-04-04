@@ -15,9 +15,11 @@
     <result column="penalty_description" jdbcType="LONGVARCHAR" property="penaltyDescription" />
     <result column="penalty_json" jdbcType="LONGVARCHAR" property="penaltyJson" />
   </resultMap>
+
   <sql id="Base_Column_List">
-    id, penalty_code, penalty_name, penalty_def, status, operator, create_time, update_time
+    id, penalty_code, penalty_name, penalty_def, status, operator, penalty_description, penalty_json, create_time, update_time
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
@@ -46,24 +48,22 @@
 
   <insert id="insert" parameterType="risk.engine.db.entity.PenaltyActionPO">
     insert into penalty_action (id, penalty_code, penalty_name,
-      penalty_def, status, operator, 
-      create_time, update_time, penalty_description, 
+      penalty_def, status, operator,
+      create_time, update_time, penalty_description,
       penalty_json)
-    values (#{id,jdbcType=BIGINT}, #{penaltyCode,jdbcType=VARCHAR}, #{penaltyName,jdbcType=VARCHAR}, 
-      #{penaltyDef,jdbcType=VARCHAR}, #{status,jdbcType=BIT}, #{operator,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{penaltyDescription,jdbcType=LONGVARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{penaltyCode,jdbcType=VARCHAR}, #{penaltyName,jdbcType=VARCHAR},
+      #{penaltyDef,jdbcType=VARCHAR}, #{status,jdbcType=BIT}, #{operator,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{penaltyDescription,jdbcType=LONGVARCHAR},
       #{penaltyJson,jdbcType=LONGVARCHAR})
   </insert>
 
   <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.PenaltyActionPO">
     update penalty_action
-    set penalty_code = #{penaltyCode,jdbcType=VARCHAR},
-      penalty_name = #{penaltyName,jdbcType=VARCHAR},
-      penalty_def = #{penaltyDef,jdbcType=VARCHAR},
+    set penalty_name = #{penaltyName,jdbcType=VARCHAR},
       status = #{status,jdbcType=BIT},
       operator = #{operator,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
 </mapper>

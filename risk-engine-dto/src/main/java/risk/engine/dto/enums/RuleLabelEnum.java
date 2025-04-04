@@ -12,23 +12,23 @@ import java.util.Objects;
 @Getter
 public enum RuleLabelEnum {
 
-    BEHAVIOR(1,"行为模式"),
-    TRADE(2,"交易行为"),
-    ACCOUNT(3,"账户识别"),
-    ASSET(4,"资金流向"),
+    BEHAVIOR("behavior","行为模式"),
+    TRADE("trade","交易行为"),
+    ACCOUNT("account","账户识别"),
+    ASSET("asset","资金流向"),
     ;
 
     /**
      * 枚举的整数值
      */
-    private final Integer code;
+    private final String code;
     /**
      * 描述
      */
     private final String desc;
 
     // 枚举的构造函数，用于设置整数值
-    RuleLabelEnum(Integer value, String desc) {
+    RuleLabelEnum(String value, String desc) {
         this.code = value;
         this.desc = desc;
     }
@@ -38,7 +38,7 @@ public enum RuleLabelEnum {
      * @param code 参数
      * @return 返回枚举
      */
-    public static RuleLabelEnum getRuleLabelEnumByCode(Integer code) {
+    public static RuleLabelEnum getRuleLabelEnumByCode(String code) {
         for (RuleLabelEnum status : RuleLabelEnum.values()) {
             if (Objects.equals(status.getCode(), code)) {
                 return status;
