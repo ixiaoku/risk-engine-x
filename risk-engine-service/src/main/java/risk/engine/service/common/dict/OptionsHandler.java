@@ -5,10 +5,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import risk.engine.db.entity.Incident;
-import risk.engine.db.entity.Indicator;
+import risk.engine.db.entity.Metric;
 import risk.engine.dto.enums.*;
 import risk.engine.service.service.IIncidentService;
-import risk.engine.service.service.IIndicatorService;
+import risk.engine.service.service.IMetricService;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -26,7 +26,7 @@ public class OptionsHandler {
     private IIncidentService incidentService;
 
     @Resource
-    private IIndicatorService indicatorService;
+    private IMetricService indicatorService;
 
     /**
      * 操作符字典
@@ -109,17 +109,17 @@ public class OptionsHandler {
      */
     @Bean("indicatorList")
     public OptionsDbFunction<String> indicatorList() {
-        List<Indicator> indicatorList = indicatorService.selectByExample(new Indicator());
-        if (CollectionUtils.isEmpty(indicatorList)) {
+        List<Metric> metricList = indicatorService.selectByExample(new Metric());
+        if (CollectionUtils.isEmpty(metricList)) {
             return value -> List.of();
         }
-        return value -> indicatorList.stream()
+        return value -> metricList.stream()
                 .filter(i -> StringUtils.equals(value, i.getIncidentCode()))
                 .map(e -> {
                     Map<String, Object> options = new HashMap<>();
-                    options.put("code", e.getIndicatorCode());
-                    IndicatorTypeEnum indicatorTypeEnum = IndicatorTypeEnum.getIncidentStatusEnumByCode(e.getIndicatorType());
-                    options.put("msg", e.getIndicatorName() + "(" + indicatorTypeEnum.getDesc() + ")");
+                    options.put("code", e.getMetricCode());
+                    IndicatorTypeEnum indicatorTypeEnum = IndicatorTypeEnum.getIncidentStatusEnumByCode(e.getMetricType());
+                    options.put("msg", e.getMetricName() + "(" + indicatorTypeEnum.getDesc() + ")");
                     return options;
                 }).collect(Collectors.toList());
     }

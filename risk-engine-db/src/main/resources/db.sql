@@ -1,7 +1,7 @@
 use risk;
 
 -- auto-generated definition
-create table indicator
+create table metric
 (
     id               bigint auto_increment comment '主键，自增ID'
         primary key,
@@ -21,11 +21,11 @@ create table indicator
     comment '风控指标表';
 
 create index idx_incident_code
-    on indicator (incident_code)
+    on metric (incident_code)
     comment '索引，按事件code搜索';
 
 create index task_incident_code
-    on indicator (incident_code)
+    on metric (incident_code)
     comment '索引，按事件code搜索';
 
 

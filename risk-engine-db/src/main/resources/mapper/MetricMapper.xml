@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="risk.engine.db.dao.MetricMapper">
+  <resultMap id="BaseResultMap" type="risk.engine.db.entity.Metric">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="incident_code" jdbcType="VARCHAR" property="incidentCode" />
+    <result column="metric_code" jdbcType="VARCHAR" property="metricCode" />
+    <result column="metric_name" jdbcType="VARCHAR" property="metricName" />
+    <result column="sample_value" jdbcType="VARCHAR" property="sampleValue" />
+    <result column="metric_desc" jdbcType="VARCHAR" property="metricDesc" />
+    <result column="metric_source" jdbcType="TINYINT" property="metricSource" />
+    <result column="metric_type" jdbcType="TINYINT" property="metricType" />
+    <result column="operator" jdbcType="VARCHAR" property="operator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, incident_code, metric_code, metric_name, sample_value, metric_desc, 
+    metric_source, metric_type, operator, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from metric
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectByExample" parameterType="risk.engine.db.entity.Metric" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from metric
+    <where>
+      <if test="incidentCode != null and incidentCode != ''">
+        incident_code = #{incidentCode,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from metric
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <delete id="deleteByIncidentCode" parameterType="java.lang.String">
+    delete from metric
+    where incident_code = #{incidentCode,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="risk.engine.db.entity.Metric">
+    insert into metric (id, incident_code, metric_code,
+      metric_name, sample_value, metric_desc, 
+      metric_source, metric_type, operator, 
+      create_time, update_time)
+    values (#{id,jdbcType=BIGINT}, #{incidentCode,jdbcType=VARCHAR}, #{metricCode,jdbcType=VARCHAR}, 
+      #{metricName,jdbcType=VARCHAR}, #{sampleValue,jdbcType=VARCHAR}, #{metricDesc,jdbcType=VARCHAR}, 
+      #{metricSource,jdbcType=TINYINT}, #{metricType,jdbcType=TINYINT}, #{operator,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    INSERT INTO metric (
+    id, incident_code, metric_code,
+    metric_name, sample_value, metric_desc,
+    metric_source, metric_type, operator,
+    create_time, update_time
+    ) VALUES
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id,jdbcType=BIGINT}, #{item.incidentCode,jdbcType=VARCHAR}, #{item.metricCode,jdbcType=VARCHAR},
+      #{item.metricName,jdbcType=VARCHAR}, #{item.sampleValue,jdbcType=VARCHAR}, #{item.metricDesc,jdbcType=VARCHAR},
+      #{item.metricSource,jdbcType=TINYINT}, #{item.metricType,jdbcType=TINYINT}, #{item.operator,jdbcType=VARCHAR},
+      #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+
+</mapper>

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.db.dao.RuleMapper;
-import risk.engine.db.entity.Indicator;
+import risk.engine.db.entity.Metric;
 import risk.engine.db.entity.Rule;
 import risk.engine.db.entity.RuleVersion;
 import risk.engine.db.entity.example.RuleExample;
@@ -17,7 +17,7 @@ import risk.engine.dto.param.RuleParam;
 import risk.engine.dto.result.RuleResult;
 import risk.engine.service.common.cache.GuavaStartupCache;
 import risk.engine.service.handler.GroovyExpressionParser;
-import risk.engine.service.service.IIndicatorService;
+import risk.engine.service.service.IMetricService;
 import risk.engine.service.service.IRuleService;
 import risk.engine.service.service.IRuleVersionService;
 
@@ -48,7 +48,7 @@ public class RuleServiceImpl implements IRuleService {
     private IRuleVersionService ruleVersionService;
 
     @Resource
-    private IIndicatorService indicatorService;
+    private IMetricService indicatorService;
 
     @Override
     public List<Rule> selectByIncidentCode(String incidentCode) {
@@ -85,13 +85,13 @@ public class RuleServiceImpl implements IRuleService {
 
     private List<RuleIndicatorDTO> getRuleIndicatorDTOList(String incidentCode, String jsonScript) {
         //获取完整的特征类型和名称
-        Indicator indicatorQuery = new Indicator();
-        indicatorQuery.setIncidentCode(incidentCode);
-        List<Indicator> indicatorList = indicatorService.selectByExample(indicatorQuery);
-        if (CollectionUtils.isEmpty(indicatorList)) {
+        Metric metricQuery = new Metric();
+        metricQuery.setIncidentCode(incidentCode);
+        List<Metric> metricList = indicatorService.selectByExample(metricQuery);
+        if (CollectionUtils.isEmpty(metricList)) {
             throw new RuntimeException();
         }
-        Map<String, Indicator> resultMap = indicatorList.stream().collect(Collectors.toMap(Indicator::getIndicatorCode, Function.identity()));
+        Map<String, Metric> resultMap = metricList.stream().collect(Collectors.toMap(Metric::getMetricCode, Function.identity()));
         List<RuleIndicatorDTO> conditions = new Gson().fromJson(jsonScript, new TypeToken<List<RuleIndicatorDTO>>(){}.getType());
         return conditions.stream()
                 .filter(i -> Objects.nonNull(resultMap.get(i.getIndicatorCode())))
@@ -101,9 +101,9 @@ public class RuleServiceImpl implements IRuleService {
                     ruleIndicatorDTO.setIndicatorValue(indicatorDTO.getIndicatorValue());
                     ruleIndicatorDTO.setOperationSymbol(indicatorDTO.getOperationSymbol());
                     ruleIndicatorDTO.setSerialNumber(indicatorDTO.getSerialNumber());
-                    Indicator indicator = resultMap.get(indicatorDTO.getIndicatorCode());
-                    ruleIndicatorDTO.setIndicatorType(indicator.getIndicatorType());
-                    ruleIndicatorDTO.setIndicatorName(indicator.getIndicatorName());
+                    Metric metric = resultMap.get(indicatorDTO.getIndicatorCode());
+                    ruleIndicatorDTO.setIndicatorType(metric.getMetricType());
+                    ruleIndicatorDTO.setIndicatorName(metric.getMetricName());
                     return ruleIndicatorDTO;
                 }).collect(Collectors.toList());
     }

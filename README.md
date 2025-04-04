@@ -12,7 +12,7 @@
 
 ## risk-engine-components 中间件模块es、mq
 
-## risk-engine-indicator 指标服务 计算指标值
+## risk-engine-metric 指标服务 计算指标值
 
 ## risk-engine-rest 引擎执行服务 风控引擎相关
 
@@ -325,7 +325,7 @@ create table incident
 );
 
 -- auto-generated definition
-create table indicator
+create table metric
 (
     id               bigint auto_increment comment '主键，自增ID'
         primary key,
@@ -345,7 +345,7 @@ create table indicator
     comment '风控指标表';
 
 create index idx_incident_code
-    on indicator (incident_code)
+    on metric (incident_code)
     comment '索引，按事件code搜索';
 
 -- auto-generated definition

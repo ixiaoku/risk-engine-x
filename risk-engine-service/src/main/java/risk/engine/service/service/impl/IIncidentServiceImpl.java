@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.db.dao.IncidentMapper;
-import risk.engine.db.dao.IndicatorMapper;
+import risk.engine.db.dao.MetricMapper;
 import risk.engine.db.entity.Incident;
-import risk.engine.db.entity.Indicator;
+import risk.engine.db.entity.Metric;
 import risk.engine.dto.dto.rule.IndicatorDTO;
 import risk.engine.dto.enums.IndicatorTypeEnum;
 import risk.engine.dto.enums.IndictorSourceEnum;
@@ -36,7 +36,7 @@ public class IIncidentServiceImpl implements IIncidentService {
     private IncidentMapper incidentMapper;
 
     @Resource
-    private IndicatorMapper indicatorMapper;
+    private MetricMapper metricMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -57,16 +57,16 @@ public class IIncidentServiceImpl implements IIncidentService {
         incident.setCreateTime(LocalDateTime.now());
         incident.setUpdateTime(LocalDateTime.now());
         incident.setRequestPayload(incidentParam.getRequestPayload());
-        List<Indicator> indicatorList = getIndicatorList(incidentParam);
+        List<Metric> metricList = getIndicatorList(incidentParam);
         //保存事件 指标
-        return incidentMapper.insert(incident) > 0 && indicatorMapper.batchInsert(indicatorList) > 0;
+        return incidentMapper.insert(incident) > 0 && metricMapper.batchInsert(metricList) > 0;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deleteByPrimaryKey(Long id) {
         Incident incident = incidentMapper.selectByPrimaryKey(id);
-        return incidentMapper.deleteByPrimaryKey(id) > 0 && indicatorMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
+        return incidentMapper.deleteByPrimaryKey(id) > 0 && metricMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
     }
 
     @Override
@@ -77,9 +77,9 @@ public class IIncidentServiceImpl implements IIncidentService {
         incident.setUpdateTime(LocalDateTime.now());
         incident.setRequestPayload(param.getRequestPayload());
         Boolean flag1 = incidentMapper.updateByPrimaryKey(incident) > 0;
-        Boolean flag2 = indicatorMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
-        List<Indicator> indicatorList = getIndicatorList(param);
-        Boolean flag3 = indicatorMapper.batchInsert(indicatorList) > 0;
+        Boolean flag2 = metricMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
+        List<Metric> metricList = getIndicatorList(param);
+        Boolean flag3 = metricMapper.batchInsert(metricList) > 0;
         return flag1 && flag2 && flag3;
     }
 
@@ -107,11 +107,11 @@ public class IIncidentServiceImpl implements IIncidentService {
 
     @Override
     public List<IndicatorDTO> parseIndicator(String incidentCode, String requestPayload) {
-        Indicator indicatorQuery = new Indicator();
-        indicatorQuery.setIncidentCode(incidentCode);
-        List<Indicator> indicatorList = indicatorMapper.selectByExample(indicatorQuery);
+        Metric metricQuery = new Metric();
+        metricQuery.setIncidentCode(incidentCode);
+        List<Metric> metricList = metricMapper.selectByExample(metricQuery);
         //新增
-        if (CollectionUtils.isEmpty(indicatorList)) {
+        if (CollectionUtils.isEmpty(metricList)) {
             JSONObject jsonObject = JSON.parseObject(requestPayload);
             return jsonObject.entrySet().stream()
                     .map(key -> {
@@ -137,13 +137,13 @@ public class IIncidentServiceImpl implements IIncidentService {
                     }).collect(Collectors.toList());
         }
         //编辑
-        return indicatorList.stream().map(indicator -> {
+        return metricList.stream().map(indicator -> {
             IndicatorDTO indicatorDTO = new IndicatorDTO();
-            indicatorDTO.setIndicatorCode(indicator.getIndicatorCode());
-            indicatorDTO.setIndicatorName(indicator.getIndicatorName());
-            indicatorDTO.setIndicatorType(indicator.getIndicatorType());
-            indicatorDTO.setIndicatorDesc(indicator.getIndicatorDesc());
-            indicatorDTO.setIndicatorValue(indicator.getIndicatorValue());
+            indicatorDTO.setIndicatorCode(indicator.getMetricCode());
+            indicatorDTO.setIndicatorName(indicator.getMetricName());
+            indicatorDTO.setIndicatorType(indicator.getMetricType());
+            indicatorDTO.setIndicatorDesc(indicator.getMetricDesc());
+            indicatorDTO.setIndicatorValue(indicator.getSampleValue());
             return indicatorDTO;
         }).collect(Collectors.toList());
     }
@@ -186,21 +186,21 @@ public class IIncidentServiceImpl implements IIncidentService {
      * @param incidentParam 事件
      * @return 结果
      */
-    private List<Indicator> getIndicatorList(IncidentParam incidentParam) {
+    private List<Metric> getIndicatorList(IncidentParam incidentParam) {
         return incidentParam.getIndicators().stream()
                 .map(indicatorDTO -> {
-                    Indicator indicator = new Indicator();
-                    indicator.setIncidentCode(incidentParam.getIncidentCode());
-                    indicator.setIndicatorCode(indicatorDTO.getIndicatorCode());
-                    indicator.setIndicatorName(indicatorDTO.getIndicatorName());
-                    indicator.setIndicatorValue(indicatorDTO.getIndicatorValue());
-                    indicator.setIndicatorDesc("备注");
-                    indicator.setIndicatorSource(IndictorSourceEnum.ATTRIBUTE.getCode());
-                    indicator.setIndicatorType(indicatorDTO.getIndicatorType());
-                    indicator.setOperator(incidentParam.getOperator());
-                    indicator.setCreateTime(LocalDateTime.now());
-                    indicator.setUpdateTime(LocalDateTime.now());
-                    return indicator;
+                    Metric metric = new Metric();
+                    metric.setIncidentCode(incidentParam.getIncidentCode());
+                    metric.setMetricCode(indicatorDTO.getIndicatorCode());
+                    metric.setMetricName(indicatorDTO.getIndicatorName());
+                    metric.setSampleValue(indicatorDTO.getIndicatorValue());
+                    metric.setMetricDesc("备注");
+                    metric.setMetricSource(IndictorSourceEnum.ATTRIBUTE.getCode());
+                    metric.setMetricType(indicatorDTO.getIndicatorType());
+                    metric.setOperator(incidentParam.getOperator());
+                    metric.setCreateTime(LocalDateTime.now());
+                    metric.setUpdateTime(LocalDateTime.now());
+                    return metric;
                 }).collect(Collectors.toList());
 
     }

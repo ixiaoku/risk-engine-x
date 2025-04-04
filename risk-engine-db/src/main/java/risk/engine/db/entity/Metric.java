@@ -11,8 +11,11 @@ import java.time.LocalDateTime;
  * @Version: 1.0
  */
 @Data
-public class Indicator {
+public class Metric {
 
+    /**
+     * 主键id
+     */
     private Long id;
 
     /**
@@ -23,32 +26,32 @@ public class Indicator {
     /**
      * 指标code
      */
-    private String indicatorCode;
+    private String metricCode;
 
     /**
      * 指标名称
      */
-    private String indicatorName;
+    private String metricName;
 
     /**
      * 指标值 样例
      */
-    private String indicatorValue;
+    private String sampleValue;
 
     /**
      * 指标描述
      */
-    private String indicatorDesc;
+    private String metricDesc;
 
     /**
      * 指标来源
      */
-    private Integer indicatorSource;
+    private Integer metricSource;
 
     /**
      * 指标类型
      */
-    private Integer indicatorType;
+    private Integer metricType;
 
     /**
      * 操作人

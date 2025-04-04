@@ -42,7 +42,7 @@
 <!--        <table tableName="list_data" domainObjectName="ListData" />-->
 <!--        <table tableName="penalty" domainObjectName="Penalty" />-->
 <!--        <table tableName="penalty_record" domainObjectName="PenaltyRecord" />-->
-<!--        <table tableName="indicator" domainObjectName="Indicator" />-->
+<!--        <table tableName="metric" domainObjectName="Indicator" />-->
 
 <!--        <table tableName="crawler_task" domainObjectName="CrawlerTask" />-->
         <table tableName="rule_version" domainObjectName="RuleVersion" />
