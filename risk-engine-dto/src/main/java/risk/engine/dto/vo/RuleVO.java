@@ -2,8 +2,6 @@ package risk.engine.dto.vo;
 
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * @Author: X
  * @Date: 2025/3/14 16:57
@@ -77,9 +75,8 @@ public class RuleVO {
     /**
      * 处置动作
      */
-    private List<PenaltyActionVO> penaltyActions;
-
     private String penaltyAction;
+
     /**
      * 责任人
      */

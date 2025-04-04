@@ -6,9 +6,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import risk.engine.db.entity.IncidentPO;
 import risk.engine.db.entity.MetricPO;
+import risk.engine.db.entity.PenaltyActionPO;
 import risk.engine.dto.enums.*;
 import risk.engine.service.service.IIncidentService;
 import risk.engine.service.service.IMetricService;
+import risk.engine.service.service.IPenaltyActionService;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -27,6 +29,9 @@ public class OptionsHandler {
 
     @Resource
     private IMetricService metricService;
+
+    @Resource
+    private IPenaltyActionService penaltyActionService;
 
     /**
      * 操作符字典
@@ -168,11 +173,17 @@ public class OptionsHandler {
      */
     @Bean("penaltyActionList")
     public OptionsEnumFunction penaltyAction() {
-        return () -> Arrays.stream(PenaltyActionEnum.values())
+        PenaltyActionPO penaltyActionQuery = new PenaltyActionPO();
+        penaltyActionQuery.setStatus(1);
+        List<PenaltyActionPO> penaltyActionPOS = penaltyActionService.selectByExample(penaltyActionQuery);
+        if (CollectionUtils.isEmpty(penaltyActionPOS)) {
+            return List::of;
+        }
+        return () -> penaltyActionPOS.stream()
                 .map(e -> {
                     Map<String, Object> options = new HashMap<>();
-                    options.put("code", e.getCode());
-                    options.put("msg", e.getDesc());
+                    options.put("code", e.getPenaltyCode());
+                    options.put("msg", e.getPenaltyName());
                     return options;
                 }).collect(Collectors.toList());
     }

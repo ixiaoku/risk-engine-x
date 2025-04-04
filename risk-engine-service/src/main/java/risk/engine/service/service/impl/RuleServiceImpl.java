@@ -72,7 +72,6 @@ public class RuleServiceImpl implements IRuleService {
         rule.setDecisionResult(ruleParam.getDecisionResult());
         rule.setExpiryTime(ruleParam.getExpiryTime());
         rule.setLabel(ruleParam.getLabel());
-        //rule.setPenaltyAction(JSON.toJSONString(ruleParam.getPenaltyActions()));
         rule.setPenaltyAction(ruleParam.getPenaltyAction());
         rule.setResponsiblePerson(ruleParam.getResponsiblePerson());
         rule.setOperator("System");
@@ -162,6 +161,7 @@ public class RuleServiceImpl implements IRuleService {
         rule.setLabel(ruleParam.getLabel());
         rule.setOperator(ruleParam.getOperator());
         rule.setResponsiblePerson(ruleParam.getResponsiblePerson());
+        rule.setPenaltyAction(ruleParam.getPenaltyAction());
         rule.setVersion(UUID.randomUUID().toString().replace("-", ""));
         rule.setUpdateTime(LocalDateTime.now());
         //规则版本
@@ -192,8 +192,6 @@ public class RuleServiceImpl implements IRuleService {
         ruleVO.setDecisionResult(rule.getDecisionResult());
         ruleVO.setExpiryTime(rule.getExpiryTime());
         ruleVO.setLabel(rule.getLabel());
-        //List<PenaltyActionVO> penaltyActions = JSON.parseArray(rule.getPenaltyAction(), PenaltyActionVO.class);
-        //ruleVO.setPenaltyActions(penaltyActions);
         ruleVO.setPenaltyAction(rule.getPenaltyAction());
         ruleVO.setResponsiblePerson(rule.getResponsiblePerson());
         ruleVO.setOperator(rule.getOperator());
