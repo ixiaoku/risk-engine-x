@@ -3,6 +3,7 @@ package risk.engine.dto.param;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import risk.engine.dto.dto.rule.RuleMetricDTO;
+import risk.engine.dto.vo.PenaltyActionVO;
 
 import java.util.List;
 
@@ -78,7 +79,7 @@ public class RuleParam extends PageHelperQuery {
     /**
      * 处置动作
      */
-    private String penaltyAction;
+    private List<PenaltyActionVO> penaltyActions;
 
     /**
      * 责任人

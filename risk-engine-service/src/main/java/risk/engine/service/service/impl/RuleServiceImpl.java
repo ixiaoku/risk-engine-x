@@ -1,5 +1,6 @@
 package risk.engine.service.service.impl;
 
+import com.alibaba.fastjson2.JSON;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections4.CollectionUtils;
@@ -14,6 +15,7 @@ import risk.engine.db.entity.example.RuleExample;
 import risk.engine.dto.dto.IncidentDTO;
 import risk.engine.dto.dto.rule.RuleMetricDTO;
 import risk.engine.dto.param.RuleParam;
+import risk.engine.dto.vo.PenaltyActionVO;
 import risk.engine.dto.vo.RuleVO;
 import risk.engine.service.common.cache.GuavaStartupCache;
 import risk.engine.service.handler.GroovyExpressionParser;
@@ -72,7 +74,7 @@ public class RuleServiceImpl implements IRuleService {
         rule.setDecisionResult(ruleParam.getDecisionResult());
         rule.setExpiryTime(ruleParam.getExpiryTime());
         rule.setLabel(ruleParam.getLabel());
-        rule.setPenaltyAction(ruleParam.getPenaltyAction());
+        rule.setPenaltyAction(JSON.toJSONString(ruleParam.getPenaltyActions()));
         rule.setResponsiblePerson(ruleParam.getResponsiblePerson());
         rule.setOperator("System");
         rule.setVersion(UUID.randomUUID().toString().replace("-", ""));
@@ -191,7 +193,8 @@ public class RuleServiceImpl implements IRuleService {
         ruleVO.setDecisionResult(rule.getDecisionResult());
         ruleVO.setExpiryTime(rule.getExpiryTime());
         ruleVO.setLabel(rule.getLabel());
-        ruleVO.setPenaltyAction(rule.getPenaltyAction());
+        List<PenaltyActionVO> penaltyActions = JSON.parseArray(rule.getPenaltyAction(), PenaltyActionVO.class);
+        ruleVO.setPenaltyActions(penaltyActions);
         ruleVO.setResponsiblePerson(rule.getResponsiblePerson());
         ruleVO.setOperator(rule.getOperator());
         ruleVO.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(rule.getUpdateTime()));
