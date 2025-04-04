@@ -25,7 +25,8 @@ public class DictionaryServiceImpl implements IDictionaryService {
     public Map<String, Object> getList(String[] keys) {
         Map<String, Object> result = new HashMap<>();
         for (String keyStr : keys) {
-            OptionsEnumFunction optionsEnumFunction = (OptionsEnumFunction) applicationContext.getBean(keyStr);
+            String beanName = keyStr + "List";
+            OptionsEnumFunction optionsEnumFunction = (OptionsEnumFunction) applicationContext.getBean(beanName);
             result.put(keyStr, optionsEnumFunction.getDictionary());
         }
         return result;
@@ -35,7 +36,8 @@ public class DictionaryServiceImpl implements IDictionaryService {
     public Map<String, Object> getList(String[] keys, String queryCode) {
         Map<String, Object> result = new HashMap<>();
         for (String keyStr : keys) {
-            OptionsDbFunction<String> optionsDbFunction = (OptionsDbFunction<String>) applicationContext.getBean(keyStr);
+            String beanName = keyStr + "List";
+            OptionsDbFunction<String> optionsDbFunction = (OptionsDbFunction<String>) applicationContext.getBean(beanName);
             result.put(keyStr, optionsDbFunction.getDictionary(queryCode));
         }
         return result;

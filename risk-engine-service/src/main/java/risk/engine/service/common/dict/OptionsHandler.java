@@ -26,13 +26,13 @@ public class OptionsHandler {
     private IIncidentService incidentService;
 
     @Resource
-    private IMetricService indicatorService;
+    private IMetricService metricService;
 
     /**
      * 操作符字典
      * @return 结果
      */
-    @Bean("operationSymbol")
+    @Bean("operationSymbolList")
     public static OptionsEnumFunction OperationSymbol() {
         return () -> Arrays.stream(OperationSymbolEnum.values())
                 .map(e -> {
@@ -47,7 +47,7 @@ public class OptionsHandler {
      * 规则状态字典
      * @return 结果
      */
-    @Bean("ruleStatus")
+    @Bean("ruleStatusList")
     public OptionsEnumFunction ruleStatus() {
         return () -> Arrays.stream(RuleStatusEnum.values())
                 .map(e -> {
@@ -62,7 +62,7 @@ public class OptionsHandler {
      * 决策结果
      * @return 结果
      */
-    @Bean("decisionResult")
+    @Bean("decisionResultList")
     public OptionsEnumFunction decisionResult() {
         return () -> Arrays.stream(RuleDecisionResultEnum.values())
                 .map(e -> {
@@ -77,7 +77,7 @@ public class OptionsHandler {
      * 规则标签
      * @return 结果
      */
-    @Bean("ruleLabel")
+    @Bean("ruleLabelList")
     public OptionsEnumFunction ruleLabel() {
         return () -> Arrays.stream(RuleLabelEnum.values())
                 .map(e -> {
@@ -92,8 +92,8 @@ public class OptionsHandler {
      * 指标类型字典
      * @return 结果
      */
-    @Bean("indicatorType")
-    public OptionsEnumFunction indicatorType() {
+    @Bean("metricTypeList")
+    public OptionsEnumFunction metricType() {
         return () -> Arrays.stream(MetricTypeEnum.values())
                 .map(e -> {
                     Map<String, Object> options = new HashMap<>();
@@ -107,9 +107,9 @@ public class OptionsHandler {
      * 指标列表字典
      * @return 结果
      */
-    @Bean("indicatorList")
-    public OptionsDbFunction<String> indicatorList() {
-        List<MetricPO> metricList = indicatorService.selectByExample(new MetricPO());
+    @Bean("metricList")
+    public OptionsDbFunction<String> metricList() {
+        List<MetricPO> metricList = metricService.selectByExample(new MetricPO());
         if (CollectionUtils.isEmpty(metricList)) {
             return value -> List.of();
         }
@@ -150,7 +150,7 @@ public class OptionsHandler {
      * 事件状态字典
      * @return 结果
      */
-    @Bean("incidentStatus")
+    @Bean("incidentStatusList")
     public OptionsEnumFunction incidentStatus() {
         return () -> Arrays.stream(IncidentStatusEnum.values())
                 .filter(e -> !Objects.equals(e.getCode(), IncidentStatusEnum.DELETED.getCode()))
@@ -166,7 +166,7 @@ public class OptionsHandler {
      * 处罚手段
      * @return 结果
      */
-    @Bean("penaltyAction")
+    @Bean("penaltyActionList")
     public OptionsEnumFunction penaltyAction() {
         return () -> Arrays.stream(PenaltyActionEnum.values())
                 .map(e -> {
