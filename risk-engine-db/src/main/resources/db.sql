@@ -1,34 +1,4 @@
 use risk;
-
--- auto-generated definition
-create table metric
-(
-    id               bigint auto_increment comment '主键，自增ID'
-        primary key,
-    incident_code    varchar(64)                        not null comment '事件编码',
-    indicator_code   varchar(64)                        not null comment '指标编码',
-    indicator_name   varchar(128)                       not null comment '指标名称',
-    indicator_value  varchar(256)                       not null comment '指标值 示例',
-    indicator_desc   varchar(128)                       not null comment '指标描述',
-    indicator_source tinyint                            not null comment '指标来源 枚举',
-    indicator_type   tinyint                            not null comment '数据类型 枚举',
-    operator         varchar(64)                        not null comment '操作人',
-    create_time      datetime default CURRENT_TIMESTAMP not null comment '创建时间',
-    update_time      datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    constraint uk_indicator_code
-        unique (incident_code, indicator_code) comment '唯一索引，确保事件code不重复'
-)
-    comment '风控指标表';
-
-create index idx_incident_code
-    on metric (incident_code)
-    comment '索引，按事件code搜索';
-
-create index task_incident_code
-    on metric (incident_code)
-    comment '索引，按事件code搜索';
-
-
 -- auto-generated definition
 create table blockchain_block
 (
@@ -151,7 +121,31 @@ create table list_library
     comment '风控名单库表';
 
 -- auto-generated definition
-create table penalty
+create table metric
+(
+    id            bigint auto_increment comment '主键，自增ID'
+        primary key,
+    incident_code varchar(64)                        not null comment '事件编码',
+    metric_code   varchar(64)                        not null comment '指标编码',
+    metric_name   varchar(128)                       not null comment '指标名称',
+    sample_value  varchar(256)                       not null comment '指标值 示例',
+    metric_desc   varchar(128)                       not null comment '指标描述',
+    metric_source tinyint                            not null comment '指标来源 枚举',
+    metric_type   tinyint                            not null comment '数据类型 枚举',
+    operator      varchar(64)                        not null comment '操作人',
+    create_time   datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_time   datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    constraint uk_metric_code
+        unique (incident_code, metric_code) comment '唯一索引，确保事件code不重复'
+)
+    comment '风控指标表';
+
+create index idx_incident_code
+    on metric (incident_code)
+    comment '索引，按事件code搜索';
+
+-- auto-generated definition
+create table penalty_action
 (
     id                  bigint auto_increment comment '主键，自增ID'
         primary key,
@@ -273,3 +267,4 @@ create index idx_receive_address
 
 create index idx_send_address
     on transfer_record (send_address);
+
