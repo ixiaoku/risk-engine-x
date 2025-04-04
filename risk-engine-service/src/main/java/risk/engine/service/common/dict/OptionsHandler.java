@@ -74,7 +74,7 @@ public class OptionsHandler {
     }
 
     /**
-     * 决策结果
+     * 规则标签
      * @return 结果
      */
     @Bean("ruleLabel")
@@ -104,27 +104,28 @@ public class OptionsHandler {
     }
 
     /**
-     * 指标字典
+     * 指标列表字典
      * @return 结果
      */
     @Bean("indicatorList")
     public OptionsDbFunction<String> indicatorList() {
         List<Indicator> indicatorList = indicatorService.selectByExample(new Indicator());
         if (CollectionUtils.isEmpty(indicatorList)) {
-            return null;
+            return value -> List.of();
         }
         return value -> indicatorList.stream()
                 .filter(i -> StringUtils.equals(value, i.getIncidentCode()))
                 .map(e -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("code", e.getIndicatorCode());
-                    options.put("msg", e.getIndicatorName() + "(" + e.getIndicatorType() + ")");
+                    IndicatorTypeEnum indicatorTypeEnum = IndicatorTypeEnum.getIncidentStatusEnumByCode(e.getIndicatorType());
+                    options.put("msg", e.getIndicatorName() + "(" + indicatorTypeEnum.getDesc() + ")");
                     return options;
                 }).collect(Collectors.toList());
     }
 
     /**
-     * 事件字典
+     * 事件列表字典
      * @return 结果
      */
     @Bean("incidentList")
@@ -133,9 +134,10 @@ public class OptionsHandler {
         incident.setStatus(IncidentStatusEnum.ONLINE.getCode());
         List<Incident> incidentList = incidentService.selectByExample(incident);
         if (CollectionUtils.isEmpty(incidentList)) {
-            return null;
+            return List::of;
         }
         return () -> incidentList.stream()
+                .filter(e -> Objects.equals(e.getStatus(), IncidentStatusEnum.ONLINE.getCode()))
                 .map(e -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("code", e.getIncidentCode());
@@ -152,6 +154,21 @@ public class OptionsHandler {
     public OptionsEnumFunction incidentStatus() {
         return () -> Arrays.stream(IncidentStatusEnum.values())
                 .filter(e -> !Objects.equals(e.getCode(), IncidentStatusEnum.DELETED.getCode()))
+                .map(e -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("code", e.getCode());
+                    options.put("msg", e.getDesc());
+                    return options;
+                }).collect(Collectors.toList());
+    }
+
+    /**
+     * 处罚手段
+     * @return 结果
+     */
+    @Bean("penaltyAction")
+    public OptionsEnumFunction penaltyAction() {
+        return () -> Arrays.stream(PenaltyActionEnum.values())
                 .map(e -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("code", e.getCode());

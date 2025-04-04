@@ -9,6 +9,11 @@ import lombok.Data;
  */
 @Data
 public class CrawlerNoticeDTO {
+
+    /**
+     * 交易所名称
+     */
+    String exchangeCode;
     /**
      * 唯一id
      */
@@ -21,5 +26,9 @@ public class CrawlerNoticeDTO {
      * 原贴时间
      */
     private String createdAt;
+    /**
+     * 类型
+     */
+    private Integer type;
 
 }

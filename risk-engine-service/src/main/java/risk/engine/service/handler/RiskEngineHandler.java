@@ -17,7 +17,7 @@ import risk.engine.dto.constant.BusinessConstant;
 import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;
 import risk.engine.dto.dto.penalty.RulePenaltyListDTO;
 import risk.engine.dto.enums.PenaltyStatusEnum;
-import risk.engine.dto.enums.PenaltyTypeEnum;
+import risk.engine.dto.enums.PenaltyActionEnum;
 import risk.engine.service.service.IEngineResultService;
 import risk.engine.service.service.IPenaltyRecordService;
 import risk.engine.service.service.IPenaltyService;
@@ -121,7 +121,7 @@ public class RiskEngineHandler {
     }
 
     private void getPenaltyJson (RulePenaltyListDTO penaltyListDTO, RiskExecuteEngineDTO executeEngineDTO) {
-        if (StringUtils.equals(penaltyListDTO.getPenaltyCode(), PenaltyTypeEnum.APPEND_LIST.getCode())) {
+        if (StringUtils.equals(penaltyListDTO.getPenaltyCode(), PenaltyActionEnum.APPEND_LIST.getCode())) {
             penaltyListDTO.getPenaltyJson().forEach(json -> {
                 String listValue = (String) executeEngineDTO.getRequestPayload().get(json.getListCode());
                 json.setListValue(listValue);

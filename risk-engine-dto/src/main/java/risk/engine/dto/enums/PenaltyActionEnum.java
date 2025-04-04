@@ -11,11 +11,12 @@ import java.util.Objects;
  * @Version: 1.0
  */
 @Getter
-public enum PenaltyTypeEnum {
+public enum PenaltyActionEnum {
 
 
     APPEND_LIST("append_list", "加名单"),
-    BUSINESS_WECHAT_BOT("business_wechat_bot", "企业微信机器人"),
+    BUSINESS_WECHAT_BOT("business_wechat_bot", "企业微推送"),
+    PERSON_WECHAT_BOT("person_wechat_bot", "个人微信推送"),
     ;
 
     /**
@@ -28,7 +29,7 @@ public enum PenaltyTypeEnum {
     private final String desc;
 
     // 枚举的构造函数，用于设置整数值
-    PenaltyTypeEnum(String value, String desc) {
+    PenaltyActionEnum(String value, String desc) {
         this.code = value;
         this.desc = desc;
     }
@@ -38,8 +39,8 @@ public enum PenaltyTypeEnum {
      * @param code 参数
      * @return 返回枚举
      */
-    public static PenaltyTypeEnum getListTypeEnumByCode(String code) {
-        for (PenaltyTypeEnum status : PenaltyTypeEnum.values()) {
+    public static PenaltyActionEnum getPenaltyTypeEnumByCode(String code) {
+        for (PenaltyActionEnum status : PenaltyActionEnum.values()) {
             if (Objects.equals(status.getCode(), code)) {
                 return status;
             }
