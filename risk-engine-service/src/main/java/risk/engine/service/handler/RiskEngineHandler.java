@@ -25,7 +25,6 @@ import risk.engine.service.service.IPenaltyRecordService;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 处理业务请求数据
@@ -83,29 +82,26 @@ public class RiskEngineHandler {
                     if (CollectionUtils.isEmpty(penaltyFieldVOList)) {
                         return;
                     }
-                    List<PenaltyRecordPO> penaltyRecordList = penaltyFieldVOList.stream().map(listDTO ->  {
-                        PenaltyRecordPO penaltyRecord = new PenaltyRecordPO();
-                        penaltyRecord.setFlowNo(executeEngineDTO.getFlowNo());
-                        penaltyRecord.setRuleCode(hitOnlineRule.getRuleCode());
-                        penaltyRecord.setRuleName(hitOnlineRule.getRuleName());
-                        penaltyRecord.setIncidentCode(executeEngineDTO.getIncidentCode());
-                        penaltyRecord.setIncidentName(executeEngineDTO.getIncidentName());
-                        penaltyRecord.setPenaltyCode(penalty.getPenaltyCode());
-                        penaltyRecord.setPenaltyName(penalty.getPenaltyName());
-                        penaltyRecord.setPenaltyDef(penalty.getPenaltyDef());
-                        penaltyRecord.setPenaltyReason(penalty.getPenaltyDescription());
-                        penaltyRecord.setPenaltyResult("");
-                        penaltyRecord.setPenaltyDescription(penalty.getPenaltyDescription());
-                        String penaltyJson = getPenaltyJson(penalty.getPenaltyCode(), penaltyFieldVOList, executeEngineDTO.getRequestPayload());
-                        penaltyRecord.setPenaltyJson(penaltyJson);
-                        penaltyRecord.setStatus(PenaltyStatusEnum.WAIT.getCode());
-                        penaltyRecord.setRetry(0);
-                        penaltyRecord.setPenaltyTime(LocalDateTime.now());
-                        penaltyRecord.setCreateTime(LocalDateTime.now());
-                        penaltyRecord.setUpdateTime(LocalDateTime.now());
-                        return penaltyRecord;
-                    }).collect(Collectors.toList());
-                    recordList.addAll(penaltyRecordList);
+                    PenaltyRecordPO penaltyRecord = new PenaltyRecordPO();
+                    penaltyRecord.setFlowNo(executeEngineDTO.getFlowNo());
+                    penaltyRecord.setRuleCode(hitOnlineRule.getRuleCode());
+                    penaltyRecord.setRuleName(hitOnlineRule.getRuleName());
+                    penaltyRecord.setIncidentCode(executeEngineDTO.getIncidentCode());
+                    penaltyRecord.setIncidentName(executeEngineDTO.getIncidentName());
+                    penaltyRecord.setPenaltyCode(penalty.getPenaltyCode());
+                    penaltyRecord.setPenaltyName(penalty.getPenaltyName());
+                    penaltyRecord.setPenaltyDef(penalty.getPenaltyDef());
+                    penaltyRecord.setPenaltyReason(penalty.getPenaltyDescription());
+                    penaltyRecord.setPenaltyResult("");
+                    penaltyRecord.setPenaltyDescription(penalty.getPenaltyDescription());
+                    String penaltyJson = getPenaltyJson(penalty.getPenaltyCode(), penaltyFieldVOList, executeEngineDTO.getRequestPayload());
+                    penaltyRecord.setPenaltyJson(penaltyJson);
+                    penaltyRecord.setStatus(PenaltyStatusEnum.WAIT.getCode());
+                    penaltyRecord.setRetry(0);
+                    penaltyRecord.setPenaltyTime(LocalDateTime.now());
+                    penaltyRecord.setCreateTime(LocalDateTime.now());
+                    penaltyRecord.setUpdateTime(LocalDateTime.now());
+                    recordList.add(penaltyRecord);
                 });
         if (CollectionUtils.isEmpty(recordList)) {
             return;
@@ -120,17 +116,19 @@ public class RiskEngineHandler {
     }
 
     private String getPenaltyJson (String penaltyCode, List<PenaltyFieldVO> penaltyFieldVOList, Map<String, Object> requestPayload) {
-        if (StringUtils.equals(penaltyCode, PenaltyActionEnum.APPEND_LIST.getCode())) {
-            List<Map<String, Object>> mapList = penaltyFieldVOList.stream()
-                    .map(fieldVO -> {
-                        Map<String, Object> map = new HashMap<>();
-                        String listValue = (String) requestPayload.get(fieldVO.getFieldCode());
-                        map.put(fieldVO.getFieldCode(), listValue);
-                        return map;
-                    }).collect(Collectors.toList());
-            return JSON.toJSONString(mapList);
+        if (StringUtils.equals(penaltyCode, PenaltyActionEnum.BUSINESS_WECHAT_BOT.getCode())) {
+            Map<String, Object> businessWeChatMap = new HashMap<>();
+            for (PenaltyFieldVO fieldVO : penaltyFieldVOList) {
+                Object value = requestPayload.get(fieldVO.getFieldCode());
+                if (Objects.isNull(value)) {
+                    continue;
+                }
+                businessWeChatMap.put(fieldVO.getFieldCode(), value);
+            }
+            return JSON.toJSONString(businessWeChatMap);
+        } else {
+            throw new RuntimeException("处罚手段未配置");
         }
-        return null;
     }
 
     /**

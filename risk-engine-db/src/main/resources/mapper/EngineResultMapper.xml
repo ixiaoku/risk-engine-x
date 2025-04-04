@@ -12,7 +12,7 @@
     <result column="rule_decision_result" jdbcType="VARCHAR" property="ruleDecisionResult" />
     <result column="rule_label" jdbcType="VARCHAR" property="ruleLabel" />
     <result column="rule_penalty_action" jdbcType="VARCHAR" property="rulePenaltyAction" />
-    <result column="rule_version" jdbcType="VARCHAR" property="ruleVersionPO" />
+    <result column="rule_version" jdbcType="VARCHAR" property="ruleVersion" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="request_payload" jdbcType="LONGVARCHAR" property="requestPayload" />
     <result column="hit_online_rules" jdbcType="LONGVARCHAR" property="hitOnlineRules" />
@@ -55,7 +55,7 @@
     values (#{id,jdbcType=BIGINT}, #{incidentCode,jdbcType=VARCHAR}, #{incidentName,jdbcType=VARCHAR}, 
       #{ruleCode,jdbcType=VARCHAR}, #{ruleName,jdbcType=VARCHAR}, #{ruleStatus,jdbcType=INTEGER}, 
       #{ruleScore,jdbcType=INTEGER}, #{ruleDecisionResult,jdbcType=VARCHAR}, #{ruleLabel,jdbcType=VARCHAR}, 
-      #{rulePenaltyAction,jdbcType=VARCHAR}, #{ruleVersionPO,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+      #{rulePenaltyAction,jdbcType=VARCHAR}, #{ruleVersion,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
       #{requestPayload,jdbcType=LONGVARCHAR}, #{hitOnlineRules,jdbcType=LONGVARCHAR}, #{hitMockRules,jdbcType=LONGVARCHAR})
   </insert>
 </mapper>

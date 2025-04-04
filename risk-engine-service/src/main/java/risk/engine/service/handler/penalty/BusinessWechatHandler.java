@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import risk.engine.common.util.CryptoUtils;
-import risk.engine.common.util.DateTimeUtil;
 import risk.engine.common.util.OkHttpUtil;
 import risk.engine.db.entity.PenaltyRecordPO;
 import risk.engine.dto.constant.CrawlerConstant;
@@ -38,7 +37,7 @@ public class BusinessWechatHandler implements IPenaltyHandler {
             String key = CryptoUtils.desDecrypt(CrawlerConstant.weChatBotDataKey, secretKey);
             //解析json报文
             String title = articleObject.getString("title");
-            String time = DateTimeUtil.getTimeByTimestamp(articleObject.getLong("releaseDate"));
+            String time = articleObject.getString("createdAt");
             String content = String.format(CrawlerConstant.notIceBotContent, title, time);
             //组装企业微信 markdown格式报文
             GroupChatBotDTO groupChatBotDTO = new GroupChatBotDTO();
