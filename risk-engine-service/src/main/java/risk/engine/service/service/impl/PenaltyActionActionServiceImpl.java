@@ -5,13 +5,11 @@ import org.springframework.stereotype.Service;
 import risk.engine.db.dao.PenaltyActionMapper;
 import risk.engine.db.entity.PenaltyActionPO;
 import risk.engine.dto.param.PenaltyActionParam;
-import risk.engine.dto.vo.PenaltyActionVO;
 import risk.engine.dto.vo.PenaltyFieldVO;
 import risk.engine.service.service.IPenaltyActionService;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Author: X
@@ -46,19 +44,13 @@ public class PenaltyActionActionServiceImpl implements IPenaltyActionService {
     }
 
     @Override
-    public List<PenaltyActionVO> getPenaltyFields(PenaltyActionParam penalty) {
-
+    public List<PenaltyFieldVO> getPenaltyFields(PenaltyActionParam penalty) {
         PenaltyActionPO penaltyActionQuery = new PenaltyActionPO();
         penaltyActionQuery.setPenaltyCode(penalty.getPenaltyCode());
         penaltyActionQuery.setStatus(1);
         List<PenaltyActionPO> penaltyActionPOS = penaltyActionMapper.selectByExample(penaltyActionQuery);
-        return penaltyActionPOS.stream().map(action -> {
-            PenaltyActionVO actionVO = new PenaltyActionVO();
-            actionVO.setPenaltyCode(action.getPenaltyCode());
-            List<PenaltyFieldVO> penaltyFieldVOS = JSON.parseArray(action.getPenaltyJson(), PenaltyFieldVO.class);
-            actionVO.setPenaltyFields(penaltyFieldVOS);
-            return actionVO;
-        }).collect(Collectors.toList());
+        PenaltyActionPO actionPO = penaltyActionPOS.get(0);
+        return JSON.parseArray(actionPO.getPenaltyJson(), PenaltyFieldVO.class);
     }
 
     @Override
