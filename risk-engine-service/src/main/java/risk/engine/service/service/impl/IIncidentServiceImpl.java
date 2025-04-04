@@ -110,15 +110,16 @@ public class IIncidentServiceImpl implements IIncidentService {
         MetricPO metricQuery = new MetricPO();
         metricQuery.setIncidentCode(incidentCode);
         List<MetricPO> metricList = metricMapper.selectByExample(metricQuery);
+        //@todo 待优化如果是增加或者减少字段 或者改变类型 我还需要兼容
         //新增
+        JSONObject jsonObject = JSON.parseObject(requestPayload);
         if (CollectionUtils.isEmpty(metricList)) {
-            JSONObject jsonObject = JSON.parseObject(requestPayload);
             return jsonObject.entrySet().stream()
                     .map(key -> {
                         MetricDTO metric = new MetricDTO();
                         metric.setMetricCode(key.getKey());
+                        metric.setSampleValue(key.getValue().toString());
                         metric.setMetricName("指标名字");
-                        metric.setMetricValue(key.getValue().toString());
                         metric.setMetricDesc("备注");
                         if (key.getValue() instanceof Integer) {
                             metric.setMetricType(MetricTypeEnum.INTEGER.getCode());
@@ -143,7 +144,7 @@ public class IIncidentServiceImpl implements IIncidentService {
             metricDTO.setMetricName(metric.getMetricName());
             metricDTO.setMetricType(metric.getMetricType());
             metricDTO.setMetricDesc(metric.getMetricDesc());
-            metricDTO.setMetricValue(metric.getSampleValue());
+            metricDTO.setSampleValue(metric.getSampleValue());
             return metricDTO;
         }).collect(Collectors.toList());
     }
@@ -193,8 +194,8 @@ public class IIncidentServiceImpl implements IIncidentService {
                     metric.setIncidentCode(incidentParam.getIncidentCode());
                     metric.setMetricCode(metricDTO.getMetricCode());
                     metric.setMetricName(metricDTO.getMetricName());
-                    metric.setSampleValue(metricDTO.getMetricValue());
-                    metric.setMetricDesc("备注");
+                    metric.setSampleValue(metricDTO.getSampleValue());
+                    metric.setMetricDesc(metricDTO.getMetricDesc());
                     metric.setMetricSource(MetricSourceEnum.ATTRIBUTE.getCode());
                     metric.setMetricType(metricDTO.getMetricType());
                     metric.setOperator(incidentParam.getOperator());

@@ -35,6 +35,6 @@ public class MetricDTO {
     /**
      * 指标示例值
      */
-    private String metricValue;
+    private String sampleValue;
 
 }
