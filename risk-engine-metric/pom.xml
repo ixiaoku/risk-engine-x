@@ -7,11 +7,11 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>risk.engine.indictor</groupId>
-    <artifactId>risk-engine-indicator</artifactId>
+    <groupId>risk.engine.metric</groupId>
+    <artifactId>risk-engine-metric</artifactId>
     <packaging>jar</packaging>
 
-    <name>risk-engine-indicator</name>
+    <name>risk-engine-metric</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <version>4.13</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

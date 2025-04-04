@@ -1,4 +1,4 @@
-package risk.engine.indictor;
+package risk.engine.metric;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
