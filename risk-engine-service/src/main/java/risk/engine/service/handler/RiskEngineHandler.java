@@ -20,7 +20,7 @@ import risk.engine.dto.enums.PenaltyStatusEnum;
 import risk.engine.dto.enums.PenaltyActionEnum;
 import risk.engine.service.service.IEngineResultService;
 import risk.engine.service.service.IPenaltyRecordService;
-import risk.engine.service.service.IPenaltyService;
+import risk.engine.service.service.IPenaltyActionService;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -47,7 +47,7 @@ public class RiskEngineHandler {
     private ElasticsearchClientApi elasticsearchClientApi;
 
     @Resource
-    private IPenaltyService penaltyService;
+    private IPenaltyActionService penaltyService;
 
     @Resource
     private IPenaltyRecordService penaltyRecordService;

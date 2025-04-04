@@ -9,7 +9,7 @@ import java.util.List;
  * @Date: 2025/3/16 12:58
  * @Version: 1.0
  */
-public interface IPenaltyService {
+public interface IPenaltyActionService {
 
     boolean deleteByPrimaryKey(Long id);
 

@@ -4,7 +4,7 @@ import risk.engine.db.entity.PenaltyActionPO;
 
 import java.util.List;
 
-public interface PenaltyMapper {
+public interface PenaltyActionMapper {
 
     int deleteByPrimaryKey(Long id);
 
