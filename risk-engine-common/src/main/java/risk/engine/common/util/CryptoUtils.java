@@ -1,5 +1,7 @@
 package risk.engine.common.util;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -14,6 +16,9 @@ import java.util.Base64;
  * @Version: 1.0
  */
 public class CryptoUtils {
+
+    @Value("${des.secret.key}")
+    private static String secretKey;
 
     /**
      * MD5 加密（32位小写）
@@ -153,7 +158,12 @@ public class CryptoUtils {
     }
 
     public static String getDesSecretKey() {
+        //测试环境
         String key = System.getenv("DES_SECRET_KEY");
+        if (key == null) {
+            //生产环境
+            key = secretKey;
+        }
         if (key == null || key.isEmpty()) {
             throw new RuntimeException("DES 密钥未配置");
         }

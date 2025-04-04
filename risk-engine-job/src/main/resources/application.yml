@@ -23,3 +23,7 @@ telegram:
   target:
     bot:
       username: btcismoonflyqaq
+
+des:
+  secret:
+    key: ${DES_SECRET_KEY:default-key}
