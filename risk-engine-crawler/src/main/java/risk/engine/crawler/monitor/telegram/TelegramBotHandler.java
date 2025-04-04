@@ -13,7 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.BotOptions;
 import org.telegram.telegrambots.meta.generics.LongPollingBot;
 import risk.engine.common.util.DateTimeUtil;
-import risk.engine.db.entity.CrawlerTask;
+import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.dto.dto.crawler.CrawlerNoticeDTO;
 import risk.engine.service.service.ICrawlerTaskService;
 
@@ -51,7 +51,7 @@ public class TelegramBotHandler implements LongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         log.info("onUpdateReceived--------------------->start");
-        List<CrawlerTask> crawlerTaskList = new ArrayList<>();
+        List<CrawlerTaskPO> crawlerTaskList = new ArrayList<>();
         //监听频道
         if (update.hasChannelPost()) {
             Chat chat = update.getChannelPost().getChat();
@@ -69,7 +69,7 @@ public class TelegramBotHandler implements LongPollingBot {
                 noticeDTO.setCreatedAt(DateTimeUtil.getCurrentDateTime());
                 noticeDTO.setTitle(messageText);
                 noticeDTO.setFlowNo(chat.getId().toString());
-                CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(noticeDTO.getFlowNo(), "TelegramBEWnews", JSON.toJSONString(noticeDTO));
+                CrawlerTaskPO crawlerTask = crawlerTaskService.getCrawlerTask(noticeDTO.getFlowNo(), "TelegramBEWnews", JSON.toJSONString(noticeDTO));
                 if (Objects.isNull(crawlerTask)) {
                     return;
                 }
@@ -95,7 +95,7 @@ public class TelegramBotHandler implements LongPollingBot {
             noticeDTO.setCreatedAt(DateTimeUtil.getTimeByTimestamp(message.getDate().longValue() * 1000));
             noticeDTO.setTitle(messageText);
             noticeDTO.setFlowNo(message.getMessageId().toString() + "_" + message.getDate().toString());
-            CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(noticeDTO.getFlowNo(), "TelegramBEWnews", JSON.toJSONString(noticeDTO));
+            CrawlerTaskPO crawlerTask = crawlerTaskService.getCrawlerTask(noticeDTO.getFlowNo(), "TelegramBEWnews", JSON.toJSONString(noticeDTO));
             if (Objects.isNull(crawlerTask)) {
                 return;
             }

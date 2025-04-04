@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import risk.engine.components.es.ElasticsearchClientApi;
 import risk.engine.components.es.EngineExecutorBoolQuery;
 import risk.engine.db.dao.EngineResultMapper;
-import risk.engine.db.entity.EngineResult;
+import risk.engine.db.entity.EngineResultPO;
 import risk.engine.dto.constant.BusinessConstant;
 import risk.engine.dto.param.EngineExecutorParam;
 import risk.engine.dto.vo.EngineExecutorVO;
@@ -38,17 +38,17 @@ public class EngineResultServiceImpl implements IEngineResultService {
     }
 
     @Override
-    public boolean insert(EngineResult record) {
+    public boolean insert(EngineResultPO record) {
         return engineResultMapper.insert(record) > 0;
     }
 
     @Override
-    public List<EngineResult> selectByExample(EngineResult engineResult) {
+    public List<EngineResultPO> selectByExample(EngineResultPO engineResult) {
         return engineResultMapper.selectByExample(engineResult);
     }
 
     @Override
-    public EngineResult selectByPrimaryKey(Long id) {
+    public EngineResultPO selectByPrimaryKey(Long id) {
         return engineResultMapper.selectByPrimaryKey(id);
     }
 

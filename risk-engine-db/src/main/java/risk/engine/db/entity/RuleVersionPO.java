@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class RuleVersion {
+public class RuleVersionPO {
 
     /**
      * 主键id

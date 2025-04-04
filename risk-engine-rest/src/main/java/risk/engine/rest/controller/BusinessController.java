@@ -6,7 +6,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import risk.engine.db.entity.TransferRecord;
+import risk.engine.db.entity.TransferRecordPO;
 import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.dto.vo.RiskEngineExecuteVO;
 import risk.engine.service.service.IRiskEngineExecuteService;
@@ -36,9 +36,9 @@ public class BusinessController {
     public void execute() {
 
         try {
-            TransferRecord transferRecord = new TransferRecord();
+            TransferRecordPO transferRecord = new TransferRecordPO();
             transferRecord.setStatus(0);
-            List<TransferRecord> transferRecordList = transferRecordService.selectByExample(transferRecord);
+            List<TransferRecordPO> transferRecordList = transferRecordService.selectByExample(transferRecord);
             if (CollectionUtils.isEmpty(transferRecordList)) {
                 return;
             }

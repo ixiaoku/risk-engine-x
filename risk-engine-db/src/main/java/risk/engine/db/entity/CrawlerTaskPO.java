@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * @Version: 1.0
  */
 @Data
-public class CrawlerTask {
+public class CrawlerTaskPO {
     /**
      * 主键id
      */

@@ -2,8 +2,8 @@ package risk.engine.service.service.impl;
 
 import org.springframework.stereotype.Service;
 import risk.engine.db.dao.PenaltyRecordMapper;
-import risk.engine.db.entity.Penalty;
-import risk.engine.db.entity.PenaltyRecord;
+import risk.engine.db.entity.PenaltyActionPO;
+import risk.engine.db.entity.PenaltyRecordPO;
 import risk.engine.service.service.IPenaltyRecordService;
 
 import javax.annotation.Resource;
@@ -27,27 +27,27 @@ public class PenaltyRecordServiceImpl implements IPenaltyRecordService {
     }
 
     @Override
-    public boolean insert(PenaltyRecord record) {
+    public boolean insert(PenaltyRecordPO record) {
         return penaltyRecordMapper.insert(record) > 0;
     }
 
     @Override
-    public boolean batchInsert(List<PenaltyRecord> records) {
+    public boolean batchInsert(List<PenaltyRecordPO> records) {
         return penaltyRecordMapper.batchInsert(records) > 0;
     }
 
     @Override
-    public Penalty selectByPrimaryKey(Long id) {
+    public PenaltyActionPO selectByPrimaryKey(Long id) {
         return penaltyRecordMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public List<PenaltyRecord> selectExample(PenaltyRecord penaltyRecord) {
+    public List<PenaltyRecordPO> selectExample(PenaltyRecordPO penaltyRecord) {
         return penaltyRecordMapper.selectExample(penaltyRecord);
     }
 
     @Override
-    public boolean updateByPrimaryKey(PenaltyRecord record) {
+    public boolean updateByPrimaryKey(PenaltyRecordPO record) {
         return penaltyRecordMapper.updateByPrimaryKey(record) > 0;
     }
 }

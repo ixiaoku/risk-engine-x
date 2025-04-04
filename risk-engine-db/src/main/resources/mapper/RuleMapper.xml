@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="risk.engine.db.dao.RuleMapper">
-  <resultMap id="BaseResultMap" type="risk.engine.db.entity.Rule">
+  <resultMap id="BaseResultMap" type="risk.engine.db.entity.RulePO">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="incident_code" jdbcType="VARCHAR" property="incidentCode" />
     <result column="rule_code" jdbcType="VARCHAR" property="ruleCode" />
@@ -75,7 +75,7 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
 
-  <insert id="insert" parameterType="risk.engine.db.entity.Rule">
+  <insert id="insert" parameterType="risk.engine.db.entity.RulePO">
     insert into rule (id, incident_code, rule_code,
                       rule_name, status, score,
                       decision_result, expiry_time, label,
@@ -90,7 +90,7 @@
             #{groovyScript,jdbcType=LONGVARCHAR}, #{jsonScript,jdbcType=LONGVARCHAR}, #{logicScript,jdbcType=VARCHAR})
   </insert>
 
-  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.Rule">
+  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.RulePO">
     update rule
     set rule_name = #{ruleName,jdbcType=VARCHAR},
         status = #{status,jdbcType=INTEGER},

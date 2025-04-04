@@ -6,7 +6,7 @@ import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
-import risk.engine.db.entity.CrawlerTask;
+import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.service.service.ICrawlerTaskService;
 import risk.engine.service.service.IRiskEngineExecuteService;
@@ -34,9 +34,9 @@ public class ExecutorEngineHandler {
     public void executorEngine() {
         try {
             String param = XxlJobHelper.getJobParam();
-            CrawlerTask crawlerTaskQuery = new CrawlerTask();
+            CrawlerTaskPO crawlerTaskQuery = new CrawlerTaskPO();
             crawlerTaskQuery.setStatus(0);
-            List<CrawlerTask> crawlerTasks = crawlerTaskService.selectByExample(crawlerTaskQuery);
+            List<CrawlerTaskPO> crawlerTasks = crawlerTaskService.selectByExample(crawlerTaskQuery);
             if (CollectionUtils.isEmpty(crawlerTasks)) {
                 return;
             }

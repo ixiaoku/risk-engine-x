@@ -10,9 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.components.es.ElasticsearchClientApi;
-import risk.engine.db.entity.EngineResult;
-import risk.engine.db.entity.Penalty;
-import risk.engine.db.entity.PenaltyRecord;
+import risk.engine.db.entity.EngineResultPO;
+import risk.engine.db.entity.PenaltyActionPO;
+import risk.engine.db.entity.PenaltyRecordPO;
 import risk.engine.dto.constant.BusinessConstant;
 import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;
 import risk.engine.dto.dto.penalty.RulePenaltyListDTO;
@@ -66,14 +66,14 @@ public class RiskEngineHandler {
      * @param executeEngineDTO 参数
      */
     public void savePenalty(RiskExecuteEngineDTO executeEngineDTO) {
-        Penalty p = new Penalty();
+        PenaltyActionPO p = new PenaltyActionPO();
         p.setStatus(1);
-        List<Penalty> penalties = penaltyService.selectByExample(p);
+        List<PenaltyActionPO> penalties = penaltyService.selectByExample(p);
         if (CollectionUtils.isEmpty(penalties)) {
             return;
         }
-        Map<String, List<Penalty>> listMap = penalties.stream().collect(Collectors.groupingBy(Penalty::getPenaltyCode));
-        List<PenaltyRecord> recordList = new ArrayList<>();
+        Map<String, List<PenaltyActionPO>> listMap = penalties.stream().collect(Collectors.groupingBy(PenaltyActionPO::getPenaltyCode));
+        List<PenaltyRecordPO> recordList = new ArrayList<>();
         executeEngineDTO
                 .getHitOnlineRules()
                 .stream()
@@ -81,11 +81,11 @@ public class RiskEngineHandler {
                 .forEach(hitOnlineRule -> {
                     String penaltyJson = hitOnlineRule.getPenaltyAction();
                     List<RulePenaltyListDTO> penaltyListDTOList = JSON.parseArray(penaltyJson, RulePenaltyListDTO.class);
-                    List<PenaltyRecord> penaltyRecordList = penaltyListDTOList.stream().map(listDTO ->  {
+                    List<PenaltyRecordPO> penaltyRecordList = penaltyListDTOList.stream().map(listDTO ->  {
                         String penaltyCode = listDTO.getPenaltyCode();
-                        List<Penalty> penaltyList = listMap.get(penaltyCode);
-                        Penalty penalty = penaltyList.get(0);
-                        PenaltyRecord penaltyRecord = new PenaltyRecord();
+                        List<PenaltyActionPO> penaltyList = listMap.get(penaltyCode);
+                        PenaltyActionPO penalty = penaltyList.get(0);
+                        PenaltyRecordPO penaltyRecord = new PenaltyRecordPO();
                         penaltyRecord.setFlowNo(executeEngineDTO.getFlowNo());
                         penaltyRecord.setRuleCode(hitOnlineRule.getRuleCode());
                         penaltyRecord.setRuleName(hitOnlineRule.getRuleName());
@@ -112,7 +112,7 @@ public class RiskEngineHandler {
             return;
         }
         //进行分组处理
-        List<List<PenaltyRecord>> list = Lists.partition(recordList, 200);
+        List<List<PenaltyRecordPO>> list = Lists.partition(recordList, 200);
         list.forEach(penaltyRecords -> {
             //保存处罚记录
             penaltyRecordService.batchInsert(penaltyRecords);
@@ -147,8 +147,8 @@ public class RiskEngineHandler {
      * @param executeEngineDTO 参数
      * @return 结果
      */
-    private EngineResult getEngineResult(RiskExecuteEngineDTO executeEngineDTO) {
-        EngineResult engineResult = new EngineResult();
+    private EngineResultPO getEngineResult(RiskExecuteEngineDTO executeEngineDTO) {
+        EngineResultPO engineResult = new EngineResultPO();
         engineResult.setFlowNo(executeEngineDTO.getFlowNo());
         engineResult.setRiskFlowNo(executeEngineDTO.getRiskFlowNo());
         engineResult.setRequestPayload(JSON.toJSONString(executeEngineDTO.getRequestPayload()));

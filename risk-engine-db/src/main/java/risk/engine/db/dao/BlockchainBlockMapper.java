@@ -3,18 +3,18 @@ package risk.engine.db.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-import risk.engine.db.entity.BlockchainBlock;
+import risk.engine.db.entity.BlockchainBlockPO;
 
 @Mapper
 public interface BlockchainBlockMapper {
 
     int deleteByPrimaryKey(Long id);
 
-    int insert(BlockchainBlock record);
+    int insert(BlockchainBlockPO record);
 
-    List<BlockchainBlock> selectByExample(BlockchainBlock example);
+    List<BlockchainBlockPO> selectByExample(BlockchainBlockPO example);
 
-    BlockchainBlock selectByPrimaryKey(Long id);
+    BlockchainBlockPO selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKey(BlockchainBlock record);
+    int updateByPrimaryKey(BlockchainBlockPO record);
 }

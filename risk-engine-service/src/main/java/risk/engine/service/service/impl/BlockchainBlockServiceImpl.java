@@ -2,7 +2,7 @@ package risk.engine.service.service.impl;
 
 import org.springframework.stereotype.Service;
 import risk.engine.db.dao.BlockchainBlockMapper;
-import risk.engine.db.entity.BlockchainBlock;
+import risk.engine.db.entity.BlockchainBlockPO;
 import risk.engine.service.service.IBlockchainBlockService;
 
 import javax.annotation.Resource;
@@ -25,22 +25,22 @@ public class BlockchainBlockServiceImpl implements IBlockchainBlockService {
     }
 
     @Override
-    public boolean insert(BlockchainBlock record) {
+    public boolean insert(BlockchainBlockPO record) {
         return  blockchainBlockMapper.insert(record) > 0;
     }
 
     @Override
-    public List<BlockchainBlock> selectByExample(BlockchainBlock example) {
+    public List<BlockchainBlockPO> selectByExample(BlockchainBlockPO example) {
         return blockchainBlockMapper.selectByExample(example);
     }
 
     @Override
-    public BlockchainBlock selectByPrimaryKey(Long id) {
+    public BlockchainBlockPO selectByPrimaryKey(Long id) {
         return blockchainBlockMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public boolean updateByPrimaryKey(BlockchainBlock record) {
+    public boolean updateByPrimaryKey(BlockchainBlockPO record) {
         return blockchainBlockMapper.updateByPrimaryKey(record) > 0;
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import risk.engine.common.util.CryptoUtils;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.common.util.OkHttpUtil;
-import risk.engine.db.entity.PenaltyRecord;
+import risk.engine.db.entity.PenaltyRecordPO;
 import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.crawler.GroupChatBotDTO;
 import risk.engine.dto.enums.PenaltyStatusEnum;
@@ -30,7 +30,7 @@ public class BusinessWechatHandler implements IPenaltyHandler {
             .create();
 
     @Override
-    public PenaltyStatusEnum doPenalty(PenaltyRecord record) {
+    public PenaltyStatusEnum doPenalty(PenaltyRecordPO record) {
         try {
             //解密这个api token
             JSONObject articleObject = JSONObject.parseObject(record.getPenaltyJson());

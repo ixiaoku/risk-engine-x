@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import risk.engine.db.entity.ListData;
-import risk.engine.db.entity.PenaltyRecord;
+import risk.engine.db.entity.ListDataPO;
+import risk.engine.db.entity.PenaltyRecordPO;
 import risk.engine.dto.dto.ListDataDTO;
 import risk.engine.dto.enums.PenaltyStatusEnum;
 import risk.engine.service.handler.IPenaltyHandler;
@@ -30,7 +30,7 @@ public class AppendListDataHandler implements IPenaltyHandler {
     private IListDataService listDataService;
 
     @Override
-    public PenaltyStatusEnum doPenalty(PenaltyRecord record) {
+    public PenaltyStatusEnum doPenalty(PenaltyRecordPO record) {
 
         try {
             List<ListDataDTO> listDataDTOS = JSON.parseArray(record.getPenaltyJson(), ListDataDTO.class);
@@ -38,19 +38,19 @@ public class AppendListDataHandler implements IPenaltyHandler {
                 return PenaltyStatusEnum.FAIL;
             }
             listDataDTOS.forEach(listDataDTO -> {
-                ListData listData = new ListData();
-                listData.setListLibraryCode(listDataDTO.getListLibraryCode());
-                listData.setListLibraryName(listDataDTO.getListLibraryName());
-                listData.setStatus(listDataDTO.getStatus());
-                listData.setListType(1);
-                listData.setListDesc("qaq");
-                listData.setListName(StringUtils.isEmpty(listDataDTO.getListName()) ? "qq" : listDataDTO.getListName());
-                listData.setListCode(listDataDTO.getListCode());
-                listData.setListValue(listDataDTO.getListValue());
-                listData.setOperator("System");
-                listData.setCreateTime(LocalDateTime.now());
-                listData.setUpdateTime(LocalDateTime.now());
-                listDataService.insert(listData);
+                ListDataPO listDataPO = new ListDataPO();
+                listDataPO.setListLibraryCode(listDataDTO.getListLibraryCode());
+                listDataPO.setListLibraryName(listDataDTO.getListLibraryName());
+                listDataPO.setStatus(listDataDTO.getStatus());
+                listDataPO.setListType(1);
+                listDataPO.setListDesc("qaq");
+                listDataPO.setListName(StringUtils.isEmpty(listDataDTO.getListName()) ? "qq" : listDataDTO.getListName());
+                listDataPO.setListCode(listDataDTO.getListCode());
+                listDataPO.setListValue(listDataDTO.getListValue());
+                listDataPO.setOperator("System");
+                listDataPO.setCreateTime(LocalDateTime.now());
+                listDataPO.setUpdateTime(LocalDateTime.now());
+                listDataService.insert(listDataPO);
             });
             return PenaltyStatusEnum.SUCCESS;
         } catch (Exception e) {

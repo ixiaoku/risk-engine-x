@@ -1,9 +1,9 @@
 package risk.engine.db.dao;
 
-import java.util.List;
-
 import org.apache.ibatis.annotations.Mapper;
-import risk.engine.db.entity.Incident;
+import risk.engine.db.entity.IncidentPO;
+
+import java.util.List;
 
 /**
  * 事件
@@ -16,13 +16,13 @@ public interface IncidentMapper {
 
     int deleteByPrimaryKey(Long id);
 
-    int insert(Incident record);
+    int insert(IncidentPO record);
 
-    List<Incident> selectByExample(Incident incident);
+    List<IncidentPO> selectByExample(IncidentPO incident);
 
-    Incident selectByIncidentCode(String incidentCode);
+    IncidentPO selectByIncidentCode(String incidentCode);
 
-    Incident selectByPrimaryKey(Long id);
+    IncidentPO selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKey(Incident record);
+    int updateByPrimaryKey(IncidentPO record);
 }

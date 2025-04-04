@@ -1,6 +1,6 @@
 package risk.engine.service.service;
 
-import risk.engine.db.entity.Metric;
+import risk.engine.db.entity.MetricPO;
 
 import java.util.List;
 
@@ -13,12 +13,12 @@ public interface IMetricService {
 
     boolean deleteByPrimaryKey(Long id);
 
-    boolean insert(Metric record);
+    boolean insert(MetricPO record);
 
-    Metric selectByPrimaryKey(Long id);
+    MetricPO selectByPrimaryKey(Long id);
 
-    boolean updateByPrimaryKey(Metric record);
+    boolean updateByPrimaryKey(MetricPO record);
 
-    List<Metric> selectByExample(Metric record);
+    List<MetricPO> selectByExample(MetricPO record);
 
 }

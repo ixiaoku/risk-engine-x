@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.db.dao.RuleMapper;
-import risk.engine.db.entity.Metric;
-import risk.engine.db.entity.Rule;
-import risk.engine.db.entity.RuleVersion;
+import risk.engine.db.entity.MetricPO;
+import risk.engine.db.entity.RulePO;
+import risk.engine.db.entity.RuleVersionPO;
 import risk.engine.db.entity.example.RuleExample;
 import risk.engine.dto.dto.IncidentDTO;
 import risk.engine.dto.dto.rule.RuleMetricDTO;
@@ -48,26 +48,26 @@ public class RuleServiceImpl implements IRuleService {
     private IRuleVersionService ruleVersionService;
 
     @Resource
-    private IMetricService indicatorService;
+    private IMetricService metricService;
 
     @Override
-    public List<Rule> selectByIncidentCode(String incidentCode) {
+    public List<RulePO> selectByIncidentCode(String incidentCode) {
         return ruleMapper.selectByIncidentCode(incidentCode);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean insert(RuleParam ruleParam) {
-        Rule rule = new Rule();
+        RulePO rule = new RulePO();
         rule.setIncidentCode(ruleParam.getIncidentCode());
         rule.setRuleCode(ruleParam.getRuleCode());
         rule.setRuleName(ruleParam.getRuleName());
         rule.setStatus(ruleParam.getStatus());
         rule.setScore(ruleParam.getScore());
-        List<RuleMetricDTO> indicatorDTOList = getRuleIndicatorDTOList(ruleParam.getIncidentCode(), ruleParam.getJsonScript());
-        rule.setJsonScript(new Gson().toJson(indicatorDTOList));
+        List<RuleMetricDTO> metricDTOList = getRuleMetricDTOList(ruleParam.getIncidentCode(), ruleParam.getJsonScript());
+        rule.setJsonScript(new Gson().toJson(metricDTOList));
         rule.setLogicScript(ruleParam.getLogicScript());
-        String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), indicatorDTOList);
+        String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), metricDTOList);
         rule.setGroovyScript(groovyScript);
         rule.setDecisionResult(ruleParam.getDecisionResult());
         rule.setExpiryTime(ruleParam.getExpiryTime());
@@ -79,31 +79,31 @@ public class RuleServiceImpl implements IRuleService {
         rule.setCreateTime(LocalDateTime.now());
         rule.setUpdateTime(LocalDateTime.now());
         //规则版本
-        RuleVersion ruleVersion = getRuleVersion(rule);
-        return ruleMapper.insert(rule) > 0 && ruleVersionService.insert(ruleVersion);
+        RuleVersionPO ruleVersionPO = getRuleVersion(rule);
+        return ruleMapper.insert(rule) > 0 && ruleVersionService.insert(ruleVersionPO);
     }
 
-    private List<RuleMetricDTO> getRuleIndicatorDTOList(String incidentCode, String jsonScript) {
+    private List<RuleMetricDTO> getRuleMetricDTOList(String incidentCode, String jsonScript) {
         //获取完整的特征类型和名称
-        Metric metricQuery = new Metric();
+        MetricPO metricQuery = new MetricPO();
         metricQuery.setIncidentCode(incidentCode);
-        List<Metric> metricList = indicatorService.selectByExample(metricQuery);
+        List<MetricPO> metricList = metricService.selectByExample(metricQuery);
         if (CollectionUtils.isEmpty(metricList)) {
             throw new RuntimeException();
         }
-        Map<String, Metric> resultMap = metricList.stream().collect(Collectors.toMap(Metric::getMetricCode, Function.identity()));
+        Map<String, MetricPO> resultMap = metricList.stream().collect(Collectors.toMap(MetricPO::getMetricCode, Function.identity()));
         List<RuleMetricDTO> conditions = new Gson().fromJson(jsonScript, new TypeToken<List<RuleMetricDTO>>(){}.getType());
         return conditions.stream()
-                .filter(i -> Objects.nonNull(resultMap.get(i.getIndicatorCode())))
-                .map(indicatorDTO -> {
+                .filter(i -> Objects.nonNull(resultMap.get(i.getMetricCode())))
+                .map(metricDTO -> {
                     RuleMetricDTO ruleMetricDTO = new RuleMetricDTO();
-                    ruleMetricDTO.setIndicatorCode(indicatorDTO.getIndicatorCode());
-                    ruleMetricDTO.setIndicatorValue(indicatorDTO.getIndicatorValue());
-                    ruleMetricDTO.setOperationSymbol(indicatorDTO.getOperationSymbol());
-                    ruleMetricDTO.setSerialNumber(indicatorDTO.getSerialNumber());
-                    Metric metric = resultMap.get(indicatorDTO.getIndicatorCode());
-                    ruleMetricDTO.setIndicatorType(metric.getMetricType());
-                    ruleMetricDTO.setIndicatorName(metric.getMetricName());
+                    ruleMetricDTO.setMetricCode(metricDTO.getMetricCode());
+                    ruleMetricDTO.setMetricValue(metricDTO.getMetricValue());
+                    ruleMetricDTO.setOperationSymbol(metricDTO.getOperationSymbol());
+                    ruleMetricDTO.setSerialNumber(metricDTO.getSerialNumber());
+                    MetricPO metric = resultMap.get(metricDTO.getMetricCode());
+                    ruleMetricDTO.setMetricType(metric.getMetricType());
+                    ruleMetricDTO.setMetricName(metric.getMetricName());
                     return ruleMetricDTO;
                 }).collect(Collectors.toList());
     }
@@ -117,7 +117,7 @@ public class RuleServiceImpl implements IRuleService {
         example.setRuleCode(ruleParam.getRuleCode());
         example.setRuleName(ruleParam.getRuleName());
         example.setStatus(ruleParam.getStatus());
-        List<Rule> ruleList = ruleMapper.selectByExample(example);
+        List<RulePO> ruleList = ruleMapper.selectByExample(example);
         if (CollectionUtils.isEmpty(ruleList)) {
             return List.of();
         }
@@ -145,16 +145,16 @@ public class RuleServiceImpl implements IRuleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean update(RuleParam ruleParam) {
-        Rule rule = new Rule();
+        RulePO rule = new RulePO();
         rule.setId(ruleParam.getId());
         rule.setRuleCode(ruleParam.getRuleCode());
         rule.setRuleName(ruleParam.getRuleName());
         rule.setStatus(ruleParam.getStatus());
         rule.setScore(ruleParam.getScore());
-        List<RuleMetricDTO> indicatorDTOList = getRuleIndicatorDTOList(ruleParam.getIncidentCode(), ruleParam.getJsonScript());
-        rule.setJsonScript(new Gson().toJson(indicatorDTOList));
+        List<RuleMetricDTO> metricDTOList = getRuleMetricDTOList(ruleParam.getIncidentCode(), ruleParam.getJsonScript());
+        rule.setJsonScript(new Gson().toJson(metricDTOList));
         rule.setLogicScript(ruleParam.getLogicScript());
-        String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), indicatorDTOList);
+        String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), metricDTOList);
         rule.setGroovyScript(groovyScript);
         rule.setDecisionResult(ruleParam.getDecisionResult());
         rule.setExpiryTime(ruleParam.getExpiryTime());
@@ -164,20 +164,20 @@ public class RuleServiceImpl implements IRuleService {
         rule.setVersion(UUID.randomUUID().toString().replace("-", ""));
         rule.setUpdateTime(LocalDateTime.now());
         //规则版本
-        RuleVersion ruleVersion = getRuleVersion(rule);
-        return ruleMapper.updateByPrimaryKey(rule) > 0 && ruleVersionService.insert(ruleVersion);
+        RuleVersionPO ruleVersionPO = getRuleVersion(rule);
+        return ruleMapper.updateByPrimaryKey(rule) > 0 && ruleVersionService.insert(ruleVersionPO);
     }
 
     @Override
     public RuleVO detail(Long id) {
-        Rule rule = ruleMapper.selectByPrimaryKey(id);
+        RulePO rule = ruleMapper.selectByPrimaryKey(id);
         if (Objects.isNull(rule)) {
             return null;
         }
         return getRuleResult(rule);
     }
 
-    private RuleVO getRuleResult(Rule rule) {
+    private RuleVO getRuleResult(RulePO rule) {
         RuleVO ruleVO = new RuleVO();
         ruleVO.setId(rule.getId());
         ruleVO.setIncidentCode(rule.getIncidentCode());
@@ -199,18 +199,18 @@ public class RuleServiceImpl implements IRuleService {
         return ruleVO;
     }
 
-    private RuleVersion getRuleVersion(Rule rule) {
-        RuleVersion ruleVersion = new RuleVersion();
-        ruleVersion.setRuleCode(rule.getRuleCode());
-        ruleVersion.setStatus(rule.getStatus());
-        ruleVersion.setLogicScript(rule.getLogicScript());
-        ruleVersion.setGroovyScript(rule.getGroovyScript());
-        ruleVersion.setJsonScript(rule.getJsonScript());
-        ruleVersion.setVersion(rule.getVersion());
-        ruleVersion.setOperator(rule.getOperator());
-        ruleVersion.setCreateTime(LocalDateTime.now());
-        ruleVersion.setUpdateTime(LocalDateTime.now());
-        return ruleVersion;
+    private RuleVersionPO getRuleVersion(RulePO rule) {
+        RuleVersionPO ruleVersionPO = new RuleVersionPO();
+        ruleVersionPO.setRuleCode(rule.getRuleCode());
+        ruleVersionPO.setStatus(rule.getStatus());
+        ruleVersionPO.setLogicScript(rule.getLogicScript());
+        ruleVersionPO.setGroovyScript(rule.getGroovyScript());
+        ruleVersionPO.setJsonScript(rule.getJsonScript());
+        ruleVersionPO.setVersion(rule.getVersion());
+        ruleVersionPO.setOperator(rule.getOperator());
+        ruleVersionPO.setCreateTime(LocalDateTime.now());
+        ruleVersionPO.setUpdateTime(LocalDateTime.now());
+        return ruleVersionPO;
     }
 
 

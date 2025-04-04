@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.common.util.OkHttpUtil;
-import risk.engine.db.entity.CrawlerTask;
+import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.crawler.CrawlerNoticeDTO;
 import risk.engine.dto.enums.ExchangeEnum;
@@ -40,7 +40,7 @@ public class MarketNoticeMonitorHandler {
             return;
         }
         // 解析json 获取公告爬虫数据
-        List<CrawlerTask> crawlerTasks = getCrawlerTasks(jsonResponse);
+        List<CrawlerTaskPO> crawlerTasks = getCrawlerTasks(jsonResponse);
         if (CollectionUtils.isEmpty(crawlerTasks)) {
             return;
         }
@@ -53,7 +53,7 @@ public class MarketNoticeMonitorHandler {
      * @param jsonResponse 参数
      * @return 结果
      */
-    private List<CrawlerTask> getCrawlerTasks(String jsonResponse) {
+    private List<CrawlerTaskPO> getCrawlerTasks(String jsonResponse) {
         JsonObject rootObject = JsonParser.parseString(jsonResponse).getAsJsonObject();
         // 检查返回状态
         String code = rootObject.get("code").getAsString();
@@ -67,7 +67,7 @@ public class MarketNoticeMonitorHandler {
         if (Objects.isNull(catalogs)) {
             log.error("未找到 data 数组");
         }
-        List<CrawlerTask> crawlerTasks = new ArrayList<>();
+        List<CrawlerTaskPO> crawlerTasks = new ArrayList<>();
         for (JsonElement element : catalogs) {
             JsonObject dataObject = element.getAsJsonObject();
             JsonArray articles =  dataObject.get("articles").getAsJsonArray();
@@ -86,7 +86,7 @@ public class MarketNoticeMonitorHandler {
                 noticeDTO.setTitle(title);
                 noticeDTO.setCreatedAt(createdAt);
                 noticeDTO.setType(type);
-                CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(flowNo, IncidentCodeEnum.BINANCE_NOTICE_LIST.getCode(), JSON.toJSONString(noticeDTO));
+                CrawlerTaskPO crawlerTask = crawlerTaskService.getCrawlerTask(flowNo, IncidentCodeEnum.BINANCE_NOTICE_LIST.getCode(), JSON.toJSONString(noticeDTO));
                 if (Objects.isNull(crawlerTask)) {
                     continue;
                 }

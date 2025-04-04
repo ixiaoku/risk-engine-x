@@ -1,14 +1,14 @@
 package risk.engine.db.dao;
 
-import risk.engine.db.entity.ListLibrary;
+import risk.engine.db.entity.ListLibraryPO;
 
 public interface ListLibraryMapper {
 
     int deleteByPrimaryKey(Long id);
 
-    int insert(ListLibrary record);
+    int insert(ListLibraryPO record);
 
-    ListLibrary selectByPrimaryKey(Long id);
+    ListLibraryPO selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKey(ListLibrary record);
+    int updateByPrimaryKey(ListLibraryPO record);
 }

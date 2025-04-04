@@ -7,8 +7,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import risk.engine.common.grovvy.GroovyShellUtil;
 import risk.engine.components.mq.RiskEngineProducer;
-import risk.engine.db.entity.Incident;
-import risk.engine.db.entity.Rule;
+import risk.engine.db.entity.IncidentPO;
+import risk.engine.db.entity.RulePO;
 import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;
 import risk.engine.dto.dto.rule.HitRuleDTO;
 import risk.engine.dto.dto.rule.RuleMetricDTO;
@@ -57,7 +57,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
         result.setDecisionResult(RuleDecisionResultEnum.SUCCESS.getCode());
         try {
             //查询事件
-            Incident incident = incidentService.selectByIncidentCode(riskEngineParam.getIncidentCode());
+            IncidentPO incident = incidentService.selectByIncidentCode(riskEngineParam.getIncidentCode());
             if (incident == null) {
                 log.error("Incident not found {}", riskEngineParam.getIncidentCode());
                 return result;
@@ -68,26 +68,26 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
                 return result;
             }
             //查询事件下的策略
-            List<Rule> ruleList = ruleService.selectByIncidentCode(incident.getIncidentCode());
+            List<RulePO> ruleList = ruleService.selectByIncidentCode(incident.getIncidentCode());
             if (CollectionUtils.isEmpty(ruleList)) {
                 log.error("Rule not found {}", riskEngineParam.getIncidentCode());
                 return result;
             }
             JSONObject paramMap = JSON.parseObject(riskEngineParam.getRequestPayload());
             //上线规则 分数降序
-            List<Rule> onlineRuleList = ruleList.stream()
+            List<RulePO> onlineRuleList = ruleList.stream()
                     .filter(rule -> rule.getStatus().equals(RuleStatusEnum.ONLINE.getCode()))
-                    .sorted(Comparator.comparingInt(Rule::getScore).reversed())
+                    .sorted(Comparator.comparingInt(RulePO::getScore).reversed())
                     .collect(Collectors.toList());
-            List<Rule> hitOnlineRuleList = getHitRuleList(paramMap, onlineRuleList);
+            List<RulePO> hitOnlineRuleList = getHitRuleList(paramMap, onlineRuleList);
             //模拟规则 分数降序
-            List<Rule> mockRuleList = ruleList.stream()
+            List<RulePO> mockRuleList = ruleList.stream()
                     .filter(rule -> rule.getStatus().equals(RuleStatusEnum.MOCK.getCode()))
-                    .sorted(Comparator.comparingInt(Rule::getScore).reversed())
+                    .sorted(Comparator.comparingInt(RulePO::getScore).reversed())
                     .collect(Collectors.toList());
-            List<Rule> hitMockRuleList = getHitRuleList(paramMap, mockRuleList);
+            List<RulePO> hitMockRuleList = getHitRuleList(paramMap, mockRuleList);
             //返回分数最高的命中策略 先返回上线的然后再看模拟的
-            Rule hitRule = new Rule();
+            RulePO hitRule = new RulePO();
             if (CollectionUtils.isNotEmpty(hitOnlineRuleList)) {
                 hitRule = hitOnlineRuleList.get(0);
                 result.setDecisionResult(hitRule.getDecisionResult());
@@ -97,7 +97,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
                 result.setDecisionResult(hitRule.getDecisionResult());
                 log.info("命中模拟规则：{}", hitRule.getRuleName());
             }
-            Rule finalHitRule = hitRule;
+            RulePO finalHitRule = hitRule;
             RiskExecuteEngineDTO executeEngineDTO = getRiskExecuteEngineDTO(riskEngineParam, incident.getIncidentName(), paramMap, finalHitRule, hitOnlineRuleList, hitMockRuleList);
             //异步保存数据和发送mq消息 规则熔断
             CompletableFuture.runAsync(() -> {
@@ -124,7 +124,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
      * @param hitMOckRuleList 命中模拟规则
      * @return 结果
      */
-    private RiskExecuteEngineDTO getRiskExecuteEngineDTO(RiskEngineParam riskEngineParam, String incidentName, JSONObject paramMap, Rule hitRule, List<Rule> hitOnlineRuleList, List<Rule> hitMOckRuleList) {
+    private RiskExecuteEngineDTO getRiskExecuteEngineDTO(RiskEngineParam riskEngineParam, String incidentName, JSONObject paramMap, RulePO hitRule, List<RulePO> hitOnlineRuleList, List<RulePO> hitMOckRuleList) {
         RiskExecuteEngineDTO executeEngineDTO = new RiskExecuteEngineDTO();
         executeEngineDTO.setFlowNo(riskEngineParam.getFlowNo());
         executeEngineDTO.setRiskFlowNo(riskEngineParam.getIncidentCode() + ":" + UUID.randomUUID());
@@ -149,7 +149,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
         List<RuleMetricDTO> indicatorDTOList = JSON.parseArray(hitRule.getJsonScript(), RuleMetricDTO.class);
         if (CollectionUtils.isNotEmpty(indicatorDTOList)) {
             Map<String, Object> map = new HashMap<>();
-            indicatorDTOList.forEach(indicatorDTO -> map.put(indicatorDTO.getIndicatorCode(), paramMap.get(indicatorDTO.getIndicatorCode())));
+            indicatorDTOList.forEach(indicatorDTO -> map.put(indicatorDTO.getMetricCode(), paramMap.get(indicatorDTO.getMetricCode())));
             executeEngineDTO.setIndicator(map);
         }
         return executeEngineDTO;
@@ -161,7 +161,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
      * @param ruleList 规则集合
      * @return 结果
      */
-    private List<HitRuleDTO> getHitRuleDTOList(Integer status, List<Rule> ruleList) {
+    private List<HitRuleDTO> getHitRuleDTOList(Integer status, List<RulePO> ruleList) {
         return ruleList.stream()
                 .filter(e-> Objects.equals(e.getStatus(), status))
                 .map(rule -> {
@@ -180,7 +180,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
      * @param ruleList 规则集合
      * @return 获取命中规则集合
      */
-    private List<Rule> getHitRuleList(JSONObject paramMap, List<Rule> ruleList) {
+    private List<RulePO> getHitRuleList(JSONObject paramMap, List<RulePO> ruleList) {
         return ruleList.stream().filter(rule -> GroovyShellUtil.runGroovy(rule.getGroovyScript(), paramMap)).collect(Collectors.toList());
     }
 

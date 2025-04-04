@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="risk.engine.db.dao.PenaltyRecordMapper">
-  <resultMap id="BaseResultMap" type="risk.engine.db.entity.PenaltyRecord">
+  <resultMap id="BaseResultMap" type="risk.engine.db.entity.PenaltyRecordPO">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="flow_no" jdbcType="VARCHAR" property="flowNo" />
     <result column="rule_code" jdbcType="VARCHAR" property="ruleCode" />
@@ -19,7 +19,7 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="risk.engine.db.entity.PenaltyRecord">
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="risk.engine.db.entity.PenaltyRecordPO">
     <result column="penalty_description" jdbcType="LONGVARCHAR" property="penaltyDescription" />
     <result column="penalty_json" jdbcType="LONGVARCHAR" property="penaltyJson" />
   </resultMap>
@@ -36,7 +36,7 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
 
-  <select id="selectExample" parameterType="risk.engine.db.entity.PenaltyRecord" resultMap="ResultMapWithBLOBs">
+  <select id="selectExample" parameterType="risk.engine.db.entity.PenaltyRecordPO" resultMap="ResultMapWithBLOBs">
     select
     <include refid="Base_Column_List" />
     from penalty_record
@@ -50,7 +50,7 @@
     delete from penalty_record
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="risk.engine.db.entity.PenaltyRecord">
+  <insert id="insert" parameterType="risk.engine.db.entity.PenaltyRecordPO">
     insert into penalty_record (id, flow_no, rule_code,
       rule_name, incident_code, incident_name, 
       penalty_code, penalty_name, penalty_def, 
@@ -82,7 +82,7 @@
     </foreach>
   </insert>
 
-  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.PenaltyRecord">
+  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.PenaltyRecordPO">
     update penalty_record
     set flow_no = #{flowNo,jdbcType=VARCHAR},
       rule_code = #{ruleCode,jdbcType=VARCHAR},

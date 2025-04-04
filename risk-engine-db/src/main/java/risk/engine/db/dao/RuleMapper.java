@@ -1,7 +1,7 @@
 package risk.engine.db.dao;
 
 import org.apache.ibatis.annotations.Mapper;
-import risk.engine.db.entity.Rule;
+import risk.engine.db.entity.RulePO;
 import risk.engine.db.entity.example.RuleExample;
 
 import java.util.List;
@@ -17,15 +17,15 @@ public interface RuleMapper {
 
     int deleteByPrimaryKey(Long id);
 
-    int insert(Rule record);
+    int insert(RulePO record);
 
-    List<Rule> selectByExample(RuleExample example);
+    List<RulePO> selectByExample(RuleExample example);
 
-    Rule selectByRuleCode(String incidentCode);
+    RulePO selectByRuleCode(String incidentCode);
 
-    List<Rule> selectByIncidentCode(String incidentCode);
+    List<RulePO> selectByIncidentCode(String incidentCode);
 
-    Rule selectByPrimaryKey(Long id);
+    RulePO selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKey(Rule record);
+    int updateByPrimaryKey(RulePO record);
 }

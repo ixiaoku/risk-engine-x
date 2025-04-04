@@ -1,20 +1,20 @@
 package risk.engine.db.dao;
 
 import org.apache.ibatis.annotations.Param;
-import risk.engine.db.entity.CrawlerTask;
+import risk.engine.db.entity.CrawlerTaskPO;
 
 import java.util.List;
 
 public interface CrawlerTaskMapper {
 
-    int batchInsert(@Param("list") List<CrawlerTask> recordList);
+    int batchInsert(@Param("list") List<CrawlerTaskPO> recordList);
 
     int deleteByPrimaryKey(Long id);
 
-    int updateByPrimaryKey(CrawlerTask record);
+    int updateByPrimaryKey(CrawlerTaskPO record);
 
-    List<CrawlerTask> selectByExample(CrawlerTask example);
+    List<CrawlerTaskPO> selectByExample(CrawlerTaskPO example);
 
-    CrawlerTask selectByPrimaryKey(Long id);
+    CrawlerTaskPO selectByPrimaryKey(Long id);
 
 }

@@ -1,6 +1,6 @@
 package risk.engine.service.service;
 
-import risk.engine.db.entity.TransferRecord;
+import risk.engine.db.entity.TransferRecordPO;
 
 import java.util.List;
 
@@ -13,12 +13,12 @@ public interface ITransferRecordService {
 
     boolean deleteByPrimaryKey(Long id);
 
-    boolean insert(TransferRecord record);
+    boolean insert(TransferRecordPO record);
 
-    TransferRecord selectByPrimaryKey(Long id);
+    TransferRecordPO selectByPrimaryKey(Long id);
 
-    List<TransferRecord> selectByExample(TransferRecord transferRecord);
+    List<TransferRecordPO> selectByExample(TransferRecordPO transferRecord);
 
-    boolean updateByPrimaryKey(TransferRecord record);
+    boolean updateByPrimaryKey(TransferRecordPO record);
 
 }

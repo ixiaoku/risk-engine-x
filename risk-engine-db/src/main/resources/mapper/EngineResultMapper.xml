@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="risk.engine.db.dao.EngineResultMapper">
-  <resultMap id="BaseResultMap" type="risk.engine.db.entity.EngineResult">
+  <resultMap id="BaseResultMap" type="risk.engine.db.entity.EngineResultPO">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="incident_code" jdbcType="VARCHAR" property="incidentCode" />
     <result column="incident_name" jdbcType="VARCHAR" property="incidentName" />
@@ -12,7 +12,7 @@
     <result column="rule_decision_result" jdbcType="VARCHAR" property="ruleDecisionResult" />
     <result column="rule_label" jdbcType="VARCHAR" property="ruleLabel" />
     <result column="rule_penalty_action" jdbcType="VARCHAR" property="rulePenaltyAction" />
-    <result column="rule_version" jdbcType="VARCHAR" property="ruleVersion" />
+    <result column="rule_version" jdbcType="VARCHAR" property="ruleVersionPO" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="request_payload" jdbcType="LONGVARCHAR" property="requestPayload" />
     <result column="hit_online_rules" jdbcType="LONGVARCHAR" property="hitOnlineRules" />
@@ -25,7 +25,7 @@
     hit_online_rules, hit_mock_rules
   </sql>
 
-  <select id="selectByExample" parameterType="risk.engine.db.entity.EngineResult" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="risk.engine.db.entity.EngineResultPO" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -46,7 +46,7 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
 
-  <insert id="insert" parameterType="risk.engine.db.entity.EngineResult">
+  <insert id="insert" parameterType="risk.engine.db.entity.EngineResultPO">
     insert into engine_result (id, incident_code, incident_name, 
       rule_code, rule_name, rule_status, 
       rule_score, rule_decision_result, rule_label, 
@@ -55,7 +55,7 @@
     values (#{id,jdbcType=BIGINT}, #{incidentCode,jdbcType=VARCHAR}, #{incidentName,jdbcType=VARCHAR}, 
       #{ruleCode,jdbcType=VARCHAR}, #{ruleName,jdbcType=VARCHAR}, #{ruleStatus,jdbcType=INTEGER}, 
       #{ruleScore,jdbcType=INTEGER}, #{ruleDecisionResult,jdbcType=VARCHAR}, #{ruleLabel,jdbcType=VARCHAR}, 
-      #{rulePenaltyAction,jdbcType=VARCHAR}, #{ruleVersion,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{rulePenaltyAction,jdbcType=VARCHAR}, #{ruleVersionPO,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
       #{requestPayload,jdbcType=LONGVARCHAR}, #{hitOnlineRules,jdbcType=LONGVARCHAR}, #{hitMockRules,jdbcType=LONGVARCHAR})
   </insert>
 </mapper>

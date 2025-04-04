@@ -1,6 +1,6 @@
 package risk.engine.service.service;
 
-import risk.engine.db.entity.ListData;
+import risk.engine.db.entity.ListDataPO;
 
 /**
  * @Author: X
@@ -11,10 +11,10 @@ public interface IListDataService {
 
     boolean deleteByPrimaryKey(Long id);
 
-    boolean insert(ListData record);
+    boolean insert(ListDataPO record);
 
-    ListData selectByPrimaryKey(Long id);
+    ListDataPO selectByPrimaryKey(Long id);
 
-    boolean updateByPrimaryKey(ListData record);
+    boolean updateByPrimaryKey(ListDataPO record);
 
 }

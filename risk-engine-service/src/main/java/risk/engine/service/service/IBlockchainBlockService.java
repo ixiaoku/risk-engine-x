@@ -1,6 +1,6 @@
 package risk.engine.service.service;
 
-import risk.engine.db.entity.BlockchainBlock;
+import risk.engine.db.entity.BlockchainBlockPO;
 
 import java.util.List;
 
@@ -13,12 +13,12 @@ public interface IBlockchainBlockService {
 
     boolean deleteByPrimaryKey(Long id);
 
-    boolean insert(BlockchainBlock record);
+    boolean insert(BlockchainBlockPO record);
 
-    List<BlockchainBlock> selectByExample(BlockchainBlock example);
+    List<BlockchainBlockPO> selectByExample(BlockchainBlockPO example);
 
-    BlockchainBlock selectByPrimaryKey(Long id);
+    BlockchainBlockPO selectByPrimaryKey(Long id);
 
-    boolean updateByPrimaryKey(BlockchainBlock record);
+    boolean updateByPrimaryKey(BlockchainBlockPO record);
 
 }

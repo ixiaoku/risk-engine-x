@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import risk.engine.common.util.OkHttpUtil;
 import risk.engine.crawler.monitor.ICrawlerBlockChainHandler;
-import risk.engine.db.entity.CrawlerTask;
+import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.dto.dto.block.ChainTransferDTO;
 import risk.engine.dto.dto.block.SolanaBlockDTO;
 import risk.engine.dto.enums.IncidentCodeEnum;
@@ -56,7 +56,7 @@ public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
             return;
         }
         //获取交易信息
-        List<CrawlerTask> crawlerTasks = getCrawlerTaskList(blockData);
+        List<CrawlerTaskPO> crawlerTasks = getCrawlerTaskList(blockData);
         if (CollectionUtils.isEmpty(crawlerTasks)) {
             return;
         }
@@ -103,8 +103,8 @@ public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
      * @param blockData 区块信息
      */
 
-    private List<CrawlerTask> getCrawlerTaskList(JsonObject blockData) {
-        List<CrawlerTask> crawlerTasks = new ArrayList<>();
+    private List<CrawlerTaskPO> getCrawlerTaskList(JsonObject blockData) {
+        List<CrawlerTaskPO> crawlerTasks = new ArrayList<>();
         SolanaBlockDTO solanaBlockDTO = gson.fromJson(blockData, SolanaBlockDTO.class);
         JsonArray jsonArray = blockData.getAsJsonArray("transactions");
         jsonArray.forEach(tx -> {
@@ -162,7 +162,7 @@ public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
             chainTransferDTO.setCreatedTime(LocalDateTime.now());
             chainTransferDTO.setStatus(0);
             //请求数据
-            CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(chainTransferDTO.getHash(), IncidentCodeEnum.TRANSFER_CHAIN.getCode(), JSON.toJSONString(chainTransferDTO));
+            CrawlerTaskPO crawlerTask = crawlerTaskService.getCrawlerTask(chainTransferDTO.getHash(), IncidentCodeEnum.TRANSFER_CHAIN.getCode(), JSON.toJSONString(chainTransferDTO));
             crawlerTasks.add(crawlerTask);
         });
         return crawlerTasks;

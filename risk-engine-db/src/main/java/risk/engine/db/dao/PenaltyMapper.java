@@ -1,6 +1,6 @@
 package risk.engine.db.dao;
 
-import risk.engine.db.entity.Penalty;
+import risk.engine.db.entity.PenaltyActionPO;
 
 import java.util.List;
 
@@ -8,11 +8,11 @@ public interface PenaltyMapper {
 
     int deleteByPrimaryKey(Long id);
 
-    int insert(Penalty record);
+    int insert(PenaltyActionPO record);
 
-    Penalty selectByPrimaryKey(Long id);
+    PenaltyActionPO selectByPrimaryKey(Long id);
 
-    List<Penalty> selectByExample(Penalty penalty);
+    List<PenaltyActionPO> selectByExample(PenaltyActionPO penalty);
 
-    int updateByPrimaryKey(Penalty record);
+    int updateByPrimaryKey(PenaltyActionPO record);
 }

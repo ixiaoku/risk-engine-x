@@ -1,6 +1,6 @@
 package risk.engine.service.service;
 
-import risk.engine.db.entity.RuleVersion;
+import risk.engine.db.entity.RuleVersionPO;
 
 /**
  * @Author: X
@@ -11,8 +11,8 @@ public interface IRuleVersionService {
 
     boolean deleteByPrimaryKey(Long id);
 
-    boolean insert(RuleVersion record);
+    boolean insert(RuleVersionPO record);
 
-    RuleVersion selectByPrimaryKey(Long id);
+    RuleVersionPO selectByPrimaryKey(Long id);
 
 }

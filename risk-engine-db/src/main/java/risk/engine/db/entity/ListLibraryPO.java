@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  * @Version: 1.0
  */
 @Data
-public class ListLibrary {
+public class ListLibraryPO {
 
     private Long id;
 

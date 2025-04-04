@@ -1,6 +1,6 @@
 package risk.engine.service.service;
 
-import risk.engine.db.entity.EngineResult;
+import risk.engine.db.entity.EngineResultPO;
 import risk.engine.dto.param.EngineExecutorParam;
 import risk.engine.dto.vo.EngineExecutorVO;
 
@@ -15,11 +15,11 @@ public interface IEngineResultService {
 
     boolean deleteByPrimaryKey(Long id);
 
-    boolean insert(EngineResult record);
+    boolean insert(EngineResultPO record);
 
-    List<EngineResult> selectByExample(EngineResult engineResult);
+    List<EngineResultPO> selectByExample(EngineResultPO engineResult);
 
-    EngineResult selectByPrimaryKey(Long id);
+    EngineResultPO selectByPrimaryKey(Long id);
 
     List<EngineExecutorVO> list(EngineExecutorParam executorParam);
 

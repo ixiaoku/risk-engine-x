@@ -1,6 +1,6 @@
 package risk.engine.service.handler;
 
-import risk.engine.db.entity.PenaltyRecord;
+import risk.engine.db.entity.PenaltyRecordPO;
 import risk.engine.dto.enums.PenaltyStatusEnum;
 
 /**
@@ -10,6 +10,6 @@ import risk.engine.dto.enums.PenaltyStatusEnum;
  */
 public interface IPenaltyHandler {
 
-    PenaltyStatusEnum doPenalty(PenaltyRecord record);
+    PenaltyStatusEnum doPenalty(PenaltyRecordPO record);
 
 }

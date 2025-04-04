@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-public class BlockchainBlock {
+public class BlockchainBlockPO {
 
     private Long id;
 

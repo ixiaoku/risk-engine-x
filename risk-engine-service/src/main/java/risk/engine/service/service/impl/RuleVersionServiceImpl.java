@@ -2,7 +2,7 @@ package risk.engine.service.service.impl;
 
 import org.springframework.stereotype.Service;
 import risk.engine.db.dao.RuleVersionMapper;
-import risk.engine.db.entity.RuleVersion;
+import risk.engine.db.entity.RuleVersionPO;
 import risk.engine.service.service.IRuleVersionService;
 
 import javax.annotation.Resource;
@@ -24,12 +24,12 @@ public class RuleVersionServiceImpl implements IRuleVersionService {
     }
 
     @Override
-    public boolean insert(RuleVersion record) {
+    public boolean insert(RuleVersionPO record) {
         return ruleVersionMapper.insert(record) > 0;
     }
 
     @Override
-    public RuleVersion selectByPrimaryKey(Long id) {
+    public RuleVersionPO selectByPrimaryKey(Long id) {
         return ruleVersionMapper.selectByPrimaryKey(id);
     }
 }

@@ -2,7 +2,7 @@ package risk.engine.service.service.impl;
 
 import org.springframework.stereotype.Service;
 import risk.engine.db.dao.ListLibraryMapper;
-import risk.engine.db.entity.ListLibrary;
+import risk.engine.db.entity.ListLibraryPO;
 import risk.engine.service.service.IListLibraryService;
 
 import javax.annotation.Resource;
@@ -24,17 +24,17 @@ public class ListLibraryServiceImpl implements IListLibraryService {
     }
 
     @Override
-    public boolean insert(ListLibrary record) {
+    public boolean insert(ListLibraryPO record) {
         return listLibraryMapper.insert(record) > 0;
     }
 
     @Override
-    public ListLibrary selectByPrimaryKey(Long id) {
+    public ListLibraryPO selectByPrimaryKey(Long id) {
         return listLibraryMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public boolean updateByPrimaryKey(ListLibrary record) {
+    public boolean updateByPrimaryKey(ListLibraryPO record) {
         return listLibraryMapper.updateByPrimaryKey(record) > 0;
     }
 }

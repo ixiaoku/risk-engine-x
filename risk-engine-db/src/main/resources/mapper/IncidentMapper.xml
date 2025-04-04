@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="risk.engine.db.dao.IncidentMapper">
-  <resultMap id="BaseResultMap" type="risk.engine.db.entity.Incident">
+  <resultMap id="BaseResultMap" type="risk.engine.db.entity.IncidentPO">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="incident_code" jdbcType="VARCHAR" property="incidentCode" />
     <result column="incident_name" jdbcType="VARCHAR" property="incidentName" />
@@ -12,7 +12,7 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="risk.engine.db.entity.Incident">
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="risk.engine.db.entity.IncidentPO">
     <result column="request_payload" jdbcType="LONGVARCHAR" property="requestPayload" />
   </resultMap>
 
@@ -21,7 +21,7 @@
     create_time, update_time, request_payload
   </sql>
 
-  <select id="selectByExample" parameterType="risk.engine.db.entity.Incident" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="risk.engine.db.entity.IncidentPO" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from incident
@@ -57,7 +57,7 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
 
-  <insert id="insert" parameterType="risk.engine.db.entity.Incident">
+  <insert id="insert" parameterType="risk.engine.db.entity.IncidentPO">
     insert into incident (id, incident_code, incident_name, 
       decision_result, status, responsible_person, 
       operator, create_time, update_time, 
@@ -68,7 +68,7 @@
       #{requestPayload,jdbcType=LONGVARCHAR})
   </insert>
 
-  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.Incident">
+  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.IncidentPO">
     update incident
     set incident_name = #{incidentName,jdbcType=VARCHAR},
       decision_result = #{decisionResult,jdbcType=VARCHAR},

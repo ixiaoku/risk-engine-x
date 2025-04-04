@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="risk.engine.db.dao.MetricMapper">
-  <resultMap id="BaseResultMap" type="risk.engine.db.entity.Metric">
+  <resultMap id="BaseResultMap" type="risk.engine.db.entity.MetricPO">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="incident_code" jdbcType="VARCHAR" property="incidentCode" />
     <result column="metric_code" jdbcType="VARCHAR" property="metricCode" />
@@ -25,7 +25,7 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
 
-  <select id="selectByExample" parameterType="risk.engine.db.entity.Metric" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="risk.engine.db.entity.MetricPO" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from metric
@@ -46,7 +46,7 @@
     where incident_code = #{incidentCode,jdbcType=VARCHAR}
   </delete>
 
-  <insert id="insert" parameterType="risk.engine.db.entity.Metric">
+  <insert id="insert" parameterType="risk.engine.db.entity.MetricPO">
     insert into metric (id, incident_code, metric_code,
       metric_name, sample_value, metric_desc, 
       metric_source, metric_type, operator, 

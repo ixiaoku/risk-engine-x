@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import risk.engine.common.util.CryptoUtils;
-import risk.engine.db.entity.CrawlerTask;
+import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.dto.constant.BlockChainConstant;
 import risk.engine.dto.dto.crawler.CrawlerNoticeDTO;
 import risk.engine.dto.enums.IncidentCodeEnum;
@@ -43,7 +43,7 @@ public class TwitterCrawlerUserHandler {
             .build();
 
     public void start() throws Exception {
-        List<CrawlerTask> crawlerTasks = new ArrayList<>();
+        List<CrawlerTaskPO> crawlerTasks = new ArrayList<>();
         for (TwitterUserEnum user : TwitterUserEnum.values()) {
             String secretKey = CryptoUtils.getDesSecretKey();
             String bearerToken = CryptoUtils.desDecrypt(BlockChainConstant.TWITTER_TOKEN, secretKey);
@@ -65,7 +65,7 @@ public class TwitterCrawlerUserHandler {
                 noticeDTO.setFlowNo(flowNo);
                 noticeDTO.setTitle(title);
                 noticeDTO.setCreatedAt(createdAt);
-                CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(flowNo, IncidentCodeEnum.TWITTER_USER_RELEASE_LIST.getCode(), JSON.toJSONString(noticeDTO));
+                CrawlerTaskPO crawlerTask = crawlerTaskService.getCrawlerTask(flowNo, IncidentCodeEnum.TWITTER_USER_RELEASE_LIST.getCode(), JSON.toJSONString(noticeDTO));
                 if (Objects.isNull(crawlerTask)) {
                     continue;
                 }

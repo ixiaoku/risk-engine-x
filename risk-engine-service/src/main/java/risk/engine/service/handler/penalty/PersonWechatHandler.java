@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.common.wechat.base.MessageApi;
-import risk.engine.db.entity.PenaltyRecord;
+import risk.engine.db.entity.PenaltyRecordPO;
 import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.enums.PenaltyStatusEnum;
 import risk.engine.service.handler.IPenaltyHandler;
@@ -23,7 +23,7 @@ import java.util.Random;
 @Component
 public class PersonWechatHandler implements IPenaltyHandler {
 
-    public PenaltyStatusEnum doPenalty (PenaltyRecord record) {
+    public PenaltyStatusEnum doPenalty (PenaltyRecordPO record) {
 
         try {
             JSONObject articleObject = JSONObject.parseObject(record.getPenaltyJson());

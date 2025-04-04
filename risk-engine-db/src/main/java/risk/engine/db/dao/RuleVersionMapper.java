@@ -1,13 +1,13 @@
 package risk.engine.db.dao;
 
-import risk.engine.db.entity.RuleVersion;
+import risk.engine.db.entity.RuleVersionPO;
 
 public interface RuleVersionMapper {
 
     int deleteByPrimaryKey(Long id);
 
-    int insert(RuleVersion record);
+    int insert(RuleVersionPO record);
 
-    RuleVersion selectByPrimaryKey(Long id);
+    RuleVersionPO selectByPrimaryKey(Long id);
 
 }

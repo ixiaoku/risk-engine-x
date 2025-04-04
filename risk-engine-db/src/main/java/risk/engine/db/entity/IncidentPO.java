@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * @Version: 1.0
  */
 @Data
-public class Incident {
+public class IncidentPO {
     /**
      * 主键id
      */

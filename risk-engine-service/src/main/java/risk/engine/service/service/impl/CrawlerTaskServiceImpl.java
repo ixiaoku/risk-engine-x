@@ -4,7 +4,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import risk.engine.db.dao.CrawlerTaskMapper;
-import risk.engine.db.entity.CrawlerTask;
+import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.dto.constant.BusinessConstant;
 import risk.engine.dto.enums.TaskStatusEnum;
 import risk.engine.service.service.ICrawlerTaskService;
@@ -25,7 +25,7 @@ public class CrawlerTaskServiceImpl implements ICrawlerTaskService {
     private CrawlerTaskMapper crawlerTaskMapper;
 
     @Override
-    public void batchInsert(List<CrawlerTask> recordList) {
+    public void batchInsert(List<CrawlerTaskPO> recordList) {
         crawlerTaskMapper.batchInsert(recordList);
     }
 
@@ -35,35 +35,35 @@ public class CrawlerTaskServiceImpl implements ICrawlerTaskService {
     }
 
     @Override
-    public Boolean updateByPrimaryKey(CrawlerTask record) {
+    public Boolean updateByPrimaryKey(CrawlerTaskPO record) {
         return crawlerTaskMapper.updateByPrimaryKey(record) > 0;
     }
 
     @Override
-    public List<CrawlerTask> selectByExample(CrawlerTask example) {
+    public List<CrawlerTaskPO> selectByExample(CrawlerTaskPO example) {
         return crawlerTaskMapper.selectByExample(example);
     }
 
     @Override
-    public CrawlerTask selectByPrimaryKey(Long id) {
+    public CrawlerTaskPO selectByPrimaryKey(Long id) {
         return crawlerTaskMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public CrawlerTask getCrawlerTask(String flowNo, String incidentCode, String requestPayload) {
+    public CrawlerTaskPO getCrawlerTask(String flowNo, String incidentCode, String requestPayload) {
         if (StringUtils.isEmpty(flowNo) || StringUtils.isEmpty(incidentCode) || StringUtils.isEmpty(requestPayload)) {
             return null;
         }
         //去重 重复的不保存
-        CrawlerTask taskQuery = new CrawlerTask();
+        CrawlerTaskPO taskQuery = new CrawlerTaskPO();
         taskQuery.setFlowNo(flowNo);
         taskQuery.setIncidentCode(incidentCode);
-        List<CrawlerTask> crawlerTaskList = crawlerTaskMapper.selectByExample(taskQuery);
+        List<CrawlerTaskPO> crawlerTaskList = crawlerTaskMapper.selectByExample(taskQuery);
         if (CollectionUtils.isNotEmpty(crawlerTaskList)) {
             return null;
         }
         //组装爬虫数据
-        CrawlerTask crawlerTask = new CrawlerTask();
+        CrawlerTaskPO crawlerTask = new CrawlerTaskPO();
         crawlerTask.setFlowNo(flowNo);
         crawlerTask.setIncidentCode(incidentCode);
         crawlerTask.setStatus(TaskStatusEnum.WAIT.getCode());

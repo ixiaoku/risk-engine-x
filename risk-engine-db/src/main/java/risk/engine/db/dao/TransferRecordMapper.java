@@ -1,6 +1,6 @@
 package risk.engine.db.dao;
 
-import risk.engine.db.entity.TransferRecord;
+import risk.engine.db.entity.TransferRecordPO;
 
 import java.util.List;
 
@@ -8,11 +8,11 @@ public interface TransferRecordMapper {
 
     int deleteByPrimaryKey(Long id);
 
-    int insert(TransferRecord record);
+    int insert(TransferRecordPO record);
 
-    TransferRecord selectByPrimaryKey(Long id);
+    TransferRecordPO selectByPrimaryKey(Long id);
 
-    List<TransferRecord> selectByExample(TransferRecord transferRecord);
+    List<TransferRecordPO> selectByExample(TransferRecordPO transferRecord);
 
-    int updateByPrimaryKey(TransferRecord record);
+    int updateByPrimaryKey(TransferRecordPO record);
 }

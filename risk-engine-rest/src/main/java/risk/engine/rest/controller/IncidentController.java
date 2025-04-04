@@ -56,7 +56,7 @@ public class IncidentController {
     public ResponseVO parseIndicator(@RequestBody @Validated IncidentParam incidentParam) throws Exception {
         log.info("parse indicator: {}", incidentParam);
         ValidatorUtils.EmptyThrowException().validateException(incidentParam.getRequestPayload());
-        return ResponseVO.success(incidentService.parseIndicator(incidentParam.getIncidentCode(), incidentParam.getRequestPayload()));
+        return ResponseVO.success(incidentService.parseMetric(incidentParam.getIncidentCode(), incidentParam.getRequestPayload()));
     }
 
     @PostMapping("/detail")

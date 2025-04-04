@@ -2,7 +2,7 @@ package risk.engine.service.service.impl;
 
 import org.springframework.stereotype.Service;
 import risk.engine.db.dao.MetricMapper;
-import risk.engine.db.entity.Metric;
+import risk.engine.db.entity.MetricPO;
 import risk.engine.service.service.IMetricService;
 
 import javax.annotation.Resource;
@@ -25,22 +25,22 @@ public class MetricServiceImpl implements IMetricService {
     }
 
     @Override
-    public boolean insert(Metric record) {
+    public boolean insert(MetricPO record) {
         return metricMapper.insert(record) > 0;
     }
 
     @Override
-    public Metric selectByPrimaryKey(Long id) {
+    public MetricPO selectByPrimaryKey(Long id) {
         return metricMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public boolean updateByPrimaryKey(Metric record) {
+    public boolean updateByPrimaryKey(MetricPO record) {
         return metricMapper.updateByPrimaryKey(record) > 0;
     }
 
     @Override
-    public List<Metric> selectByExample(Metric record) {
+    public List<MetricPO> selectByExample(MetricPO record) {
         return metricMapper.selectByExample(record);
     }
 }

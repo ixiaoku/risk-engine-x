@@ -5,7 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
-import risk.engine.db.entity.Incident;
+import risk.engine.db.entity.IncidentPO;
 import risk.engine.dto.dto.IncidentDTO;
 import risk.engine.dto.enums.IncidentStatusEnum;
 import risk.engine.service.service.IIncidentService;
@@ -52,9 +52,9 @@ public class GuavaStartupCache {
      */
     private ConcurrentHashMap<String, IncidentDTO> getDataFromDB() {
         ConcurrentHashMap<String, IncidentDTO> data = new ConcurrentHashMap<>();
-        Incident incident = new Incident();
+        IncidentPO incident = new IncidentPO();
         incident.setStatus(IncidentStatusEnum.ONLINE.getCode());
-        List<Incident> incidentList = incidentService.selectByExample(incident);
+        List<IncidentPO> incidentList = incidentService.selectByExample(incident);
         if (CollectionUtils.isEmpty(incidentList)) {
             return data;
         }

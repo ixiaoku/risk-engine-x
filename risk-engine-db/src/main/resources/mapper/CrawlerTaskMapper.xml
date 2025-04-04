@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="risk.engine.db.dao.CrawlerTaskMapper">
-  <resultMap id="BaseResultMap" type="risk.engine.db.entity.CrawlerTask">
+  <resultMap id="BaseResultMap" type="risk.engine.db.entity.CrawlerTaskPO">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="flow_no" jdbcType="VARCHAR" property="flowNo" />
     <result column="incident_code" jdbcType="VARCHAR" property="incidentCode" />
@@ -10,7 +10,7 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="risk.engine.db.entity.CrawlerTask">
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="risk.engine.db.entity.CrawlerTaskPO">
     <result column="request_payload" jdbcType="LONGVARCHAR" property="requestPayload" />
   </resultMap>
   <sql id="Base_Column_List">
@@ -55,7 +55,7 @@
     </foreach>
   </insert>
 
-  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.CrawlerTask">
+  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.CrawlerTaskPO">
     update crawler_task
     set status = #{status,jdbcType=INTEGER},
         retry = #{retry,jdbcType=INTEGER},

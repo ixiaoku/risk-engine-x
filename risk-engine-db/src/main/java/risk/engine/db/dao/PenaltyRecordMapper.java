@@ -1,8 +1,8 @@
 package risk.engine.db.dao;
 
 import org.apache.ibatis.annotations.Param;
-import risk.engine.db.entity.Penalty;
-import risk.engine.db.entity.PenaltyRecord;
+import risk.engine.db.entity.PenaltyActionPO;
+import risk.engine.db.entity.PenaltyRecordPO;
 
 import java.util.List;
 
@@ -10,13 +10,13 @@ public interface PenaltyRecordMapper {
 
     int deleteByPrimaryKey(Long id);
 
-    int insert(PenaltyRecord record);
+    int insert(PenaltyRecordPO record);
 
-    int batchInsert(@Param("list") List<PenaltyRecord> records);
+    int batchInsert(@Param("list") List<PenaltyRecordPO> records);
 
-    Penalty selectByPrimaryKey(Long id);
+    PenaltyActionPO selectByPrimaryKey(Long id);
 
-    List<PenaltyRecord> selectExample(PenaltyRecord penaltyRecord);
+    List<PenaltyRecordPO> selectExample(PenaltyRecordPO penaltyRecord);
 
-    int updateByPrimaryKey(PenaltyRecord record);
+    int updateByPrimaryKey(PenaltyRecordPO record);
 }

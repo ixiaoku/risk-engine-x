@@ -1,6 +1,6 @@
 package risk.engine.service.service;
 
-import risk.engine.db.entity.ListLibrary;
+import risk.engine.db.entity.ListLibraryPO;
 
 /**
  * @Author: X
@@ -11,10 +11,10 @@ public interface IListLibraryService {
 
     boolean deleteByPrimaryKey(Long id);
 
-    boolean insert(ListLibrary record);
+    boolean insert(ListLibraryPO record);
 
-    ListLibrary selectByPrimaryKey(Long id);
+    ListLibraryPO selectByPrimaryKey(Long id);
 
-    boolean updateByPrimaryKey(ListLibrary record);
+    boolean updateByPrimaryKey(ListLibraryPO record);
 
 }

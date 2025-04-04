@@ -12,7 +12,7 @@ import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 import risk.engine.common.util.CryptoUtils;
 import risk.engine.crawler.monitor.ICrawlerBlockChainHandler;
-import risk.engine.db.entity.CrawlerTask;
+import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.dto.constant.BlockChainConstant;
 import risk.engine.dto.dto.block.ChainTransferDTO;
 import risk.engine.dto.enums.IncidentCodeEnum;
@@ -53,7 +53,7 @@ public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
                 .send();
         EthBlock.Block block = ethBlock.getBlock();
         // 3. 遍历区块中的交易信息
-        List<CrawlerTask> crawlerTasks = getCrawlerTaskList(block, latestBlockNumber);
+        List<CrawlerTaskPO> crawlerTasks = getCrawlerTaskList(block, latestBlockNumber);
         log.info("交易信息笔数：{}", crawlerTasks.size());
         crawlerTaskService.batchInsert(crawlerTasks);
     }
@@ -65,8 +65,8 @@ public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
      * @return 结果
      * @throws IOException 异常
      */
-    private List<CrawlerTask> getCrawlerTaskList (EthBlock.Block block, BigInteger latestBlockNumber) throws IOException {
-        List<CrawlerTask> crawlerTasks = new ArrayList<>();
+    private List<CrawlerTaskPO> getCrawlerTaskList (EthBlock.Block block, BigInteger latestBlockNumber) throws IOException {
+        List<CrawlerTaskPO> crawlerTasks = new ArrayList<>();
         if (CollectionUtils.isEmpty(block.getTransactions())) {
             return List.of();
         }
@@ -93,7 +93,7 @@ public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
             chainTransferDTO.setToken("ETH");
             chainTransferDTO.setFee(gasFee);
             chainTransferDTO.setTransferTime(block.getTimestamp().longValue());
-            CrawlerTask crawlerTask = crawlerTaskService.getCrawlerTask(transaction.getHash(), IncidentCodeEnum.TRANSFER_CHAIN.getCode(), JSON.toJSONString(chainTransferDTO));
+            CrawlerTaskPO crawlerTask = crawlerTaskService.getCrawlerTask(transaction.getHash(), IncidentCodeEnum.TRANSFER_CHAIN.getCode(), JSON.toJSONString(chainTransferDTO));
             crawlerTasks.add(crawlerTask);
         }
         return crawlerTasks;

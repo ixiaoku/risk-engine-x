@@ -41,12 +41,12 @@ public class GroovyExpressionParser {
      * @return 返回指标表达式
      */
     private static String buildConditionExpression(RuleMetricDTO expressionDTO) {
-        String attributeCode = expressionDTO.getIndicatorCode();
-        String attributeValue = expressionDTO.getIndicatorValue();
+        String attributeCode = expressionDTO.getMetricCode();
+        String attributeValue = expressionDTO.getMetricValue();
         //操作逻辑符号
         String operator = OperationSymbolEnum.getOperationSymbolEnumByCode(expressionDTO.getOperationSymbol()).getName();
         //指标类型
-        boolean isString = Objects.equals(expressionDTO.getIndicatorType(), MetricTypeEnum.STRING.getCode());
+        boolean isString = Objects.equals(expressionDTO.getMetricType(), MetricTypeEnum.STRING.getCode());
         String value = isString ? "'" + attributeValue + "'" : attributeValue;
         return attributeCode + " " + operator + " " + value;
     }

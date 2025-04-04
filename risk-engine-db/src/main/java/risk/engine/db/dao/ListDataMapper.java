@@ -1,14 +1,14 @@
 package risk.engine.db.dao;
 
-import risk.engine.db.entity.ListData;
+import risk.engine.db.entity.ListDataPO;
 
 public interface ListDataMapper {
 
     int deleteByPrimaryKey(Long id);
 
-    int insert(ListData record);
+    int insert(ListDataPO record);
 
-    ListData selectByPrimaryKey(Long id);
+    ListDataPO selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKey(ListData record);
+    int updateByPrimaryKey(ListDataPO record);
 }

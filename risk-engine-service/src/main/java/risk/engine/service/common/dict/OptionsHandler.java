@@ -4,8 +4,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import risk.engine.db.entity.Incident;
-import risk.engine.db.entity.Metric;
+import risk.engine.db.entity.IncidentPO;
+import risk.engine.db.entity.MetricPO;
 import risk.engine.dto.enums.*;
 import risk.engine.service.service.IIncidentService;
 import risk.engine.service.service.IMetricService;
@@ -109,7 +109,7 @@ public class OptionsHandler {
      */
     @Bean("indicatorList")
     public OptionsDbFunction<String> indicatorList() {
-        List<Metric> metricList = indicatorService.selectByExample(new Metric());
+        List<MetricPO> metricList = indicatorService.selectByExample(new MetricPO());
         if (CollectionUtils.isEmpty(metricList)) {
             return value -> List.of();
         }
@@ -130,9 +130,9 @@ public class OptionsHandler {
      */
     @Bean("incidentList")
     public OptionsEnumFunction incidentList() {
-        Incident incident = new Incident();
+        IncidentPO incident = new IncidentPO();
         incident.setStatus(IncidentStatusEnum.ONLINE.getCode());
-        List<Incident> incidentList = incidentService.selectByExample(incident);
+        List<IncidentPO> incidentList = incidentService.selectByExample(incident);
         if (CollectionUtils.isEmpty(incidentList)) {
             return List::of;
         }

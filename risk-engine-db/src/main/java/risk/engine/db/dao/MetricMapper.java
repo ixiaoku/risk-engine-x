@@ -1,7 +1,7 @@
 package risk.engine.db.dao;
 
 import org.apache.ibatis.annotations.Param;
-import risk.engine.db.entity.Metric;
+import risk.engine.db.entity.MetricPO;
 
 import java.util.List;
 
@@ -11,14 +11,14 @@ public interface MetricMapper {
 
     int deleteByIncidentCode(String incidentCode);
 
-    int insert(Metric record);
+    int insert(MetricPO record);
 
-    Metric selectByPrimaryKey(Long id);
+    MetricPO selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKey(Metric record);
+    int updateByPrimaryKey(MetricPO record);
 
-    List<Metric> selectByExample(Metric record);
+    List<MetricPO> selectByExample(MetricPO record);
 
-    int batchInsert(@Param("list") List<Metric> record);
+    int batchInsert(@Param("list") List<MetricPO> record);
 
 }

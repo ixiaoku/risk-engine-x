@@ -1,7 +1,7 @@
 package risk.engine.db.dao;
 
 import org.apache.ibatis.annotations.Mapper;
-import risk.engine.db.entity.EngineResult;
+import risk.engine.db.entity.EngineResultPO;
 
 import java.util.List;
 
@@ -16,10 +16,10 @@ public interface EngineResultMapper {
 
     int deleteByPrimaryKey(Long id);
 
-    int insert(EngineResult record);
+    int insert(EngineResultPO record);
 
-    List<EngineResult> selectByExample(EngineResult engineResult);
+    List<EngineResultPO> selectByExample(EngineResultPO engineResult);
 
-    EngineResult selectByPrimaryKey(Long id);
+    EngineResultPO selectByPrimaryKey(Long id);
 
 }

@@ -57,6 +57,6 @@ public class IncidentParam {
     /**
      * 事件接入配置的字段 和关联requestPayload
      */
-    private List<MetricDTO> indicators;
+    private List<MetricDTO> metrics;
 
 }

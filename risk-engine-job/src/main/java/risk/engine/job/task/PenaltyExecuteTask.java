@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 import risk.engine.common.util.ApplicationContextUtil;
-import risk.engine.db.entity.PenaltyRecord;
+import risk.engine.db.entity.PenaltyRecordPO;
 import risk.engine.dto.enums.PenaltyStatusEnum;
 import risk.engine.service.handler.IPenaltyHandler;
 import risk.engine.service.service.IPenaltyRecordService;
@@ -33,8 +33,8 @@ public class PenaltyExecuteTask {
     public void execute() {
 
         log.info("PenaltyExecuteTask start");
-        PenaltyRecord record = new PenaltyRecord();
-        List<PenaltyRecord> penaltyRecordList = penaltyRecordService.selectExample(record);
+        PenaltyRecordPO record = new PenaltyRecordPO();
+        List<PenaltyRecordPO> penaltyRecordList = penaltyRecordService.selectExample(record);
         if (CollectionUtils.isEmpty(penaltyRecordList)) {
             return;
         }

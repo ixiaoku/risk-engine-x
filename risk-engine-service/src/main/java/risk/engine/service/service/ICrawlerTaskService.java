@@ -1,7 +1,7 @@
 package risk.engine.service.service;
 
 import org.apache.ibatis.annotations.Param;
-import risk.engine.db.entity.CrawlerTask;
+import risk.engine.db.entity.CrawlerTaskPO;
 
 import java.util.List;
 
@@ -12,16 +12,16 @@ import java.util.List;
  */
 public interface ICrawlerTaskService {
 
-    void batchInsert(@Param("list") List<CrawlerTask> recordList);
+    void batchInsert(@Param("list") List<CrawlerTaskPO> recordList);
 
     Boolean deleteByPrimaryKey(Long id);
 
-    Boolean updateByPrimaryKey(CrawlerTask record);
+    Boolean updateByPrimaryKey(CrawlerTaskPO record);
 
-    List<CrawlerTask> selectByExample(CrawlerTask example);
+    List<CrawlerTaskPO> selectByExample(CrawlerTaskPO example);
 
-    CrawlerTask selectByPrimaryKey(Long id);
+    CrawlerTaskPO selectByPrimaryKey(Long id);
 
-    CrawlerTask getCrawlerTask(String flowNo, String incidentCode, String requestPayload);
+    CrawlerTaskPO getCrawlerTask(String flowNo, String incidentCode, String requestPayload);
 
 }

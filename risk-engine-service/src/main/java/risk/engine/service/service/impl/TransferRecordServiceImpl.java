@@ -2,7 +2,7 @@ package risk.engine.service.service.impl;
 
 import org.springframework.stereotype.Service;
 import risk.engine.db.dao.TransferRecordMapper;
-import risk.engine.db.entity.TransferRecord;
+import risk.engine.db.entity.TransferRecordPO;
 import risk.engine.service.service.ITransferRecordService;
 
 import javax.annotation.Resource;
@@ -25,22 +25,22 @@ public class TransferRecordServiceImpl implements ITransferRecordService {
     }
 
     @Override
-    public boolean insert(TransferRecord record) {
+    public boolean insert(TransferRecordPO record) {
         return transferRecordMapper.insert(record) > 0;
     }
 
     @Override
-    public TransferRecord selectByPrimaryKey(Long id) {
+    public TransferRecordPO selectByPrimaryKey(Long id) {
         return transferRecordMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public List<TransferRecord> selectByExample(TransferRecord transferRecord) {
+    public List<TransferRecordPO> selectByExample(TransferRecordPO transferRecord) {
         return transferRecordMapper.selectByExample(transferRecord);
     }
 
     @Override
-    public boolean updateByPrimaryKey(TransferRecord record) {
+    public boolean updateByPrimaryKey(TransferRecordPO record) {
         return transferRecordMapper.deleteByPrimaryKey(record.getId()) > 0;
     }
 }

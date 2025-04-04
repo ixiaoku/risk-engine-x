@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="risk.engine.db.dao.TransferRecordMapper">
-  <resultMap id="BaseResultMap" type="risk.engine.db.entity.TransferRecord">
+  <resultMap id="BaseResultMap" type="risk.engine.db.entity.TransferRecordPO">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="send_address" jdbcType="VARCHAR" property="sendAddress" />
     <result column="receive_address" jdbcType="VARCHAR" property="receiveAddress" />
@@ -28,7 +28,7 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
 
-  <select id="selectByExample" parameterType="risk.engine.db.entity.TransferRecord" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="risk.engine.db.entity.TransferRecordPO" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from transfer_record
@@ -45,7 +45,7 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
 
-  <insert id="insert" parameterType="risk.engine.db.entity.TransferRecord">
+  <insert id="insert" parameterType="risk.engine.db.entity.TransferRecordPO">
     insert into transfer_record (id, send_address, receive_address, 
       amount, u_amount, hash, 
       height, chain, token, 
@@ -58,7 +58,7 @@
       #{status,jdbcType=INTEGER})
   </insert>
 
-  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.TransferRecord">
+  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.TransferRecordPO">
     update transfer_record
     set
       status = #{status,jdbcType=INTEGER}

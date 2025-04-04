@@ -1,6 +1,6 @@
 package risk.engine.service.service;
 
-import risk.engine.db.entity.Penalty;
+import risk.engine.db.entity.PenaltyActionPO;
 
 import java.util.List;
 
@@ -13,12 +13,12 @@ public interface IPenaltyService {
 
     boolean deleteByPrimaryKey(Long id);
 
-    boolean insert(Penalty record);
+    boolean insert(PenaltyActionPO record);
 
-    Penalty selectByPrimaryKey(Long id);
+    PenaltyActionPO selectByPrimaryKey(Long id);
 
-    List<Penalty> selectByExample(Penalty penalty);
+    List<PenaltyActionPO> selectByExample(PenaltyActionPO penalty);
 
-    boolean updateByPrimaryKey(Penalty record);
+    boolean updateByPrimaryKey(PenaltyActionPO record);
 
 }

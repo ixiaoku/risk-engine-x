@@ -1,6 +1,6 @@
 package risk.engine.service.service;
 
-import risk.engine.db.entity.Incident;
+import risk.engine.db.entity.IncidentPO;
 import risk.engine.dto.dto.rule.MetricDTO;
 import risk.engine.dto.param.IncidentParam;
 import risk.engine.dto.vo.IncidentVO;
@@ -18,13 +18,13 @@ public interface IIncidentService {
 
     boolean insert(IncidentParam incidentParam);
 
-    List<Incident> selectByExample(Incident incident);
+    List<IncidentPO> selectByExample(IncidentPO incident);
 
-    Incident selectByIncidentCode(String incidentCode);
+    IncidentPO selectByIncidentCode(String incidentCode);
 
     IncidentVO selectByPrimaryKey(Long id);
 
-    List<MetricDTO> parseIndicator(String incidentCode, String requestPayload);
+    List<MetricDTO> parseMetric(String incidentCode, String requestPayload);
 
     boolean updateByPrimaryKey(IncidentParam incidentParam);
 

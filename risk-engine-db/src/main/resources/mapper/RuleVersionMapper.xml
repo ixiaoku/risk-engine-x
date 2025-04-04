@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="risk.engine.db.dao.RuleVersionMapper">
-  <resultMap id="BaseResultMap" type="risk.engine.db.entity.RuleVersion">
+  <resultMap id="BaseResultMap" type="risk.engine.db.entity.RuleVersionPO">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="rule_code" jdbcType="VARCHAR" property="ruleCode" />
     <result column="status" jdbcType="BIT" property="status" />
@@ -11,7 +11,7 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="risk.engine.db.entity.RuleVersion">
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="risk.engine.db.entity.RuleVersionPO">
     <result column="groovy_script" jdbcType="LONGVARCHAR" property="groovyScript" />
     <result column="json_script" jdbcType="LONGVARCHAR" property="jsonScript" />
   </resultMap>
@@ -31,7 +31,7 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
 
-  <insert id="insert" parameterType="risk.engine.db.entity.RuleVersion">
+  <insert id="insert" parameterType="risk.engine.db.entity.RuleVersionPO">
     insert into rule_version (id, rule_code, status, 
       logic_script, version, operator, 
       create_time, update_time, groovy_script, 

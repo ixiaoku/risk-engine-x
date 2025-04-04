@@ -2,7 +2,7 @@ package risk.engine.service.service.impl;
 
 import org.springframework.stereotype.Service;
 import risk.engine.db.dao.ListDataMapper;
-import risk.engine.db.entity.ListData;
+import risk.engine.db.entity.ListDataPO;
 import risk.engine.service.service.IListDataService;
 
 import javax.annotation.Resource;
@@ -24,17 +24,17 @@ public class ListDataServiceImpl implements IListDataService {
     }
 
     @Override
-    public boolean insert(ListData record) {
+    public boolean insert(ListDataPO record) {
         return listDataMapper.insert(record) > 0;
     }
 
     @Override
-    public ListData selectByPrimaryKey(Long id) {
+    public ListDataPO selectByPrimaryKey(Long id) {
         return listDataMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public boolean updateByPrimaryKey(ListData record) {
+    public boolean updateByPrimaryKey(ListDataPO record) {
         return listDataMapper.updateByPrimaryKey(record) > 0;
     }
 }

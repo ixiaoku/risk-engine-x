@@ -1,6 +1,6 @@
 package risk.engine.service.service;
 
-import risk.engine.db.entity.Rule;
+import risk.engine.db.entity.RulePO;
 import risk.engine.dto.param.RuleParam;
 import risk.engine.dto.vo.RuleVO;
 
@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface IRuleService {
 
-    List<Rule> selectByIncidentCode(String incidentCode);
+    List<RulePO> selectByIncidentCode(String incidentCode);
 
     Boolean insert(RuleParam ruleParam);
 

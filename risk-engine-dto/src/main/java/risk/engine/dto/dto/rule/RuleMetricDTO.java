@@ -19,23 +19,23 @@ public class RuleMetricDTO {
     /**
      * 指标code
      */
-    private String indicatorCode;
+    private String metricCode;
 
     /**
      * 指标值
      */
-    private String indicatorValue;
+    private String metricValue;
 
     /**
      * 指标名称
      */
-    private String indicatorName;
+    private String metricName;
 
     /**
      * 指标数据类型
      * @see MetricTypeEnum
      */
-    private Integer indicatorType;
+    private Integer metricType;
 
     /**
      * 操作符

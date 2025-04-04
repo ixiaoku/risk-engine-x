@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-public class TransferRecord {
+public class TransferRecordPO {
 
     private Long id;
 
