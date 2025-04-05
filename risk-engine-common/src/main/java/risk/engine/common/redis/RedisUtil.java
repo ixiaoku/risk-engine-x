@@ -1,8 +1,5 @@
 package risk.engine.common.redis;
 
-import org.redisson.api.RBucket;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -21,8 +18,8 @@ public class RedisUtil {
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
-    @Resource
-    private RedissonClient redissonClient;
+//    @Resource
+//    private RedissonClient redissonClient;
 
     public void set(String key, Object value) {
         try {
@@ -141,28 +138,28 @@ public class RedisUtil {
     }
 
     // --- Redisson Distributed Lock ---
-    public RLock getLock(String lockKey) {
-        return redissonClient.getLock(lockKey);
-    }
+//    public RLock getLock(String lockKey) {
+//        return redissonClient.getLock(lockKey);
+//    }
 
-    public boolean tryLock(String lockKey, long waitTime, long leaseTime, TimeUnit unit) {
-        try {
-            RLock lock = redissonClient.getLock(lockKey);
-            return lock.tryLock(waitTime, leaseTime, unit);
-        } catch (Exception e) {
-            return false;
-        }
-    }
+//    public boolean tryLock(String lockKey, long waitTime, long leaseTime, TimeUnit unit) {
+//        try {
+//            RLock lock = redissonClient.getLock(lockKey);
+//            return lock.tryLock(waitTime, leaseTime, unit);
+//        } catch (Exception e) {
+//            return false;
+//        }
+//    }
 
-    public void unlock(String lockKey) {
-        RLock lock = redissonClient.getLock(lockKey);
-        if (lock.isHeldByCurrentThread()) {
-            lock.unlock();
-        }
-    }
+//    public void unlock(String lockKey) {
+//        RLock lock = redissonClient.getLock(lockKey);
+//        if (lock.isHeldByCurrentThread()) {
+//            lock.unlock();
+//        }
+//    }
 
     // --- Redisson Atomic Operation ---
-    public <T> RBucket<T> getBucket(String key) {
-        return redissonClient.getBucket(key);
-    }
+//    public <T> RBucket<T> getBucket(String key) {
+//        return redissonClient.getBucket(key);
+//    }
 }
