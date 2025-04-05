@@ -16,7 +16,6 @@ import risk.engine.service.service.IMetricService;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -54,7 +53,7 @@ public class RedisIncidentMetricCache implements ApplicationRunner {
         if (CollectionUtils.isEmpty(metricPOList)) {
             return Map.of();
         }
-        return (ConcurrentMap<String, List<MetricDTO>>) metricPOList.stream()
+        return metricPOList.stream()
                 .map(metric -> {
                     MetricDTO metricDTO = new MetricDTO();
                     metricDTO.setIncidentCode(metric.getIncidentCode());
