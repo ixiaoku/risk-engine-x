@@ -18,12 +18,6 @@
     id, incident_code, metric_code, metric_name, sample_value, metric_desc, 
     metric_source, metric_type, operator, create_time, update_time
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from metric
-    where id = #{id,jdbcType=BIGINT}
-  </select>
 
   <select id="selectByExample" parameterType="risk.engine.db.entity.MetricPO" resultMap="BaseResultMap">
     select
@@ -36,26 +30,10 @@
     </where>
   </select>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from metric
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-
   <delete id="deleteByIncidentCode" parameterType="java.lang.String">
     delete from metric
     where incident_code = #{incidentCode,jdbcType=VARCHAR}
   </delete>
-
-  <insert id="insert" parameterType="risk.engine.db.entity.MetricPO">
-    insert into metric (id, incident_code, metric_code,
-      metric_name, sample_value, metric_desc, 
-      metric_source, metric_type, operator, 
-      create_time, update_time)
-    values (#{id,jdbcType=BIGINT}, #{incidentCode,jdbcType=VARCHAR}, #{metricCode,jdbcType=VARCHAR}, 
-      #{metricName,jdbcType=VARCHAR}, #{sampleValue,jdbcType=VARCHAR}, #{metricDesc,jdbcType=VARCHAR}, 
-      #{metricSource,jdbcType=TINYINT}, #{metricType,jdbcType=TINYINT}, #{operator,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
-  </insert>
 
   <insert id="batchInsert" parameterType="java.util.List">
     INSERT INTO metric (

@@ -15,7 +15,7 @@ import risk.engine.dto.dto.IncidentDTO;
 import risk.engine.dto.dto.rule.RuleMetricDTO;
 import risk.engine.dto.param.RuleParam;
 import risk.engine.dto.vo.RuleVO;
-import risk.engine.service.common.cache.GuavaStartupCache;
+import risk.engine.service.common.cache.GuavaIncidentCache;
 import risk.engine.service.handler.GroovyExpressionParser;
 import risk.engine.service.service.IMetricService;
 import risk.engine.service.service.IRuleService;
@@ -42,7 +42,7 @@ public class RuleServiceImpl implements IRuleService {
     private RuleMapper ruleMapper;
 
     @Resource
-    private GuavaStartupCache guavaStartupCache;
+    private GuavaIncidentCache guavaIncidentCache;
 
     @Resource
     private IRuleVersionService ruleVersionService;
@@ -123,7 +123,7 @@ public class RuleServiceImpl implements IRuleService {
         }
         return ruleList.stream().map(rule -> {
             RuleVO ruleVO = new RuleVO();
-            IncidentDTO incidentDTO = guavaStartupCache.getIncident(rule.getIncidentCode());
+            IncidentDTO incidentDTO = guavaIncidentCache.getCache(rule.getIncidentCode());
             ruleVO.setId(rule.getId());
             ruleVO.setIncidentCode(rule.getIncidentCode());
             ruleVO.setIncidentName(incidentDTO.getIncidentName());

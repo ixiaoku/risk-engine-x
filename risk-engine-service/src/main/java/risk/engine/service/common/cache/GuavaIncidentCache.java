@@ -13,11 +13,14 @@ import risk.engine.service.service.IIncidentService;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
+ * 事件缓存
  * @Author: X
  * @Date: 2025/3/20 17:16
  * @Version: 1.0
@@ -25,32 +28,55 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class GuavaStartupCache {
+public class GuavaIncidentCache {
 
     @Resource
     private IIncidentService incidentService;
 
-    private final Cache<String, IncidentDTO> cache = CacheBuilder.newBuilder()
-            .maximumSize(100) // 限制最大存储 1000 条数据
+    private final Cache<String, IncidentDTO> incidentCache = CacheBuilder.newBuilder()
+            .maximumSize(256)
             .build();
 
     @PostConstruct
-    public void loadCache() {
-        // 1. 启动时手动预加载数据
-        ConcurrentHashMap<String, IncidentDTO> data = getDataFromDB(); // 预加载数据库数据
-        cache.putAll(data);
-        log.info("缓存已初始化完成！");
-    }
-
-    public IncidentDTO getIncident(String incidentCode) {
-        return cache.getIfPresent(incidentCode);
+    private void loadCache() {
+        ConcurrentHashMap<String, IncidentDTO> incidentMap = selectIncidentList();
+        incidentCache.putAll(incidentMap);
     }
 
     /**
-     * 初始化 事件数据
+     * 获取事件缓存 如果为空主动加载
+     * @param incidentCode 事件code
      * @return 结果
      */
-    private ConcurrentHashMap<String, IncidentDTO> getDataFromDB() {
+    public IncidentDTO getCache(String incidentCode) {
+        IncidentDTO incidentDTO = incidentCache.getIfPresent(incidentCode);
+        if (Objects.nonNull(incidentDTO)) {
+            return incidentDTO;
+        }
+        ConcurrentHashMap<String, IncidentDTO> concurrentHashMap = selectIncidentList();
+        return concurrentHashMap.get(incidentCode);
+    }
+
+    /**
+     * 刷新缓存
+     */
+    public void refreshCache() {
+        CompletableFuture.runAsync(() -> {
+            ConcurrentHashMap<String, IncidentDTO> newData = selectIncidentList();
+            incidentCache.invalidateAll();
+            incidentCache.putAll(newData);
+            log.info("Incident缓存刷新完毕，条数：{}", newData.size());
+        }).exceptionally(ex -> {
+            log.error("刷新缓存 异步任务失败, 异常: {}", ex.getMessage(), ex);
+            return null;
+        });
+    }
+
+    /**
+     * 查库缓存事件
+     * @return 结果
+     */
+    private ConcurrentHashMap<String, IncidentDTO> selectIncidentList() {
         ConcurrentHashMap<String, IncidentDTO> data = new ConcurrentHashMap<>();
         IncidentPO incident = new IncidentPO();
         incident.setStatus(IncidentStatusEnum.ONLINE.getCode());

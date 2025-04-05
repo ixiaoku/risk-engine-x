@@ -12,6 +12,11 @@ import risk.engine.dto.enums.MetricTypeEnum;
 public class MetricDTO {
 
     /**
+     * 事件code
+     */
+    private String incidentCode;
+
+    /**
      * 指标code
      */
     private String metricCode;

@@ -1,5 +1,6 @@
 package risk.engine.service.service;
 
+import org.apache.ibatis.annotations.Param;
 import risk.engine.db.entity.MetricPO;
 
 import java.util.List;
@@ -11,14 +12,10 @@ import java.util.List;
  */
 public interface IMetricService {
 
-    boolean deleteByPrimaryKey(Long id);
-
-    boolean insert(MetricPO record);
-
-    MetricPO selectByPrimaryKey(Long id);
-
-    boolean updateByPrimaryKey(MetricPO record);
+    boolean deleteByIncidentCode(String incidentCode);
 
     List<MetricPO> selectByExample(MetricPO record);
+
+    boolean batchInsert(@Param("list") List<MetricPO> record);
 
 }

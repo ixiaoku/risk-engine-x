@@ -20,27 +20,17 @@ public class MetricServiceImpl implements IMetricService {
     private MetricMapper metricMapper;
 
     @Override
-    public boolean deleteByPrimaryKey(Long id) {
-        return metricMapper.deleteByPrimaryKey(id) > 0;
-    }
-
-    @Override
-    public boolean insert(MetricPO record) {
-        return metricMapper.insert(record) > 0;
-    }
-
-    @Override
-    public MetricPO selectByPrimaryKey(Long id) {
-        return metricMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public boolean updateByPrimaryKey(MetricPO record) {
-        return metricMapper.updateByPrimaryKey(record) > 0;
+    public boolean deleteByIncidentCode(String incidentCode) {
+        return metricMapper.deleteByIncidentCode(incidentCode) > 0;
     }
 
     @Override
     public List<MetricPO> selectByExample(MetricPO record) {
         return metricMapper.selectByExample(record);
+    }
+
+    @Override
+    public boolean batchInsert(List<MetricPO> record) {
+        return metricMapper.batchInsert(record) > 0;
     }
 }

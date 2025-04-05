@@ -7,15 +7,8 @@ import java.util.List;
 
 public interface MetricMapper {
 
-    int deleteByPrimaryKey(Long id);
 
     int deleteByIncidentCode(String incidentCode);
-
-    int insert(MetricPO record);
-
-    MetricPO selectByPrimaryKey(Long id);
-
-    int updateByPrimaryKey(MetricPO record);
 
     List<MetricPO> selectByExample(MetricPO record);
 
