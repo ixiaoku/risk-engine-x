@@ -70,8 +70,13 @@ public class ChainTransferDTO {
     private LocalDateTime createdTime;
 
     /**
-     * 是否同步引擎执行
+     * 发布时间
      */
-    private Integer status;
+    private String createdAt;
+
+    /**
+     * 内容
+     */
+    private String title;
 
 }

@@ -1,6 +1,6 @@
 package risk.engine.crawler.monitor.transfer;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,12 +13,8 @@ import org.web3j.protocol.core.methods.response.Transaction;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 import risk.engine.common.redis.RedisUtil;
-import risk.engine.common.util.CryptoUtils;
-import risk.engine.common.util.DateTimeUtil;
 import risk.engine.crawler.monitor.ICrawlerBlockChainHandler;
 import risk.engine.db.entity.CrawlerTaskPO;
-import risk.engine.dto.constant.BlockChainConstant;
-import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.block.ChainTransferDTO;
 import risk.engine.dto.enums.IncidentCodeEnum;
 import risk.engine.service.service.ICrawlerTaskService;
@@ -34,29 +30,28 @@ import java.util.concurrent.Executors;
 
 /**
  * @Author: X
- * @Date: 2025/3/9 22:45
+ * @Date: 2025/4/5 22:35
  * @Version: 1.0
  */
 @Slf4j
 @Component
-public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
+public class BnbFetcherHandler implements ICrawlerBlockChainHandler {
 
     @Resource
     private ICrawlerTaskService crawlerTaskService;
     @Resource
-    private RedisUtil redisUtil;
+    private RedisUtil redis;
 
     private Web3j web3j;
-    private static final int CONFIRMATION_BLOCKS = 6; // ETH确认块数
-    private static final String LAST_BLOCK_KEY = "eth:lastBlock";
-    private static final String TX_SET_KEY = "eth:processedTxs";
-    private static final BigDecimal ETH_THRESHOLD = new BigDecimal("0.05"); // 金额过滤
+    private static final String BNB_RPC_URL = "https://bsc-dataseed.binance.org/";
+    private static final int CONFIRMATION_BLOCKS = 15; // BNB确认块数
+    private static final String LAST_BLOCK_KEY = "bnb:lastBlock";
+    private static final String TX_SET_KEY = "bnb:processedTxs";
+    private static final BigDecimal BNB_THRESHOLD = new BigDecimal("0.1"); // 示例金额过滤，可调整
 
     @Override
     public void start() throws IOException {
-        String secretKey = CryptoUtils.getDesSecretKey();
-        String key = CryptoUtils.desDecrypt(BlockChainConstant.ETH_DATA_KEY, secretKey);
-        web3j = Web3j.build(new HttpService(BlockChainConstant.INFURA_URL + key));
+        web3j = Web3j.build(new HttpService(BNB_RPC_URL));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(this::pollBlocks);
     }
@@ -65,20 +60,21 @@ public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
         try {
             BigInteger latestBlock = web3j.ethBlockNumber().send().getBlockNumber();
             BigInteger confirmedBlock = latestBlock.subtract(BigInteger.valueOf(CONFIRMATION_BLOCKS));
-            String lastBlockStr = (String) redisUtil.get(LAST_BLOCK_KEY);
-            BigInteger lastBlock = StringUtils.isEmpty(lastBlockStr) ? confirmedBlock.subtract(BigInteger.valueOf(100)) : new BigInteger(lastBlockStr);
+            String lastBlockStr = (String) redis.get(LAST_BLOCK_KEY);
+            BigInteger lastBlock = StringUtils.isEmpty(lastBlockStr) ? confirmedBlock.subtract(BigInteger.valueOf(100))
+                    : new BigInteger(lastBlockStr);
             for (BigInteger i = lastBlock.add(BigInteger.ONE); i.compareTo(confirmedBlock) <= 0; i = i.add(BigInteger.ONE)) {
                 EthBlock ethBlock = web3j.ethGetBlockByNumber(DefaultBlockParameter.valueOf(i), true).send();
                 EthBlock.Block block = ethBlock.getBlock();
                 List<CrawlerTaskPO> crawlerTasks = getCrawlerTaskList(block, i);
-                if (CollectionUtils.isNotEmpty(crawlerTasks)) {
+                if (!crawlerTasks.isEmpty()) {
                     crawlerTaskService.batchInsert(crawlerTasks);
-                    log.info("ETH Block {} processed, {} transactions saved", i, crawlerTasks.size());
+                    log.info("BNB Block {} processed, {} transactions saved", i, crawlerTasks.size());
                 }
-                redisUtil.set(LAST_BLOCK_KEY, i.toString());
+                redis.set(LAST_BLOCK_KEY, i.toString());
             }
         } catch (Exception e) {
-            log.error("ETH polling error: {}", e.getMessage());
+            log.error("BNB polling error: {}", e.getMessage());
         }
     }
 
@@ -89,37 +85,34 @@ public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
         for (EthBlock.TransactionResult<?> txResult : block.getTransactions()) {
             Transaction tx = (Transaction) txResult.get();
             String txHash = tx.getHash();
+
             // 去重检查
-            if (redisUtil.sismember(TX_SET_KEY, txHash)) {
-                continue;
-            }
-            BigDecimal valueInEther = Convert.fromWei(tx.getValue().toString(), Convert.Unit.ETHER);
-            // 过滤小于0.05 ETH的交易
-            if (valueInEther.compareTo(ETH_THRESHOLD) <= 0) {
-                continue;
-            }
+            if (redis.sismember(TX_SET_KEY, txHash)) continue;
+
+            BigDecimal valueInBnb = Convert.fromWei(tx.getValue().toString(), Convert.Unit.ETHER);
+            if (valueInBnb.compareTo(BNB_THRESHOLD) <= 0) continue; // 过滤小于0.1 BNB的交易
+
             String from = tx.getFrom();
             String to = tx.getTo();
             BigInteger gasUsed = getTransactionGasUsed(txHash);
             BigInteger gasPrice = tx.getGasPrice();
             BigDecimal gasFee = Convert.fromWei(gasUsed.multiply(gasPrice).toString(), Convert.Unit.ETHER);
+
             ChainTransferDTO dto = new ChainTransferDTO();
             dto.setSendAddress(from);
             dto.setReceiveAddress(to);
-            dto.setAmount(valueInEther);
+            dto.setAmount(valueInBnb);
             dto.setUAmount(BigDecimal.ZERO);
             dto.setHash(txHash);
             dto.setHeight(blockNumber.intValue());
-            dto.setChain("Ethereum");
-            dto.setToken("ETH");
+            dto.setChain("BNB Chain");
+            dto.setToken("BNB");
             dto.setFee(gasFee);
             dto.setTransferTime(block.getTimestamp().longValue());
-            dto.setCreatedAt(DateTimeUtil.getTimeByTimestamp(dto.getTransferTime()));
-            String title = String.format(CrawlerConstant.ADDRESS_BOT_TITLE, dto.getChain(), dto.getSendAddress(), dto.getReceiveAddress(), dto.getAmount());
-            dto.setTitle(title);
+
             CrawlerTaskPO task = crawlerTaskService.getCrawlerTask(txHash, IncidentCodeEnum.TRANSFER_CHAIN.getCode(), JSON.toJSONString(dto));
             crawlerTasks.add(task);
-            redisUtil.sadd(TX_SET_KEY, txHash); // 记录已处理交易
+            redis.sadd(TX_SET_KEY, txHash);
         }
         return crawlerTasks;
     }

@@ -4,6 +4,7 @@ import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import risk.engine.crawler.monitor.transfer.BnbFetcherHandler;
 import risk.engine.crawler.monitor.transfer.EthereumFetcherHandler;
 import risk.engine.crawler.monitor.transfer.SolBlockFetcherHandler;
 
@@ -23,6 +24,9 @@ public class BlockChainMonitorHandler {
 
     @Resource
     private SolBlockFetcherHandler solBlockFetcherHandler;
+
+    @Resource
+    private BnbFetcherHandler bnbFetcherHandler;
 
     @XxlJob("bitcoinMonitorJob")
     public void executeBitcoinMonitor() {
@@ -61,6 +65,20 @@ public class BlockChainMonitorHandler {
         } catch (Exception e) {
             log.error("solMonitorJob executed failed : {}", e.getMessage(), e);
             XxlJobHelper.log("solMonitorJob executed failed : {}", e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @XxlJob("bnbMonitorJob")
+    public void bnbMonitor() {
+        try {
+            String param = XxlJobHelper.getJobParam();
+            bnbFetcherHandler.start();
+            XxlJobHelper.log("bnbMonitorJob, param: " + param);
+            log.info("bnbMonitorJob executed successfully!");
+        } catch (Exception e) {
+            log.error("bnbMonitorJob executed failed : {}", e.getMessage(), e);
+            XxlJobHelper.log("bnbMonitorJob executed failed : {}", e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }

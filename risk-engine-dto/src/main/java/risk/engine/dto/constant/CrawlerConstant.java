@@ -32,6 +32,8 @@ public interface CrawlerConstant {
             "\uD83D\uDD25 【内容】: %s \n" +
             "\uD83D\uDDD3 【时间】: %s \n";
 
+    String ADDRESS_BOT_TITLE = "链名称：%s，发送地址: %s ，收款地址：%s，数量：%s";
+
     String appId = "wx_ima6EoKmHub0LsKJZwtgi";
 
 
