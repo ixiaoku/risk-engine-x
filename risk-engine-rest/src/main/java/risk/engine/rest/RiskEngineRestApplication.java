@@ -15,11 +15,11 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication()
 @ComponentScan(basePackages = {"risk.engine.rest", "risk.engine.service", "risk.engine.db", "risk.engine.common", "risk.engine.components"})
 @MapperScan("risk.engine.db.dao")
-public class RiskEngineApplication {
+public class RiskEngineRestApplication {
 
     public static void main(String[] args) {
         try {
-            SpringApplication.run(RiskEngineApplication.class, args);
+            SpringApplication.run(RiskEngineRestApplication.class, args);
             log.info("HELLO WORLD ----->>> 服务rest启动成功 -------->>> SUCCESS" );
         } catch (Exception e) {
             log.error("服务启动报错信息：{}", e.getMessage(), e);

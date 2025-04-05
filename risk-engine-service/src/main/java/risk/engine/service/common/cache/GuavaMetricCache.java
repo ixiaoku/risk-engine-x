@@ -81,6 +81,7 @@ public class GuavaMetricCache {
         }
         return (ConcurrentHashMap<String, List<MetricDTO>>) metricPOList.stream().map(metric -> {
             MetricDTO metricDTO = new MetricDTO();
+            metricDTO.setIncidentCode(metric.getIncidentCode());
             metricDTO.setMetricCode(metric.getMetricCode());
             metricDTO.setMetricName(metric.getMetricName());
             metricDTO.setMetricType(metric.getMetricType());

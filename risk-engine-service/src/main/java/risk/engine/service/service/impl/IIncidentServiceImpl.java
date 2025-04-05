@@ -16,6 +16,8 @@ import risk.engine.dto.enums.MetricTypeEnum;
 import risk.engine.dto.enums.MetricSourceEnum;
 import risk.engine.dto.param.IncidentParam;
 import risk.engine.dto.vo.IncidentVO;
+import risk.engine.service.common.cache.GuavaIncidentCache;
+import risk.engine.service.common.cache.GuavaMetricCache;
 import risk.engine.service.service.IIncidentService;
 
 import javax.annotation.Resource;
@@ -38,6 +40,11 @@ public class IIncidentServiceImpl implements IIncidentService {
     @Resource
     private MetricMapper metricMapper;
 
+    @Resource
+    private GuavaIncidentCache guavaIncidentCache;
+    @Resource
+    private GuavaMetricCache guavaMetricCache;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean insert(IncidentParam incidentParam) {
@@ -59,14 +66,25 @@ public class IIncidentServiceImpl implements IIncidentService {
         incident.setRequestPayload(incidentParam.getRequestPayload());
         List<MetricPO> metricList = getMetricList(incidentParam);
         //保存事件 指标
-        return incidentMapper.insert(incident) > 0 && metricMapper.batchInsert(metricList) > 0;
+        boolean flag = incidentMapper.insert(incident) > 0 && metricMapper.batchInsert(metricList) > 0;
+        if (flag) {
+            guavaIncidentCache.refreshCache();
+            guavaMetricCache.refreshCache();
+        }
+        return flag;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deleteByPrimaryKey(Long id) {
         IncidentPO incident = incidentMapper.selectByPrimaryKey(id);
-        return incidentMapper.deleteByPrimaryKey(id) > 0 && metricMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
+        boolean flag = incidentMapper.deleteByPrimaryKey(id) > 0 && metricMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
+        //刷新缓存
+        if (flag) {
+            guavaIncidentCache.refreshCache();
+            guavaMetricCache.refreshCache();
+        }
+        return flag;
     }
 
     @Override
@@ -76,11 +94,17 @@ public class IIncidentServiceImpl implements IIncidentService {
         BeanUtils.copyProperties(param, incident);
         incident.setUpdateTime(LocalDateTime.now());
         incident.setRequestPayload(param.getRequestPayload());
-        Boolean flag1 = incidentMapper.updateByPrimaryKey(incident) > 0;
-        Boolean flag2 = metricMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
+        boolean flag1 = incidentMapper.updateByPrimaryKey(incident) > 0;
+        boolean flag2 = metricMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
         List<MetricPO> metricList = getMetricList(param);
-        Boolean flag3 = metricMapper.batchInsert(metricList) > 0;
-        return flag1 && flag2 && flag3;
+        boolean flag3 = metricMapper.batchInsert(metricList) > 0;
+        boolean flag = flag1 && flag2 && flag3;
+        //刷新缓存
+        if (flag) {
+            guavaIncidentCache.refreshCache();
+            guavaMetricCache.refreshCache();
+        }
+        return flag;
     }
 
     @Override

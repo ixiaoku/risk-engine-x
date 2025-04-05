@@ -67,7 +67,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>risk.engine.rest.RiskEngineApplication</mainClass> <!-- 替换为你的实际主类 -->
+                    <mainClass>risk.engine.rest.RiskEngineRestApplication</mainClass> <!-- 替换为你的实际主类 -->
                 </configuration>
             </plugin>
         </plugins>
