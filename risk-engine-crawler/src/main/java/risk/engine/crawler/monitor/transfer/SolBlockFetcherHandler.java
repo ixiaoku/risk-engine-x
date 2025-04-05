@@ -8,9 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import risk.engine.common.redis.RedisUtil;
+import risk.engine.common.util.DateTimeUtil;
 import risk.engine.common.util.OkHttpUtil;
 import risk.engine.crawler.monitor.ICrawlerBlockChainHandler;
 import risk.engine.db.entity.CrawlerTaskPO;
+import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.block.ChainTransferDTO;
 import risk.engine.dto.enums.IncidentCodeEnum;
 import risk.engine.service.service.ICrawlerTaskService;
@@ -132,7 +134,9 @@ public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
             dto.setToken("SOL");
             dto.setFee(new BigDecimal(fee).divide(new BigDecimal("1000000000"), 2, RoundingMode.HALF_UP));
             dto.setTransferTime(blockData.get("blockTime").getAsLong() * 1000);
-
+            dto.setCreatedAt(DateTimeUtil.getTimeByTimestamp(dto.getTransferTime()));
+            String title = String.format(CrawlerConstant.ADDRESS_BOT_TITLE, dto.getChain(), dto.getSendAddress(), dto.getReceiveAddress(), dto.getAmount());
+            dto.setTitle(title);
             CrawlerTaskPO task = crawlerTaskService.getCrawlerTask(txHash, IncidentCodeEnum.TRANSFER_CHAIN.getCode(), JSON.toJSONString(dto));
             crawlerTasks.add(task);
             redisUtil.sadd(TX_SET_KEY, txHash);

@@ -13,8 +13,10 @@ import org.web3j.protocol.core.methods.response.Transaction;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 import risk.engine.common.redis.RedisUtil;
+import risk.engine.common.util.DateTimeUtil;
 import risk.engine.crawler.monitor.ICrawlerBlockChainHandler;
 import risk.engine.db.entity.CrawlerTaskPO;
+import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.block.ChainTransferDTO;
 import risk.engine.dto.enums.IncidentCodeEnum;
 import risk.engine.service.service.ICrawlerTaskService;
@@ -109,7 +111,9 @@ public class BnbFetcherHandler implements ICrawlerBlockChainHandler {
             dto.setToken("BNB");
             dto.setFee(gasFee);
             dto.setTransferTime(block.getTimestamp().longValue());
-
+            dto.setCreatedAt(DateTimeUtil.getTimeByTimestamp(dto.getTransferTime()));
+            String title = String.format(CrawlerConstant.ADDRESS_BOT_TITLE, dto.getChain(), dto.getSendAddress(), dto.getReceiveAddress(), dto.getAmount());
+            dto.setTitle(title);
             CrawlerTaskPO task = crawlerTaskService.getCrawlerTask(txHash, IncidentCodeEnum.TRANSFER_CHAIN.getCode(), JSON.toJSONString(dto));
             crawlerTasks.add(task);
             redis.sadd(TX_SET_KEY, txHash);
