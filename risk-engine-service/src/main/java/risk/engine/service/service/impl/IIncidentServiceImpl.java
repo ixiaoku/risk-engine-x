@@ -21,7 +21,11 @@ import risk.engine.service.service.IIncidentService;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -107,46 +111,59 @@ public class IIncidentServiceImpl implements IIncidentService {
 
     @Override
     public List<MetricDTO> parseMetric(String incidentCode, String requestPayload) {
+        // 解析请求参数
+        JSONObject jsonObject = JSON.parseObject(requestPayload);
+        // 查询指标
         MetricPO metricQuery = new MetricPO();
         metricQuery.setIncidentCode(incidentCode);
         List<MetricPO> metricList = metricMapper.selectByExample(metricQuery);
-        //@todo 待优化如果是增加或者减少字段 或者改变类型 我还需要兼容
-        //新增
-        JSONObject jsonObject = JSON.parseObject(requestPayload);
-        if (CollectionUtils.isEmpty(metricList)) {
-            return jsonObject.entrySet().stream()
-                    .map(key -> {
-                        MetricDTO metric = new MetricDTO();
-                        metric.setMetricCode(key.getKey());
-                        metric.setSampleValue(key.getValue().toString());
-                        metric.setMetricName("指标名字");
-                        metric.setMetricDesc("备注");
-                        if (key.getValue() instanceof Integer) {
-                            metric.setMetricType(MetricTypeEnum.INTEGER.getCode());
-                        }  else if (key.getValue() instanceof BigDecimal) {
-                            metric.setMetricType(MetricTypeEnum.BIG_DECIMAL.getCode());
-                        } else if (key.getValue() instanceof Boolean) {
-                            metric.setMetricType(MetricTypeEnum.BOOLEAN.getCode());
-                        } else if (JSON.isValidArray(key.getValue().toString())) {
-                            metric.setMetricType(MetricTypeEnum.JSON_ARRAY.getCode());
-                        } else if (JSON.isValidObject(key.getValue().toString())) {
-                            metric.setMetricType(MetricTypeEnum.JSON_OBJECT.getCode());
-                        }else {
-                            metric.setMetricType(MetricTypeEnum.STRING.getCode());
-                        }
-                        return metric;
-                    }).collect(Collectors.toList());
+        Map<String, MetricPO> metricDbMap = metricList.stream()
+                .collect(Collectors.toMap(MetricPO::getMetricCode, Function.identity()));
+        List<MetricDTO> result = new ArrayList<>();
+        // 遍历请求体字段，构建或更新指标
+        for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
+            String metricCode = entry.getKey();
+            Object value = entry.getValue();
+            MetricPO existing = metricDbMap.get(metricCode);
+            MetricDTO dto = new MetricDTO();
+            dto.setMetricCode(metricCode);
+            dto.setSampleValue(value != null ? value.toString() : null);
+            if (Objects.nonNull(existing)) {
+                // DB 已存在该字段，沿用原信息
+                dto.setMetricName(existing.getMetricName());
+                dto.setMetricDesc(existing.getMetricDesc());
+                dto.setMetricType(existing.getMetricType());
+            } else {
+                // 新增字段，动态推导类型
+                dto.setMetricName("指标名字");
+                dto.setMetricDesc("备注");
+                dto.setMetricType(determineMetricType(value));
+            }
+            result.add(dto);
         }
-        //编辑
-        return metricList.stream().map(metric -> {
-            MetricDTO metricDTO = new MetricDTO();
-            metricDTO.setMetricCode(metric.getMetricCode());
-            metricDTO.setMetricName(metric.getMetricName());
-            metricDTO.setMetricType(metric.getMetricType());
-            metricDTO.setMetricDesc(metric.getMetricDesc());
-            metricDTO.setSampleValue(metric.getSampleValue());
-            return metricDTO;
-        }).collect(Collectors.toList());
+        return result;
+    }
+
+    /**
+     * 根据样例值判断指标类型
+     */
+    private Integer determineMetricType(Object value) {
+        if (value == null) {
+            return MetricTypeEnum.STRING.getCode();
+        }
+        if (value instanceof Integer || value instanceof Long) {
+            return MetricTypeEnum.INTEGER.getCode();
+        } else if (value instanceof BigDecimal || value instanceof Double || value instanceof Float) {
+            return MetricTypeEnum.BIG_DECIMAL.getCode();
+        } else if (value instanceof Boolean) {
+            return MetricTypeEnum.BOOLEAN.getCode();
+        } else if (JSON.isValidArray(value.toString())) {
+            return MetricTypeEnum.JSON_ARRAY.getCode();
+        } else if (JSON.isValidObject(value.toString())) {
+            return MetricTypeEnum.JSON_OBJECT.getCode();
+        } else {
+            return MetricTypeEnum.STRING.getCode();
+        }
     }
 
     @Override

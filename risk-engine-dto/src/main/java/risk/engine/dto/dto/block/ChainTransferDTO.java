@@ -1,9 +1,9 @@
 package risk.engine.dto.dto.block;
 
 import lombok.Data;
+import risk.engine.dto.dto.penalty.AnnouncementDTO;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * 链上转账
@@ -65,18 +65,8 @@ public class ChainTransferDTO {
     private long transferTime;
 
     /**
-     * 创建时间
+     * 推送公告
      */
-    private LocalDateTime createdTime;
-
-    /**
-     * 发布时间
-     */
-    private String createdAt;
-
-    /**
-     * 内容
-     */
-    private String title;
+    private AnnouncementDTO announcement;
 
 }

@@ -18,6 +18,7 @@ import risk.engine.crawler.monitor.ICrawlerBlockChainHandler;
 import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.block.ChainTransferDTO;
+import risk.engine.dto.dto.penalty.AnnouncementDTO;
 import risk.engine.dto.enums.IncidentCodeEnum;
 import risk.engine.service.service.ICrawlerTaskService;
 
@@ -111,9 +112,12 @@ public class BnbFetcherHandler implements ICrawlerBlockChainHandler {
             dto.setToken("BNB");
             dto.setFee(gasFee);
             dto.setTransferTime(block.getTimestamp().longValue());
-            dto.setCreatedAt(DateTimeUtil.getTimeByTimestamp(dto.getTransferTime()));
-            String title = String.format(CrawlerConstant.ADDRESS_BOT_TITLE, dto.getChain(), dto.getSendAddress(), dto.getReceiveAddress(), dto.getAmount());
-            dto.setTitle(title);
+            //公告
+            String createdAt = DateTimeUtil.getTimeByTimestamp(dto.getTransferTime() * 1000);
+            String content = String.format(CrawlerConstant.ADDRESS_BOT_TITLE, dto.getChain(), dto.getSendAddress(), dto.getReceiveAddress(), dto.getAmount());
+            AnnouncementDTO announcementDTO = new AnnouncementDTO(CrawlerConstant.OVER_TRANSFER_TITLE, content, createdAt);
+            dto.setAnnouncement(announcementDTO);
+
             CrawlerTaskPO task = crawlerTaskService.getCrawlerTask(txHash, IncidentCodeEnum.TRANSFER_CHAIN.getCode(), JSON.toJSONString(dto));
             crawlerTasks.add(task);
             redis.sadd(TX_SET_KEY, txHash);

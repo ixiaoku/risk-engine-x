@@ -34,7 +34,7 @@ import java.util.*;
  */
 @Slf4j
 @Component
-public class RiskEngineHandler {
+public class RiskEngineExecutorHandler {
 
     @Resource
     private IEngineResultService engineResultService;
@@ -115,17 +115,35 @@ public class RiskEngineHandler {
         log.info("PenaltyRecord 保存成功");
     }
 
+    /**
+     * 获取处置报文
+     * @param penaltyCode 处置code
+     * @param penaltyFieldVOList 处置字段
+     * @param requestPayload 请求报文
+     * @return 结果
+     */
     private String getPenaltyJson (String penaltyCode, List<PenaltyFieldVO> penaltyFieldVOList, Map<String, Object> requestPayload) {
         if (StringUtils.equals(penaltyCode, PenaltyActionEnum.BUSINESS_WECHAT_BOT.getCode())) {
             Map<String, Object> businessWeChatMap = new HashMap<>();
+            Object value = requestPayload.get("announcement");
+            if (Objects.isNull(value)) {
+                return null;
+            }
+            JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(value));
+            for (PenaltyFieldVO fieldVO : penaltyFieldVOList) {
+                businessWeChatMap.put(fieldVO.getFieldCode(), jsonObject.get(fieldVO.getFieldCode()));
+            }
+            return JSON.toJSONString(businessWeChatMap);
+        } else if (StringUtils.equals(penaltyCode, PenaltyActionEnum.APPEND_LIST.getCode())) {
+            Map<String, Object> addListMap = new HashMap<>();
             for (PenaltyFieldVO fieldVO : penaltyFieldVOList) {
                 Object value = requestPayload.get(fieldVO.getFieldCode());
                 if (Objects.isNull(value)) {
                     continue;
                 }
-                businessWeChatMap.put(fieldVO.getFieldCode(), value);
+                addListMap.put(fieldVO.getFieldCode(), value);
             }
-            return JSON.toJSONString(businessWeChatMap);
+            return JSON.toJSONString(addListMap);
         } else {
             throw new RuntimeException("处罚手段未配置");
         }

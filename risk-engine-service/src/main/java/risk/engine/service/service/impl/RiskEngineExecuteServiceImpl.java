@@ -146,11 +146,13 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
         executeEngineDTO.setRuleLabel(hitRule.getLabel());
         executeEngineDTO.setRulePenaltyAction(hitRule.getPenaltyAction());
         executeEngineDTO.setRuleVersion(hitRule.getVersion());
-        List<RuleMetricDTO> indicatorDTOList = JSON.parseArray(hitRule.getJsonScript(), RuleMetricDTO.class);
-        if (CollectionUtils.isNotEmpty(indicatorDTOList)) {
+        executeEngineDTO.setIp(Objects.nonNull(paramMap.get("ip")) ? paramMap.get("ip").toString() : null);
+        executeEngineDTO.setDeviceId(Objects.nonNull(paramMap.get("deviceId")) ? paramMap.get("deviceId").toString() : null);
+        List<RuleMetricDTO> metricDTOS = JSON.parseArray(hitRule.getJsonScript(), RuleMetricDTO.class);
+        if (CollectionUtils.isNotEmpty(metricDTOS)) {
             Map<String, Object> map = new HashMap<>();
-            indicatorDTOList.forEach(indicatorDTO -> map.put(indicatorDTO.getMetricCode(), paramMap.get(indicatorDTO.getMetricCode())));
-            executeEngineDTO.setIndicator(map);
+            metricDTOS.forEach(indicatorDTO -> map.put(indicatorDTO.getMetricCode(), paramMap.get(indicatorDTO.getMetricCode())));
+            executeEngineDTO.setMetric(map);
         }
         return executeEngineDTO;
     }

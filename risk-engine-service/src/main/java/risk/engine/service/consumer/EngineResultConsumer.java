@@ -6,7 +6,7 @@ import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Component;
 import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;
-import risk.engine.service.handler.RiskEngineHandler;
+import risk.engine.service.handler.RiskEngineExecutorHandler;
 
 import javax.annotation.Resource;
 
@@ -16,13 +16,13 @@ import javax.annotation.Resource;
 public class EngineResultConsumer implements RocketMQListener<String> {
 
     @Resource
-    private RiskEngineHandler riskEngineHandler;
+    private RiskEngineExecutorHandler riskEngineExecutorHandler;
 
     @Override
     public void onMessage(String message) {
         try {
             RiskExecuteEngineDTO riskExecuteEngineDTO = new Gson().fromJson(message, RiskExecuteEngineDTO.class);
-            riskEngineHandler.saveEngineResult(riskExecuteEngineDTO);
+            riskEngineExecutorHandler.saveEngineResult(riskExecuteEngineDTO);
         } catch (Exception e) {
             log.error("mq消息失败 错误信息：{}", e.getMessage(), e);
             throw new RuntimeException(e);

@@ -11,8 +11,11 @@ import risk.engine.common.util.OkHttpUtil;
 import risk.engine.db.entity.PenaltyRecordPO;
 import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.crawler.GroupChatBotDTO;
+import risk.engine.dto.dto.penalty.AnnouncementDTO;
 import risk.engine.dto.enums.PenaltyStatusEnum;
 import risk.engine.service.handler.IPenaltyHandler;
+
+import java.util.Objects;
 
 /**
  * @Author: X
@@ -32,13 +35,13 @@ public class BusinessWechatHandler implements IPenaltyHandler {
     public PenaltyStatusEnum doPenalty(PenaltyRecordPO record) {
         try {
             //解密这个api token
-            JSONObject articleObject = JSONObject.parseObject(record.getPenaltyJson());
+            AnnouncementDTO announcement = JSONObject.parseObject(record.getPenaltyJson(), AnnouncementDTO.class);
+            if (Objects.isNull(announcement)) {
+                throw new RuntimeException("处置报文为空");
+            }
             String secretKey = CryptoUtils.getDesSecretKey();
             String key = CryptoUtils.desDecrypt(CrawlerConstant.weChatBotDataKey, secretKey);
-            //解析json报文
-            String title = articleObject.getString("title");
-            String time = articleObject.getString("createdAt");
-            String content = String.format(CrawlerConstant.notIceBotContent, title, time);
+            String content = String.format(CrawlerConstant.notIceBotContent, announcement.getTitle(), announcement.getContent(), announcement.getCreatedAt());
             //组装企业微信 markdown格式报文
             GroupChatBotDTO groupChatBotDTO = new GroupChatBotDTO();
             groupChatBotDTO.setMsgtype("markdown");

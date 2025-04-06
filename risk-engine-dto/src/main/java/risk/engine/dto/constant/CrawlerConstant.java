@@ -17,7 +17,7 @@ public interface CrawlerConstant {
     String weChatBotDataKey = "FC3DVhg+cBjQ96QATuWRco4PVCK1rg7UFGefsmXPet52p1YGLkHtgg==";
 
     String notIceBotContent = "监控结果通知\n" +
-            ">**标题**:<font color=\"comment\">Binance公告</font>\n" +
+            ">**标题**:<font color=\"comment\">%s</font>\n" +
             ">**内容**:<font color=\"comment\">%s</font>\n" +
             ">**时间**:<font color=\"comment\">%s</font> \n";
 
@@ -33,6 +33,8 @@ public interface CrawlerConstant {
             "\uD83D\uDDD3 【时间】: %s \n";
 
     String ADDRESS_BOT_TITLE = "链名称：%s，发送地址: %s ，收款地址：%s，数量：%s";
+
+    String OVER_TRANSFER_TITLE = "大额转账";
 
     String appId = "wx_ima6EoKmHub0LsKJZwtgi";
 

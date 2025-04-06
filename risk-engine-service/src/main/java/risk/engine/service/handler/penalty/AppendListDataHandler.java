@@ -43,7 +43,6 @@ public class AppendListDataHandler implements IPenaltyHandler {
                 listDataPO.setListLibraryName(listDataDTO.getListLibraryName());
                 listDataPO.setStatus(listDataDTO.getStatus());
                 listDataPO.setListType(1);
-                listDataPO.setListDesc("qaq");
                 listDataPO.setListName(StringUtils.isEmpty(listDataDTO.getListName()) ? "qq" : listDataDTO.getListName());
                 listDataPO.setListCode(listDataDTO.getListCode());
                 listDataPO.setListValue(listDataDTO.getListValue());

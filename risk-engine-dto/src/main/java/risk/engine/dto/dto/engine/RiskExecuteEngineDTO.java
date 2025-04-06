@@ -25,16 +25,6 @@ public class RiskExecuteEngineDTO {
     private String riskFlowNo;
 
     /**
-     * 请求报文
-     */
-    private Map<String, Object> requestPayload;
-
-    /**
-     * 指标
-     */
-    private Map<String, Object> indicator;
-
-    /**
      * 事件code
      */
     private String incidentCode;
@@ -83,6 +73,26 @@ public class RiskExecuteEngineDTO {
      * 规则版本
      */
     private String ruleVersion;
+
+    /**
+     * ip地址
+     */
+    private String ip;
+
+    /**
+     * 设备地址
+     */
+    private String deviceId;
+
+    /**
+     * 请求报文
+     */
+    private Map<String, Object> requestPayload;
+
+    /**
+     * 指标
+     */
+    private Map<String, Object> metric;
 
     /**
      * 命中上线策略集合
