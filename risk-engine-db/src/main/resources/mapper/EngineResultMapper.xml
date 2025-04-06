@@ -3,59 +3,48 @@
 <mapper namespace="risk.engine.db.dao.EngineResultMapper">
   <resultMap id="BaseResultMap" type="risk.engine.db.entity.EngineResultPO">
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="flow_no" jdbcType="VARCHAR" property="flowNo" />
+    <result column="risk_flow_no" jdbcType="VARCHAR" property="riskFlowNo" />
     <result column="incident_code" jdbcType="VARCHAR" property="incidentCode" />
     <result column="incident_name" jdbcType="VARCHAR" property="incidentName" />
-    <result column="rule_code" jdbcType="VARCHAR" property="ruleCode" />
-    <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
-    <result column="rule_status" jdbcType="INTEGER" property="ruleStatus" />
-    <result column="rule_score" jdbcType="INTEGER" property="ruleScore" />
-    <result column="rule_decision_result" jdbcType="VARCHAR" property="ruleDecisionResult" />
-    <result column="rule_label" jdbcType="VARCHAR" property="ruleLabel" />
-    <result column="rule_penalty_action" jdbcType="VARCHAR" property="rulePenaltyAction" />
-    <result column="rule_version" jdbcType="VARCHAR" property="ruleVersion" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="request_payload" jdbcType="LONGVARCHAR" property="requestPayload" />
+    <result column="primary_element" jdbcType="LONGVARCHAR" property="primaryElement" />
+    <result column="metric" jdbcType="LONGVARCHAR" property="metric" />
+    <result column="extra" jdbcType="LONGVARCHAR" property="extra" />
     <result column="hit_online_rules" jdbcType="LONGVARCHAR" property="hitOnlineRules" />
     <result column="hit_mock_rules" jdbcType="LONGVARCHAR" property="hitMockRules" />
+    <result column="primary_rule" jdbcType="LONGVARCHAR" property="primaryRule" />
+    <result column="decision_result" jdbcType="VARCHAR" property="decisionResult" />
+    <result column="execution_time" jdbcType="BIGINT" property="executionTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, incident_code, incident_name, rule_code, rule_name, rule_status, rule_score,
-    rule_decision_result, rule_label, rule_penalty_action, rule_version, create_time,
-    hit_online_rules, hit_mock_rules
+    id, flow_no, risk_flow_no, incident_code, incident_name,
+    request_payload, primary_element, metric, extra,
+    hit_online_rules, hit_mock_rules, primary_rule,
+    decision_result, execution_time, create_time
   </sql>
 
-  <select id="selectByExample" parameterType="risk.engine.db.entity.EngineResultPO" resultMap="BaseResultMap">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from engine_result
-  </select>
-
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from engine_result
     where id = #{id,jdbcType=BIGINT}
   </select>
-
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from engine_result
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
 
   <insert id="insert" parameterType="risk.engine.db.entity.EngineResultPO">
-    insert into engine_result (id, incident_code, incident_name, 
-      rule_code, rule_name, rule_status, 
-      rule_score, rule_decision_result, rule_label, 
-      rule_penalty_action, rule_version, create_time, 
-      request_payload, hit_online_rules, hit_mock_rules)
-    values (#{id,jdbcType=BIGINT}, #{incidentCode,jdbcType=VARCHAR}, #{incidentName,jdbcType=VARCHAR}, 
-      #{ruleCode,jdbcType=VARCHAR}, #{ruleName,jdbcType=VARCHAR}, #{ruleStatus,jdbcType=INTEGER}, 
-      #{ruleScore,jdbcType=INTEGER}, #{ruleDecisionResult,jdbcType=VARCHAR}, #{ruleLabel,jdbcType=VARCHAR}, 
-      #{rulePenaltyAction,jdbcType=VARCHAR}, #{ruleVersion,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
-      #{requestPayload,jdbcType=LONGVARCHAR}, #{hitOnlineRules,jdbcType=LONGVARCHAR}, #{hitMockRules,jdbcType=LONGVARCHAR})
+    insert into engine_result (
+      flow_no, risk_flow_no, incident_code, incident_name,
+      request_payload, primary_element, metric, extra,
+      hit_online_rules, hit_mock_rules, primary_rule,
+      decision_result, execution_time, create_time
+    ) values (
+               #{flowNo,jdbcType=VARCHAR}, #{riskFlowNo,jdbcType=VARCHAR}, #{incidentCode,jdbcType=VARCHAR}, #{incidentName,jdbcType=VARCHAR},
+               #{requestPayload,jdbcType=LONGVARCHAR}, #{primaryElement,jdbcType=LONGVARCHAR}, #{metric,jdbcType=LONGVARCHAR}, #{extra,jdbcType=LONGVARCHAR},
+               #{hitOnlineRules,jdbcType=LONGVARCHAR}, #{hitMockRules,jdbcType=LONGVARCHAR}, #{primaryRule,jdbcType=LONGVARCHAR},
+               #{decisionResult,jdbcType=VARCHAR}, #{executionTime,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}
+             )
   </insert>
+
 </mapper>

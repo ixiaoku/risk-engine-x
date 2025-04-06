@@ -3,7 +3,6 @@ package risk.engine.service.handler;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -72,9 +71,9 @@ public class RiskEngineExecutorHandler {
         executeEngineDTO
                 .getHitOnlineRules()
                 .stream()
-                .filter(hit -> StringUtils.isNotBlank(hit.getPenaltyAction()))
+                .filter(hit -> StringUtils.isNotBlank(hit.getRulePenaltyAction()))
                 .forEach(hitOnlineRule -> {
-                    PenaltyActionPO penalty = penaltieList.stream().filter(e -> StringUtils.equals(hitOnlineRule.getPenaltyAction(), e.getPenaltyCode())).findFirst().orElse(null);
+                    PenaltyActionPO penalty = penaltieList.stream().filter(e -> StringUtils.equals(hitOnlineRule.getRulePenaltyAction(), e.getPenaltyCode())).findFirst().orElse(null);
                     if (Objects.isNull(penalty)) {
                         return;
                     }
@@ -171,20 +170,18 @@ public class RiskEngineExecutorHandler {
         EngineResultPO engineResult = new EngineResultPO();
         engineResult.setFlowNo(executeEngineDTO.getFlowNo());
         engineResult.setRiskFlowNo(executeEngineDTO.getRiskFlowNo());
+        engineResult.setPrimaryElement(JSON.toJSONString(executeEngineDTO.getPrimaryElement()));
+        engineResult.setMetric(JSON.toJSONString(executeEngineDTO.getMetric()));
+        engineResult.setExtra(JSON.toJSONString(executeEngineDTO.getExtra()));
+        engineResult.setPrimaryRule(JSON.toJSONString(executeEngineDTO.getPrimaryRule()));
+        engineResult.setDecisionResult(executeEngineDTO.getDecisionResult());
+        engineResult.setExecutionTime(executeEngineDTO.getExecutionTime());
         engineResult.setRequestPayload(JSON.toJSONString(executeEngineDTO.getRequestPayload()));
         engineResult.setIncidentCode(executeEngineDTO.getIncidentCode());
         engineResult.setIncidentName(executeEngineDTO.getIncidentName());
-        engineResult.setRuleCode(executeEngineDTO.getRuleCode());
-        engineResult.setRuleName(executeEngineDTO.getRuleName());
-        engineResult.setRuleStatus(executeEngineDTO.getRuleStatus());
-        engineResult.setRuleScore(executeEngineDTO.getRuleScore());
-        engineResult.setRuleDecisionResult(executeEngineDTO.getRuleDecisionResult());
-        engineResult.setRuleLabel(executeEngineDTO.getRuleLabel());
-        engineResult.setRulePenaltyAction(executeEngineDTO.getRulePenaltyAction());
-        engineResult.setRuleVersion(executeEngineDTO.getRuleVersion());
         engineResult.setCreateTime(LocalDateTime.now());
-        engineResult.setHitMockRules(new Gson().toJson(executeEngineDTO.getHitMockRules()));
-        engineResult.setHitOnlineRules(new Gson().toJson(executeEngineDTO.getHitOnlineRules()));
+        engineResult.setHitMockRules(JSON.toJSONString(executeEngineDTO.getHitMockRules()));
+        engineResult.setHitOnlineRules(JSON.toJSONString(executeEngineDTO.getHitOnlineRules()));
         engineResultService.insert(engineResult);
         return engineResult;
     }

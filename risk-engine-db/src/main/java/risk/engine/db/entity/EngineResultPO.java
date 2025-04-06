@@ -12,28 +12,24 @@ import java.time.LocalDateTime;
  */
 @Data
 public class EngineResultPO {
+
     /**
-     * 主键id
+     * 主键ID
      */
     private Long id;
 
     /**
-     * 业务方唯一id
+     * 业务流水号
      */
     private String flowNo;
 
     /**
-     * 风控系统唯一id
+     * 风控流水号
      */
     private String riskFlowNo;
 
     /**
-     * 请求报文
-     */
-    private String requestPayload;
-
-    /**
-     * 事件code
+     * 事件编码
      */
     private String incidentCode;
 
@@ -43,44 +39,24 @@ public class EngineResultPO {
     private String incidentName;
 
     /**
-     * 规则code
+     * 请求报文（原始请求数据）
      */
-    private String ruleCode;
+    private String requestPayload;
 
     /**
-     * 规则名称
+     * 基本要素（核心特征/身份信息等）
      */
-    private String ruleName;
+    private String primaryElement;
 
     /**
-     * 规则状态
+     * 使用的指标
      */
-    private Integer ruleStatus;
+    private String metric;
 
     /**
-     * 规则分数
+     * 扩展字段（可用于后续扩展）
      */
-    private Integer ruleScore;
-
-    /**
-     * 规则处置方式
-     */
-    private String ruleDecisionResult;
-
-    /**
-     * 规则标签
-     */
-    private String ruleLabel;
-
-    /**
-     * 规则处罚
-     */
-    private String rulePenaltyAction;
-
-    /**
-     * 规则版本
-     */
-    private String ruleVersion;
+    private String extra;
 
     /**
      * 命中上线策略集合
@@ -93,8 +69,22 @@ public class EngineResultPO {
     private String hitMockRules;
 
     /**
+     * 命中主规则
+     */
+    private String primaryRule;
+
+    /**
+     * 决策结果（通过和拒绝）
+     */
+    private String decisionResult;
+
+    /**
+     * 决策耗时（毫秒）
+     */
+    private Long executionTime;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createTime;
-
 }

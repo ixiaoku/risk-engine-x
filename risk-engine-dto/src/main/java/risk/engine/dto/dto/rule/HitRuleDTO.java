@@ -31,8 +31,18 @@ public class HitRuleDTO {
     private Integer ruleScore;
 
     /**
+     * 规则版本
+     */
+    private String ruleVersion;
+
+    /**
+     * 规则标签
+     */
+    private String ruleLabel;
+
+    /**
      * 规则处置 数组形式
      */
-    private String penaltyAction;
+    private String rulePenaltyAction;
 
 }
