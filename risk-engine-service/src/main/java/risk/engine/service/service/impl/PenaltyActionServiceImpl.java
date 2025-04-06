@@ -18,16 +18,10 @@ import java.util.List;
  * @Version: 1.0
  */
 @Service
-public class PenaltyActionActionServiceImpl implements IPenaltyActionService {
+public class PenaltyActionServiceImpl implements IPenaltyActionService {
 
     @Resource
     private PenaltyActionMapper penaltyActionMapper;
-
-
-    @Override
-    public boolean deleteByPrimaryKey(Long id) {
-        return penaltyActionMapper.deleteByPrimaryKey(id) > 0;
-    }
 
     @Override
     public boolean insert(PenaltyActionPO record) {

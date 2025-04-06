@@ -1,6 +1,7 @@
 package risk.engine.components.es;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -10,6 +11,9 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.xcontent.XContentType;
 import org.springframework.stereotype.Component;
@@ -18,7 +22,6 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @Author: X
@@ -32,25 +35,74 @@ public class ElasticsearchClientApi {
     @Resource
     private RestHighLevelClient client;
 
-    public SearchHit[] queryRestHighLevelClient(String index, BoolQueryBuilder boolQuery) {
+    /**
+     * 分页查询
+     * @param index 索引
+     * @param boolQuery 查询条件
+     * @param pageNum 页数
+     * @param pageSize 一页条数
+     * @return 结果
+     */
+    public Pair<SearchHit[], Long> queryWithPaging(
+            String index,
+            BoolQueryBuilder boolQuery,
+            int pageNum,
+            int pageSize
+    ) {
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.query(boolQuery);
-        log.info(sourceBuilder.toString());
+        sourceBuilder.from((pageNum - 1) * pageSize);
+        sourceBuilder.size(pageSize);
+        sourceBuilder.trackTotalHits(true);
         SearchRequest searchRequest = new SearchRequest(index);
         searchRequest.source(sourceBuilder);
         try {
             SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-            log.info(searchResponse.getHits().toString());
-            if (Objects.isNull(searchResponse.getHits())) {
-                return null;
+            SearchHits hits = searchResponse.getHits();
+            if (hits == null || hits.getTotalHits() == null) {
+                return Pair.of(new SearchHit[0], 0L);
             }
-            return searchResponse.getHits().getHits();
+            return Pair.of(hits.getHits(), hits.getTotalHits().value);
         } catch (IOException e) {
-            log.error("Bulk response: {}", e.getMessage(), e);
-            throw new RuntimeException(e);
+            log.error("ES 查询异常: {}", e.getMessage(), e);
+            throw new RuntimeException("ES 查询异常", e);
         }
     }
 
+    /**
+     * es分组查询
+     * @param index 索引
+     * @param boolQuery 查询条件
+     * @param aggregationBuilder 分组条件
+     * @return 结果
+     */
+    public Pair<Aggregations, Long> queryWithAggregations(
+            String index,
+            BoolQueryBuilder boolQuery,
+            AggregationBuilder aggregationBuilder
+    ) {
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        sourceBuilder.query(boolQuery);
+        sourceBuilder.trackTotalHits(true);
+        if (aggregationBuilder != null) {
+            sourceBuilder.aggregation(aggregationBuilder);
+        }
+        SearchRequest searchRequest = new SearchRequest(index);
+        searchRequest.source(sourceBuilder);
+        try {
+            SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+            SearchHits hits = searchResponse.getHits();
+            // 如果你还需要拿 aggregation 的结果，可以通过：
+            Aggregations aggregations = searchResponse.getAggregations();
+            if (aggregations == null || hits.getTotalHits() == null) {
+                return null;
+            }
+            return Pair.of(aggregations, hits.getTotalHits().value);
+        } catch (IOException e) {
+            log.error("ES 查询异常: {}", e.getMessage(), e);
+            throw new RuntimeException("ES 查询异常", e);
+        }
+    }
 
     /**
      * 通用保存文档方法

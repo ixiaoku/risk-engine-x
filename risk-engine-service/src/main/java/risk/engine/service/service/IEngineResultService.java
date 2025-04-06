@@ -1,5 +1,6 @@
 package risk.engine.service.service;
 
+import org.apache.commons.lang3.tuple.Pair;
 import risk.engine.db.entity.EngineResultPO;
 import risk.engine.dto.param.EngineExecutorParam;
 import risk.engine.dto.vo.EngineExecutorVO;
@@ -13,15 +14,10 @@ import java.util.List;
  */
 public interface IEngineResultService {
 
-    boolean deleteByPrimaryKey(Long id);
-
     boolean insert(EngineResultPO record);
 
-    List<EngineResultPO> selectByExample(EngineResultPO engineResult);
+    EngineExecutorVO getOne(EngineExecutorParam executorParam);
 
-    EngineResultPO selectByPrimaryKey(Long id);
-
-    List<EngineExecutorVO> list(EngineExecutorParam executorParam);
-
+    Pair<List<EngineExecutorVO>, Long> list(EngineExecutorParam executorParam);
 
 }

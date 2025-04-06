@@ -72,7 +72,7 @@ public class IncidentController {
         PageResult<IncidentVO> pageResult = new PageResult<>();
         List<IncidentVO> incidentList = incidentService.list(incidentParam);
         pageResult.setList(incidentList);
-        pageResult.setTotal(incidentList.size());
+        pageResult.setTotal((long) incidentList.size());
         pageResult.setPageSize(10);
         pageResult.setPageNum(1);
         return ResponseVO.success(pageResult);

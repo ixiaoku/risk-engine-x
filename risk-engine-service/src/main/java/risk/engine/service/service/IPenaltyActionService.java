@@ -13,8 +13,6 @@ import java.util.List;
  */
 public interface IPenaltyActionService {
 
-    boolean deleteByPrimaryKey(Long id);
-
     boolean insert(PenaltyActionPO record);
 
     PenaltyActionPO selectByPrimaryKey(Long id);

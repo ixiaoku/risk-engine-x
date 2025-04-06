@@ -16,7 +16,7 @@ public class PageResult<T> {
 
     private int pageSize;
 
-    private int total;
+    private Long total;
 
     private List<T> list;
 

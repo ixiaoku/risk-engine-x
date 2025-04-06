@@ -2,10 +2,6 @@ package risk.engine.dto.param;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import risk.engine.dto.dto.rule.HitRuleDTO;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Author: X
@@ -27,77 +23,18 @@ public class EngineExecutorParam extends PageHelperQuery{
     private String riskFlowNo;
 
     /**
-     * 请求报文
-     */
-    private Map<String, Object> requestPayload;
-
-    /**
-     * 指标
-     */
-    private Map<String, Object> indicator;
-
-    /**
-     * 事件code
+     * 事件
      */
     private String incidentCode;
 
     /**
-     * 事件名称
+     * 开始时间
      */
-    private String incidentName;
-
-    /**
-     * 规则code
-     */
-    private String ruleCode;
-
-    /**
-     * 规则名称
-     */
-    private String ruleName;
-
-    /**
-     * 规则状态
-     */
-    private Integer ruleStatus;
-
-    /**
-     * 规则分数
-     */
-    private Integer ruleScore;
-
-    /**
-     * 规则处置方式
-     */
-    private String ruleDecisionResult;
-
-    /**
-     * 规则标签
-     */
-    private String ruleLabel;
-
-    /**
-     * 规则处罚
-     */
-    private String rulePenaltyAction;
-
-    /**
-     * 规则版本
-     */
-    private String ruleVersion;
-
-    /**
-     * 命中上线策略集合
-     */
-    private List<HitRuleDTO> hitOnlineRules;
-
-    /**
-     * 命中模拟策略集合
-     */
-    private List<HitRuleDTO> hitMockRules;
-
     private String startTime;
 
+    /**
+     * 结束时间
+     */
     private String endTime;
 
 }

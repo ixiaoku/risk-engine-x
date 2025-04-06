@@ -3,7 +3,7 @@ package risk.engine.service.service.impl;
 import org.springframework.stereotype.Service;
 import risk.engine.db.dao.BlockchainBlockMapper;
 import risk.engine.db.entity.BlockchainBlockPO;
-import risk.engine.service.service.IBlockchainBlockService;
+import risk.engine.service.service.IBlockchainService;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
  * @Version: 1.0
  */
 @Service
-public class BlockchainBlockServiceImpl implements IBlockchainBlockService {
+public class BlockchainServiceImpl implements IBlockchainService {
 
     @Resource
     private BlockchainBlockMapper blockchainBlockMapper;

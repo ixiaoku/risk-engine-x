@@ -1,6 +1,7 @@
 package risk.engine.dto.vo;
 
 import lombok.Data;
+import risk.engine.dto.dto.engine.EssentialElementDTO;
 import risk.engine.dto.dto.rule.HitRuleDTO;
 
 import java.util.List;
@@ -25,17 +26,7 @@ public class EngineExecutorVO {
     private String riskFlowNo;
 
     /**
-     * 请求报文
-     */
-    private Map<String, Object> requestPayload;
-
-    /**
-     * 指标
-     */
-    private Map<String, Object> indicator;
-
-    /**
-     * 事件code
+     * 事件
      */
     private String incidentCode;
 
@@ -45,44 +36,39 @@ public class EngineExecutorVO {
     private String incidentName;
 
     /**
-     * 规则code
+     * 命中主规则
      */
-    private String ruleCode;
+    private HitRuleDTO primaryRule;
 
     /**
-     * 规则名称
+     * 风控结果
      */
-    private String ruleName;
+    private String decisionResult;
 
     /**
-     * 规则状态
+     * 引擎执行耗时 单位ms
      */
-    private Integer ruleStatus;
+    private Long executionTime;
 
     /**
-     * 规则分数
+     * 核心要素
      */
-    private Integer ruleScore;
+    private EssentialElementDTO primaryElement;
 
     /**
-     * 规则处置方式
+     * 需求扩展字段
      */
-    private String ruleDecisionResult;
+    private Map<String, Object> extra;
 
     /**
-     * 规则标签
+     * 请求报文
      */
-    private String ruleLabel;
+    private Map<String, Object> requestPayload;
 
     /**
-     * 规则处罚
+     * 使用的指标
      */
-    private String rulePenaltyAction;
-
-    /**
-     * 规则版本
-     */
-    private String ruleVersion;
+    private Map<String, Object> metric;
 
     /**
      * 命中上线策略集合
@@ -94,6 +80,9 @@ public class EngineExecutorVO {
      */
     private List<HitRuleDTO> hitMockRules;
 
+    /**
+     * 创建时间
+     */
     private String createTime;
 
 }

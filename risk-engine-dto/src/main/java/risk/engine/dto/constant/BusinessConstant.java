@@ -7,7 +7,7 @@ package risk.engine.dto.constant;
  */
 public interface BusinessConstant {
 
-    String ENGINE_INDEX = "risk_engine_2025_01";
+    String ENGINE_INDEX = "risk_engine_2025";
 
     Integer RETRY = 0;
 

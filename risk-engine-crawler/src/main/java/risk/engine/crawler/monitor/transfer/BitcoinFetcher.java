@@ -9,7 +9,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.stereotype.Component;
 import risk.engine.dto.dto.block.ChainTransferDTO;
-import risk.engine.service.service.IBlockchainBlockService;
+import risk.engine.service.service.IBlockchainService;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat;
 @Component
 public class BitcoinFetcher {
     @Resource
-    private IBlockchainBlockService blockchainBlockService;
+    private IBlockchainService blockchainBlockService;
     private static final String BTC_API = "https://blockstream.info/api";
     private static final OkHttpClient client = new OkHttpClient();
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
