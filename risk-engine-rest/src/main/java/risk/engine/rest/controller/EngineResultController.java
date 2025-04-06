@@ -42,18 +42,17 @@ public class EngineResultController {
 
     @PostMapping("/result/dashboard")
     public ResponseVO dashboard(@RequestBody EngineExecutorParam executorParam) {
-        EngineExecutorVO engineExecutorVO = engineResultService.getOne(executorParam);
-        return ResponseVO.success(engineExecutorVO);
+        return ResponseVO.success(engineResultService.getDashboard(executorParam));
     }
 
-    @PostMapping("/result/detail")
-    public ResponseVO getOne(@RequestBody EngineExecutorParam executorParam) {
+    @PostMapping("/result/replay")
+    public ResponseVO replay(@RequestBody EngineExecutorParam executorParam) {
         return ResponseVO.success(Map.of());
     }
 
     @PostMapping("/result/snapshot")
     public ResponseVO snapshot(@RequestBody EngineExecutorParam executorParam) {
-        return ResponseVO.success(Map.of());
+        return ResponseVO.success(engineResultService.getOne(executorParam));
     }
 
 }

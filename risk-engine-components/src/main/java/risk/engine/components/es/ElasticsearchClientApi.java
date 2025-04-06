@@ -51,8 +51,10 @@ public class ElasticsearchClientApi {
     ) {
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.query(boolQuery);
-        sourceBuilder.from((pageNum - 1) * pageSize);
-        sourceBuilder.size(pageSize);
+        if (pageNum != 0 && pageSize != 0) {
+            sourceBuilder.from((pageNum - 1) * pageSize);
+            sourceBuilder.size(pageSize);
+        }
         sourceBuilder.trackTotalHits(true);
         SearchRequest searchRequest = new SearchRequest(index);
         searchRequest.source(sourceBuilder);
@@ -76,28 +78,22 @@ public class ElasticsearchClientApi {
      * @param aggregationBuilder 分组条件
      * @return 结果
      */
-    public Pair<Aggregations, Long> queryWithAggregations(
+    public Aggregations queryWithAggregations(
             String index,
             BoolQueryBuilder boolQuery,
             AggregationBuilder aggregationBuilder
     ) {
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        sourceBuilder.query(boolQuery);
-        sourceBuilder.trackTotalHits(true);
+        sourceBuilder.query(boolQuery)
+                .size(0);
         if (aggregationBuilder != null) {
             sourceBuilder.aggregation(aggregationBuilder);
         }
         SearchRequest searchRequest = new SearchRequest(index);
-        searchRequest.source(sourceBuilder);
         try {
+            searchRequest.source(sourceBuilder);
             SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-            SearchHits hits = searchResponse.getHits();
-            // 如果你还需要拿 aggregation 的结果，可以通过：
-            Aggregations aggregations = searchResponse.getAggregations();
-            if (aggregations == null || hits.getTotalHits() == null) {
-                return null;
-            }
-            return Pair.of(aggregations, hits.getTotalHits().value);
+            return searchResponse.getAggregations();
         } catch (IOException e) {
             log.error("ES 查询异常: {}", e.getMessage(), e);
             throw new RuntimeException("ES 查询异常", e);

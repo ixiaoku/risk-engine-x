@@ -56,6 +56,11 @@ public class RuleServiceImpl implements IRuleService {
     }
 
     @Override
+    public List<RulePO> selectByExample(RuleExample ruleExample) {
+        return ruleMapper.selectByExample(ruleExample);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean insert(RuleParam ruleParam) {
         RulePO rule = new RulePO();

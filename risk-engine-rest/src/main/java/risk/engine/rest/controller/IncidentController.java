@@ -53,7 +53,7 @@ public class IncidentController {
     }
 
     @PostMapping("/parse")
-    public ResponseVO parseIndicator(@RequestBody @Validated IncidentParam incidentParam) throws Exception {
+    public ResponseVO parseMetric(@RequestBody @Validated IncidentParam incidentParam) throws Exception {
         log.info("parse indicator: {}", incidentParam);
         ValidatorUtils.EmptyThrowException().validateException(incidentParam.getRequestPayload());
         return ResponseVO.success(incidentService.parseMetric(incidentParam.getIncidentCode(), incidentParam.getRequestPayload()));
@@ -67,14 +67,12 @@ public class IncidentController {
     }
 
     @PostMapping("/list")
-    public ResponseVO list(@RequestBody IncidentParam incidentParam) throws Exception {
+    public ResponseVO list(@RequestBody IncidentParam incidentParam) {
         log.info("list incident: {}", incidentParam);
         PageResult<IncidentVO> pageResult = new PageResult<>();
         List<IncidentVO> incidentList = incidentService.list(incidentParam);
         pageResult.setList(incidentList);
         pageResult.setTotal((long) incidentList.size());
-        pageResult.setPageSize(10);
-        pageResult.setPageNum(1);
         return ResponseVO.success(pageResult);
     }
 

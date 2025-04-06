@@ -5,6 +5,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.springframework.stereotype.Service;
 import risk.engine.components.es.ElasticsearchClientApi;
 import risk.engine.components.es.EngineExecutorBoolQuery;
@@ -16,9 +20,8 @@ import risk.engine.dto.vo.EngineExecutorVO;
 import risk.engine.service.service.IEngineResultService;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +41,37 @@ public class EngineResultServiceImpl implements IEngineResultService {
     @Override
     public boolean insert(EngineResultPO record) {
         return engineResultMapper.insert(record) > 0;
+    }
+
+    @Override
+    public Map<String, BigDecimal> getDashboard(EngineExecutorParam executorParam) {
+        BoolQueryBuilder boolQuery = EngineExecutorBoolQuery.getBoolQuery(executorParam);
+        // 聚合部分
+        TermsAggregationBuilder decisionAgg = AggregationBuilders
+                .terms("decision_group")
+                .field("decisionResult")
+                .size(2);
+        Aggregations aggregations = elasticsearchClientApi.queryWithAggregations(BusinessConstant.ENGINE_INDEX, boolQuery, decisionAgg);
+        if (Objects.isNull(aggregations)) {
+            return Collections.emptyMap();
+        }
+        Terms decisionTerms = aggregations.get("decision_group");
+        long total = 0L, pass = 0L, reject = 0L;
+        for (Terms.Bucket bucket : decisionTerms.getBuckets()) {
+            String key = bucket.getKeyAsString();
+            long count = bucket.getDocCount();
+            total += count;
+            if ("1".equalsIgnoreCase(key)) {
+                pass = count;
+            } else if ("0".equalsIgnoreCase(key)) {
+                reject = count;
+            }
+        }
+        Map<String, BigDecimal> result = new HashMap<>();
+        result.put("dailyVolume", BigDecimal.valueOf(total));
+        result.put("approvalRate", new BigDecimal(pass).divide(BigDecimal.valueOf(total), 4, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)));
+        result.put("rejectionRate", new BigDecimal(reject).divide(BigDecimal.valueOf(total), 4, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)));
+        return result;
     }
 
     @Override

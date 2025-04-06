@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import risk.engine.dto.param.DictionaryParam;
 import risk.engine.dto.vo.ResponseVO;
 import risk.engine.service.service.IDictionaryService;
+import risk.engine.service.service.IIncidentService;
+import risk.engine.service.service.IRuleVersionService;
 
 import javax.annotation.Resource;
 
@@ -21,6 +23,12 @@ public class DictionaryController {
 
     @Resource
     private IDictionaryService dictionaryService;
+
+    @Resource
+    private IRuleVersionService ruleVersionService;
+
+    @Resource
+    private IIncidentService incidentService;
 
     /**
      * 字典 带查询参数
@@ -43,4 +51,8 @@ public class DictionaryController {
         return ResponseVO.success(dictionaryService.getList(dictKeyList));
     }
 
+    @GetMapping("/options/db")
+    public ResponseVO getDictIncidents(@ModelAttribute DictionaryParam dictionaryParam) {
+        return ResponseVO.success(dictionaryService.getDictByDB(dictionaryParam));
+    }
 }

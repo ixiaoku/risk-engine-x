@@ -18,7 +18,7 @@ public class ValidatorUtils {
     public static ValidatorException<Object> EmptyThrowException() {
         return value -> {
             if (Objects.isNull(value)) {
-                throw new IllegalArgumentException("Input string must not be null or empty");
+                throw new RuntimeException("Input string must not be null or empty");
             }
         };
     }

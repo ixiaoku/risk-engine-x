@@ -5,7 +5,9 @@ import risk.engine.db.entity.EngineResultPO;
 import risk.engine.dto.param.EngineExecutorParam;
 import risk.engine.dto.vo.EngineExecutorVO;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: X
@@ -15,6 +17,8 @@ import java.util.List;
 public interface IEngineResultService {
 
     boolean insert(EngineResultPO record);
+
+    Map<String, BigDecimal> getDashboard(EngineExecutorParam executorParam);
 
     EngineExecutorVO getOne(EngineExecutorParam executorParam);
 
