@@ -50,6 +50,7 @@ public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
     private static final int CONFIRMATION_BLOCKS = 6; // ETH确认块数
     private static final String LAST_BLOCK_KEY = "eth:lastBlock";
     private static final String TX_SET_KEY = "eth:processedTxs";
+    private static final Integer INDEX = 1;//100太大了 接口容易被限频 改成0
     private static final BigDecimal ETH_THRESHOLD = new BigDecimal("0.05"); // 金额过滤
 
     @Override
@@ -66,7 +67,7 @@ public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
             BigInteger latestBlock = web3j.ethBlockNumber().send().getBlockNumber();
             BigInteger confirmedBlock = latestBlock.subtract(BigInteger.valueOf(CONFIRMATION_BLOCKS));
             String lastBlockStr = (String) redisUtil.get(LAST_BLOCK_KEY);
-            BigInteger lastBlock = StringUtils.isEmpty(lastBlockStr) ? confirmedBlock.subtract(BigInteger.valueOf(100)) : new BigInteger(lastBlockStr);
+            BigInteger lastBlock = StringUtils.isEmpty(lastBlockStr) ? confirmedBlock.subtract(BigInteger.valueOf(INDEX)) : new BigInteger(lastBlockStr);
             for (BigInteger i = lastBlock.add(BigInteger.ONE); i.compareTo(confirmedBlock) <= 0; i = i.add(BigInteger.ONE)) {
                 EthBlock ethBlock = web3j.ethGetBlockByNumber(DefaultBlockParameter.valueOf(i), true).send();
                 EthBlock.Block block = ethBlock.getBlock();

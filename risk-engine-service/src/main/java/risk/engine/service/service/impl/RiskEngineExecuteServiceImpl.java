@@ -110,7 +110,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             });
             return result;
         } catch (Exception e) {
-            log.error("错误信息: {}, 事件code: {}, ", e.getMessage(), riskEngineParam.getIncidentCode(), e);
+            log.error("引擎执行 错误信息: {}, 事件code: {}, ", e.getMessage(), riskEngineParam.getIncidentCode(), e);
             return result;
         }
     }

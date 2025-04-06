@@ -44,6 +44,7 @@ public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
     private static final String SLOT_JSON = "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getSlot\"}";
     private static final String LAST_SLOT_KEY = "sol:lastSlot";
     private static final String TX_SET_KEY = "sol:processedTxs";
+    private static final Integer INDEX = 1;//100太大了 接口容易被限频 改成1
     private static final BigDecimal SOL_THRESHOLD = new BigDecimal("1"); // 金额过滤
     private static final int CONFIRMATION_SLOTS = 32; // Solana确认slot数
 
@@ -59,7 +60,7 @@ public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
             if (latestSlot == -1) return;
             long confirmedSlot = latestSlot - CONFIRMATION_SLOTS;
             String lastSlotStr = (String) redisUtil.get(LAST_SLOT_KEY);
-            long lastSlot = lastSlotStr == null ? confirmedSlot - 100 : Long.parseLong(lastSlotStr);
+            long lastSlot = lastSlotStr == null ? confirmedSlot - INDEX : Long.parseLong(lastSlotStr);
             for (long i = lastSlot + 1; i <= confirmedSlot; i++) {
                 JsonObject blockData = getBlockDetails(i);
                 if (blockData == null) continue;
