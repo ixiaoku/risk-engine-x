@@ -1,6 +1,5 @@
 package risk.engine.service.service;
 
-import risk.engine.db.entity.PenaltyActionPO;
 import risk.engine.db.entity.PenaltyRecordPO;
 
 import java.util.List;
@@ -12,13 +11,7 @@ import java.util.List;
  */
 public interface IPenaltyRecordService {
 
-    boolean deleteByPrimaryKey(Long id);
-
-    boolean insert(PenaltyRecordPO record);
-
     boolean batchInsert(List<PenaltyRecordPO> records);
-
-    PenaltyActionPO selectByPrimaryKey(Long id);
 
     List<PenaltyRecordPO> selectExample(PenaltyRecordPO penaltyRecord);
 

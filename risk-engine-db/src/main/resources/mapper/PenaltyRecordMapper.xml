@@ -29,43 +29,19 @@
     penalty_time, create_time, update_time
   </sql>
 
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from penalty_record
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-
   <select id="selectExample" parameterType="risk.engine.db.entity.PenaltyRecordPO" resultMap="ResultMapWithBLOBs">
     select
     <include refid="Base_Column_List" />
     from penalty_record
     <where>
-      retry = 0
-      and status = 2
+      <if test="status != null">
+        status = #{status,jdbcType=BIT}
+      </if>
+      <if test="retry != null">
+        and retry &lt; #{retry,jdbcType=INTEGER}
+      </if>
     </where>
   </select>
-
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from penalty_record
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="risk.engine.db.entity.PenaltyRecordPO">
-    insert into penalty_record (id, flow_no, rule_code,
-      rule_name, incident_code, incident_name, 
-      penalty_code, penalty_name, penalty_def, 
-      penalty_reason, penalty_result, status, 
-      retry, penalty_time, create_time, 
-      update_time, penalty_description, penalty_json
-      )
-    values (#{id,jdbcType=BIGINT}, #{flowNo,jdbcType=VARCHAR}, #{ruleCode,jdbcType=VARCHAR},
-      #{ruleName,jdbcType=VARCHAR}, #{incidentCode,jdbcType=VARCHAR}, #{incidentName,jdbcType=VARCHAR}, 
-      #{penaltyCode,jdbcType=VARCHAR}, #{penaltyName,jdbcType=VARCHAR}, #{penaltyDef,jdbcType=VARCHAR}, 
-      #{penaltyReason,jdbcType=VARCHAR}, #{penaltyResult,jdbcType=VARCHAR}, #{status,jdbcType=BIT}, 
-      #{retry,jdbcType=INTEGER}, #{penaltyTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{penaltyDescription,jdbcType=LONGVARCHAR}, #{penaltyJson,jdbcType=LONGVARCHAR}
-      )
-  </insert>
 
   <insert id="batchInsert" parameterType="java.util.List">
     insert into penalty_record (id, flow_no, rule_code, rule_name, incident_code, incident_name,
@@ -84,20 +60,9 @@
 
   <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.PenaltyRecordPO">
     update penalty_record
-    set flow_no = #{flowNo,jdbcType=VARCHAR},
-      rule_code = #{ruleCode,jdbcType=VARCHAR},
-      rule_name = #{ruleName,jdbcType=VARCHAR},
-      incident_code = #{incidentCode,jdbcType=VARCHAR},
-      incident_name = #{incidentName,jdbcType=VARCHAR},
-      penalty_code = #{penaltyCode,jdbcType=VARCHAR},
-      penalty_name = #{penaltyName,jdbcType=VARCHAR},
-      penalty_def = #{penaltyDef,jdbcType=VARCHAR},
-      penalty_reason = #{penaltyReason,jdbcType=VARCHAR},
-      penalty_result = #{penaltyResult,jdbcType=VARCHAR},
+    set penalty_result = #{penaltyResult,jdbcType=VARCHAR},
       status = #{status,jdbcType=BIT},
       retry = #{retry,jdbcType=INTEGER},
-      penalty_time = #{penaltyTime,jdbcType=TIMESTAMP},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
