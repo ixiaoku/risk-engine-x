@@ -174,12 +174,13 @@
         <groupId>org.apache.rocketmq</groupId>
         <artifactId>rocketmq-spring-boot-starter</artifactId>
         <version>${rocketmq.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-          </exclusion>
-        </exclusions>
+      </dependency>
+      <!-- 保留 fastjson 1.x 供 RocketMQ 使用 -->
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>fastjson</artifactId>
+        <version>1.2.83</version>
+        <scope>compile</scope>
       </dependency>
 
       <!-- Kafka 依赖 -->
