@@ -36,7 +36,7 @@
         and flow_no = #{flowNo,jdbcType=VARCHAR}
       </if>
     </where>
-    limit 100
+    limit 500
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">

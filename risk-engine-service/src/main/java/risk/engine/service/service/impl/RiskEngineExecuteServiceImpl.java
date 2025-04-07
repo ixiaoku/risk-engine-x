@@ -142,12 +142,15 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
         executeEngineDTO.setIncidentName(incidentName);
         executeEngineDTO.setExecutionTime(executionTime);
         executeEngineDTO.setRequestPayload(paramMap);
+        //要素
         EssentialElementDTO essentialElementDTO = JSON.parseObject(riskEngineParam.getRequestPayload(), EssentialElementDTO.class);
         executeEngineDTO.setPrimaryElement(essentialElementDTO);
+        //是否命中规则
         if (Objects.isNull(hitRule)) {
             executeEngineDTO.setDecisionResult(result.getDecisionResult());
             return executeEngineDTO;
         }
+        executeEngineDTO.setDecisionResult(hitRule.getDecisionResult());
         //命中的策略集合
         List<HitRuleDTO> hitMockRules = getHitRuleDTOList(RuleStatusEnum.MOCK.getCode(), hitMOckRuleList);
         executeEngineDTO.setHitMockRules(hitMockRules);
