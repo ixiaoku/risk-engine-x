@@ -65,7 +65,7 @@ public class RiskEngineExecutorHandler {
         actionPO.setStatus(1);
         List<PenaltyActionPO> penaltieList = penaltyService.selectByExample(actionPO);
         if (CollectionUtils.isEmpty(penaltieList)) {
-            return;
+            throw new RuntimeException("PenaltyAction is empty");
         }
         List<PenaltyRecordPO> recordList = new ArrayList<>();
         executeEngineDTO

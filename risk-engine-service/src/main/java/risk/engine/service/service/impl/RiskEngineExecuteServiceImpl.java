@@ -92,14 +92,14 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             List<RulePO> hitMockRuleList = getHitRuleList(paramMap, mockRuleList);
             //返回分数最高的命中策略 先返回上线的然后再看模拟的
             RulePO hitRule = new RulePO();
-            if (CollectionUtils.isNotEmpty(hitOnlineRuleList)) {
-                hitRule = hitOnlineRuleList.get(0);
-                result.setDecisionResult(hitRule.getDecisionResult());
-                log.info("命中上线规则：{}", hitRule.getRuleName());
-            } else if (CollectionUtils.isNotEmpty(hitMockRuleList)) {
+            if (CollectionUtils.isNotEmpty(hitMockRuleList)) {
                 hitRule = hitMockRuleList.get(0);
                 result.setDecisionResult(hitRule.getDecisionResult());
                 log.info("命中模拟规则：{}", hitRule.getRuleName());
+            } else if (CollectionUtils.isNotEmpty(hitOnlineRuleList)) {
+                hitRule = hitOnlineRuleList.get(0);
+                result.setDecisionResult(hitRule.getDecisionResult());
+                log.info("命中上线规则：{}", hitRule.getRuleName());
             }
 
 
