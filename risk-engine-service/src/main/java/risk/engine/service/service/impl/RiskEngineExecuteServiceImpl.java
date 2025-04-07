@@ -106,7 +106,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             RulePO finalHitRule = hitRule;
             //执行耗时
             Long executionTime = System.currentTimeMillis() - startTime;
-            RiskExecuteEngineDTO executeEngineDTO = getRiskExecuteEngineDTO(riskEngineParam, incident.getIncidentName(), paramMap, finalHitRule, hitOnlineRuleList, hitMockRuleList, executionTime);
+            RiskExecuteEngineDTO executeEngineDTO = getRiskExecuteEngineDTO(result, riskEngineParam, incident.getIncidentName(), paramMap, finalHitRule, hitOnlineRuleList, hitMockRuleList, executionTime);
             log.info("RiskEngineExecuteServiceImpl execute 耗时 :{}", executionTime);
 
             //异步保存数据和发送mq消息 规则熔断
@@ -134,7 +134,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
      * @param hitMOckRuleList 命中模拟规则
      * @return 结果
      */
-    private RiskExecuteEngineDTO getRiskExecuteEngineDTO(RiskEngineParam riskEngineParam, String incidentName, JSONObject paramMap, RulePO hitRule, List<RulePO> hitOnlineRuleList, List<RulePO> hitMOckRuleList, Long executionTime) {
+    private RiskExecuteEngineDTO getRiskExecuteEngineDTO(RiskEngineExecuteVO result, RiskEngineParam riskEngineParam, String incidentName, JSONObject paramMap, RulePO hitRule, List<RulePO> hitOnlineRuleList, List<RulePO> hitMOckRuleList, Long executionTime) {
         RiskExecuteEngineDTO executeEngineDTO = new RiskExecuteEngineDTO();
         executeEngineDTO.setFlowNo(riskEngineParam.getFlowNo());
         executeEngineDTO.setRiskFlowNo(riskEngineParam.getIncidentCode() + ":" + UUID.randomUUID().toString().replace("-", "") + ":" +System.currentTimeMillis());
@@ -145,6 +145,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
         EssentialElementDTO essentialElementDTO = JSON.parseObject(riskEngineParam.getRequestPayload(), EssentialElementDTO.class);
         executeEngineDTO.setPrimaryElement(essentialElementDTO);
         if (Objects.isNull(hitRule)) {
+            executeEngineDTO.setDecisionResult(result.getDecisionResult());
             return executeEngineDTO;
         }
         //命中的策略集合
@@ -162,7 +163,6 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
         hitRuleDTO.setRulePenaltyAction(hitRule.getPenaltyAction());
         hitRuleDTO.setRuleVersion(hitRule.getVersion());
         executeEngineDTO.setPrimaryRule(hitRuleDTO);
-        executeEngineDTO.setDecisionResult(hitRule.getDecisionResult());
         //命中规则 使用的指标
         List<RuleMetricDTO> metricDTOS = JSON.parseArray(hitRule.getJsonScript(), RuleMetricDTO.class);
         if (CollectionUtils.isNotEmpty(metricDTOS)) {

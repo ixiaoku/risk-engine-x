@@ -11,4 +11,6 @@ public interface BusinessConstant {
 
     Integer RETRY = 0;
 
+    Integer STATUS = 0;
+
 }
