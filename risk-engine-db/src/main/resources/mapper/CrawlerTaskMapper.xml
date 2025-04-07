@@ -17,13 +17,6 @@
     id, flow_no, incident_code, request_payload, status, retry, create_time, update_time
   </sql>
 
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
-    select 
-    <include refid="Base_Column_List" />
-    from crawler_task
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-
   <select id="selectByExample" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
     select
     <include refid="Base_Column_List" />
@@ -35,14 +28,12 @@
       <if test="flowNo != null and flowNo != '' ">
         and flow_no = #{flowNo,jdbcType=VARCHAR}
       </if>
+      <if test="status != null">
+        and status = #{status,jdbcType=INTEGER}
+      </if>
     </where>
     limit 500
   </select>
-
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from crawler_task
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
 
   <insert id="batchInsert" parameterType="java.util.List">
     INSERT INTO crawler_task (id, flow_no, incident_code,
