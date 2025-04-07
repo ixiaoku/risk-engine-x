@@ -34,6 +34,8 @@ public class PenaltyExecuteTask {
 
         log.info("PenaltyExecuteTask start");
         PenaltyRecordPO record = new PenaltyRecordPO();
+        record.setRetry(3);
+        record.setStatus(PenaltyStatusEnum.WAIT.getCode());
         List<PenaltyRecordPO> penaltyRecordList = penaltyRecordService.selectExample(record);
         if (CollectionUtils.isEmpty(penaltyRecordList)) {
             return;
@@ -51,6 +53,6 @@ public class PenaltyExecuteTask {
             penaltyRecord.setUpdateTime(LocalDateTime.now());
             penaltyRecordService.updateByPrimaryKey(penaltyRecord);
         });
-        log.info("PenaltyExecuteTask end");
+        log.info("PenaltyExecuteTask success");
     }
 }
