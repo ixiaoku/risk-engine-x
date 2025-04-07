@@ -93,7 +93,7 @@ public class BnbFetcherHandler implements ICrawlerBlockChainHandler {
             if (redis.sismember(TX_SET_KEY, txHash)) continue;
 
             BigDecimal valueInBnb = Convert.fromWei(tx.getValue().toString(), Convert.Unit.ETHER);
-            if (valueInBnb.compareTo(BNB_THRESHOLD) <= 0) continue; // 过滤小于0.1 BNB的交易
+            if (valueInBnb.compareTo(BNB_THRESHOLD) <= 0) continue;
 
             String from = tx.getFrom();
             String to = tx.getTo();
