@@ -2,6 +2,7 @@ package risk.engine.dto.dto.crawler;
 
 import lombok.Getter;
 import lombok.Setter;
+import risk.engine.dto.dto.penalty.AnnouncementDTO;
 
 import java.math.BigDecimal;
 
@@ -13,7 +14,10 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class BinanceKLineDTO {
-
+    /**
+     * 币种交易对
+     */
+    private String symbol;
     /**
      * 开始时间
      */
@@ -59,6 +63,11 @@ public class BinanceKLineDTO {
      * 涨跌幅
      */
     private BigDecimal changePercent;
+
+    /**
+     * 公告
+     */
+    private AnnouncementDTO announcement;
 
     public BinanceKLineDTO() {
     }

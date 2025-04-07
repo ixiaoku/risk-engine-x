@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 import risk.engine.db.entity.CrawlerTaskPO;
+import risk.engine.dto.constant.BusinessConstant;
 import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.service.service.ICrawlerTaskService;
 import risk.engine.service.service.IRiskEngineExecuteService;
@@ -35,12 +36,11 @@ public class ExecutorEngineHandler {
         try {
             String param = XxlJobHelper.getJobParam();
             CrawlerTaskPO crawlerTaskQuery = new CrawlerTaskPO();
-            crawlerTaskQuery.setStatus(0);
+            crawlerTaskQuery.setStatus(BusinessConstant.STATUS);
             List<CrawlerTaskPO> crawlerTasks = crawlerTaskService.selectByExample(crawlerTaskQuery);
             if (CollectionUtils.isEmpty(crawlerTasks)) {
                 return;
             }
-            crawlerTasks = crawlerTasks.subList(0, 10);
             Lists.partition(crawlerTasks, 100)
                     .forEach(taskList -> taskList.forEach(task -> {
                         RiskEngineParam engineParam = new RiskEngineParam();

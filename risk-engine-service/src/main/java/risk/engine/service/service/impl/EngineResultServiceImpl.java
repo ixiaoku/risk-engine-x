@@ -51,16 +51,19 @@ public class EngineResultServiceImpl implements IEngineResultService {
                 .terms("decision_group")
                 .field("decisionResult")
                 .size(2);
-        Aggregations aggregations = elasticsearchClientApi.queryWithAggregations(BusinessConstant.ENGINE_INDEX, boolQuery, decisionAgg);
+        Pair<Aggregations,Long> pair = elasticsearchClientApi.queryWithAggregations(BusinessConstant.ENGINE_INDEX, boolQuery, decisionAgg);
+        if (Objects.isNull(pair)) {
+            return Collections.emptyMap();
+        }
+        Aggregations aggregations = pair.getLeft();
         if (Objects.isNull(aggregations)) {
             return Collections.emptyMap();
         }
         Terms decisionTerms = aggregations.get("decision_group");
-        long total = 0L, pass = 0L, reject = 0L;
+        long total = pair.getRight(), pass = 0L, reject = 0L;
         for (Terms.Bucket bucket : decisionTerms.getBuckets()) {
             String key = bucket.getKeyAsString();
             long count = bucket.getDocCount();
-            total += count;
             if ("1".equalsIgnoreCase(key)) {
                 pass = count;
             } else if ("0".equalsIgnoreCase(key)) {

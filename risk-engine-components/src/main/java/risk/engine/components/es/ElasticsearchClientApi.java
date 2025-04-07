@@ -78,7 +78,7 @@ public class ElasticsearchClientApi {
      * @param aggregationBuilder 分组条件
      * @return 结果
      */
-    public Aggregations queryWithAggregations(
+    public Pair<Aggregations,Long> queryWithAggregations(
             String index,
             BoolQueryBuilder boolQuery,
             AggregationBuilder aggregationBuilder
@@ -93,7 +93,11 @@ public class ElasticsearchClientApi {
         try {
             searchRequest.source(sourceBuilder);
             SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-            return searchResponse.getAggregations();
+            SearchHits hits = searchResponse.getHits();
+            if (hits == null || hits.getTotalHits() == null) {
+                return null;
+            }
+            return Pair.of(searchResponse.getAggregations(), hits.getTotalHits().value);
         } catch (IOException e) {
             log.error("ES 查询异常: {}", e.getMessage(), e);
             throw new RuntimeException("ES 查询异常", e);

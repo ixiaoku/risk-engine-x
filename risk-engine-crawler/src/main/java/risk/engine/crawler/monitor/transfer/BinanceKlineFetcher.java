@@ -9,9 +9,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.stereotype.Component;
+import risk.engine.common.util.DateTimeUtil;
 import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.dto.constant.BusinessConstant;
+import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.crawler.BinanceKLineDTO;
+import risk.engine.dto.dto.penalty.AnnouncementDTO;
 import risk.engine.dto.enums.IncidentCodeEnum;
 import risk.engine.service.service.ICrawlerTaskService;
 
@@ -69,14 +72,15 @@ public class BinanceKlineFetcher {
     public BinanceKLineDTO fetchAndCalculate(String symbol, String interval, int limit, int period) {
         List<BinanceKLineDTO> kLines = fetchKLines(symbol, interval, limit);
         if (kLines == null || kLines.size() < period) {
-            log.warn("Insufficient data: kLines size = {}, period = {}",
+            log.error("Insufficient data: kLines size = {}, period = {}",
                     kLines == null ? 0 : kLines.size(), period);
             return null;
         }
         // 计算布林带和涨跌幅
         calculateIndicators(kLines, period);
-        // 返回最新一根K线（列表最后一个元素）
-        return kLines.get(kLines.size() - 1);
+        BinanceKLineDTO binanceKLine =  kLines.get(kLines.size() - 1);
+        binanceKLine.setSymbol(symbol);
+        return binanceKLine;
     }
 
     // 计算布林带和涨跌幅
@@ -130,6 +134,12 @@ public class BinanceKlineFetcher {
     public void start() {
         BinanceKlineFetcher fetcher = new BinanceKlineFetcher();
         BinanceKLineDTO binanceKLine = fetcher.fetchAndCalculate("BTCUSDT", "5m", 21, 20);
+        AnnouncementDTO announcement = new AnnouncementDTO();
+        announcement.setTitle("涨跌幅提醒");
+        String content = String.format(CrawlerConstant.TRADE_DATA_BOT_TITLE, binanceKLine.getSymbol(), binanceKLine.getOpen(), binanceKLine.getClose(), binanceKLine.getMa(), binanceKLine.getChangePercent());
+        announcement.setContent(content);
+        announcement.setCreatedAt(DateTimeUtil.getTimeByTimestamp(binanceKLine.getCloseTime()));
+        binanceKLine.setAnnouncement(announcement);
         CrawlerTaskPO crawlerTaskPO = new CrawlerTaskPO();
         crawlerTaskPO.setFlowNo(UUID.randomUUID().toString().replace("-", ""));
         crawlerTaskPO.setIncidentCode(IncidentCodeEnum.TRADE_QUANT_DATA.getCode());

@@ -34,6 +34,8 @@ public interface CrawlerConstant {
 
     String ADDRESS_BOT_TITLE = "链名称：%s，发送地址: %s ，收款地址：%s，数量：%s";
 
+    String TRADE_DATA_BOT_TITLE = "5min内，币种交易对：%s,开盘价: %s ，收盘价：%s,布林带中轨：%s,涨跌幅：%s";
+
     String OVER_TRANSFER_TITLE = "大额转账";
 
     String appId = "wx_ima6EoKmHub0LsKJZwtgi";
