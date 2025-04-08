@@ -69,7 +69,7 @@ public class GuavaIncidentRuleCache implements ApplicationRunner {
         query.setStatus(IncidentStatusEnum.ONLINE.getCode());
         List<IncidentPO> incidentList = incidentMapper.selectByExample(query);
         if (CollectionUtils.isEmpty(incidentList)) {
-            log.warn("No online incidents found");
+            log.error("No online incidents found");
             return;
         }
         for (IncidentPO incident : incidentList) {

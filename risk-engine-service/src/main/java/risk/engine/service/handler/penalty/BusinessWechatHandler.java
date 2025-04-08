@@ -41,7 +41,7 @@ public class BusinessWechatHandler implements IPenaltyHandler {
             }
             String secretKey = CryptoUtils.getDesSecretKey();
             String key = CryptoUtils.desDecrypt(CrawlerConstant.weChatBotDataKey, secretKey);
-            String content = String.format(CrawlerConstant.notIceBotContent, announcement.getTitle(), announcement.getContent(), announcement.getCreatedAt());
+            String content = String.format(CrawlerConstant.noticeBotContent, announcement.getTitle(), announcement.getContent(), announcement.getCreatedAt());
             //组装企业微信 markdown格式报文
             GroupChatBotDTO groupChatBotDTO = new GroupChatBotDTO();
             groupChatBotDTO.setMsgtype("markdown");

@@ -16,10 +16,10 @@ public interface CrawlerConstant {
 
     String weChatBotDataKey = "FC3DVhg+cBjQ96QATuWRco4PVCK1rg7UFGefsmXPet52p1YGLkHtgg==";
 
-    String notIceBotContent = "监控结果通知\n" +
-            ">**标题**:<font color=\"comment\">%s</font>\n" +
-            ">**内容**:<font color=\"comment\">%s</font>\n" +
-            ">**时间**:<font color=\"comment\">%s</font> \n";
+    String noticeBotContent = "### 🚨 风控监控结果通知\n" +
+            ">**📝 标题：** <font color=\"info\">%s</font>  \n" +
+            ">**📄 内容：** <font color=\"comment\">%s</font>  \n" +
+            ">**🕒 时间：** <font color=\"warning\">%s</font>  \n";
 
     String notIceLinkBotContent = "监控结果通知\n" +
             ">**标题**:<font color=\"comment\">Binance公告</font>\n" +

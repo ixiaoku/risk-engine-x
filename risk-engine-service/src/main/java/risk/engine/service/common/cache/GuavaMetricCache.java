@@ -5,15 +5,16 @@ import com.google.common.cache.CacheBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
+import risk.engine.db.dao.MetricMapper;
 import risk.engine.db.entity.MetricPO;
 import risk.engine.dto.dto.rule.MetricDTO;
-import risk.engine.service.service.IMetricService;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -28,10 +29,11 @@ import java.util.stream.Collectors;
 public class GuavaMetricCache {
 
     @Resource
-    private IMetricService metricService;
+    private MetricMapper metricMapper;
 
     private final Cache<String, List<MetricDTO>> metricCache = CacheBuilder.newBuilder()
             .maximumSize(256)
+            .expireAfterWrite(30, TimeUnit.MINUTES)
             .build();
 
     @PostConstruct
@@ -75,7 +77,7 @@ public class GuavaMetricCache {
      */
     private ConcurrentHashMap<String, List<MetricDTO>> selectMetricPOList() {
         ConcurrentHashMap<String, List<MetricDTO>> data = new ConcurrentHashMap<>();
-        List<MetricPO> metricPOList = metricService.selectByExample(new MetricPO());
+        List<MetricPO> metricPOList = metricMapper.selectByExample(new MetricPO());
         if (CollectionUtils.isEmpty(metricPOList)) {
             return data;
         }
