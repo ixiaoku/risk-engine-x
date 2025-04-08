@@ -28,9 +28,8 @@ public class RedisLockUtil {
      * @param expireTime 过期时间（秒）
      * @return 是否加锁成功
      */
-    public boolean tryLock(String key, long expireTime) {
-        Boolean success = redisTemplate.opsForValue().setIfAbsent(key, LOCK_VALUE, expireTime, TimeUnit.SECONDS);
-        return Boolean.TRUE.equals(success);
+    public Boolean tryLock(String key, long expireTime) {
+        return redisTemplate.opsForValue().setIfAbsent(key, LOCK_VALUE, expireTime, TimeUnit.SECONDS);
     }
 
     /**
@@ -45,7 +44,6 @@ public class RedisLockUtil {
                         "else " +
                         "   return 0 " +
                         "end";
-
         redisTemplate.execute(new DefaultRedisScript<>(luaScript, Long.class), Collections.singletonList(key), LOCK_VALUE);
     }
 }

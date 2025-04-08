@@ -9,7 +9,7 @@ import risk.engine.db.entity.RuleVersionPO;
  */
 public interface IRuleVersionService {
 
-    boolean deleteByPrimaryKey(Long id);
+    boolean deleteByRuleCode(String ruleCode);
 
     boolean insert(RuleVersionPO record);
 

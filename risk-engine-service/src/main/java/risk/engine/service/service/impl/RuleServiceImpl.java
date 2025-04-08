@@ -7,15 +7,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.db.dao.RuleMapper;
+import risk.engine.db.entity.IncidentPO;
 import risk.engine.db.entity.MetricPO;
 import risk.engine.db.entity.RulePO;
 import risk.engine.db.entity.RuleVersionPO;
 import risk.engine.db.entity.example.RuleExample;
-import risk.engine.dto.dto.IncidentDTO;
 import risk.engine.dto.dto.rule.RuleMetricDTO;
 import risk.engine.dto.param.RuleParam;
 import risk.engine.dto.vo.RuleVO;
-import risk.engine.service.common.cache.GuavaIncidentCache;
+import risk.engine.service.common.cache.GuavaIncidentRuleCache;
 import risk.engine.service.handler.GroovyExpressionParser;
 import risk.engine.service.service.IMetricService;
 import risk.engine.service.service.IRuleService;
@@ -42,7 +42,7 @@ public class RuleServiceImpl implements IRuleService {
     private RuleMapper ruleMapper;
 
     @Resource
-    private GuavaIncidentCache guavaIncidentCache;
+    private GuavaIncidentRuleCache guavaIncidentCache;
 
     @Resource
     private IRuleVersionService ruleVersionService;
@@ -85,7 +85,9 @@ public class RuleServiceImpl implements IRuleService {
         rule.setUpdateTime(LocalDateTime.now());
         //规则版本
         RuleVersionPO ruleVersionPO = getRuleVersion(rule);
-        return ruleMapper.insert(rule) > 0 && ruleVersionService.insert(ruleVersionPO);
+        boolean flag = ruleMapper.insert(rule) > 0 && ruleVersionService.insert(ruleVersionPO);
+        if (flag) guavaIncidentCache.refreshCache();
+        return flag;
     }
 
     private List<RuleMetricDTO> getRuleMetricDTOList(String incidentCode, String jsonScript) {
@@ -128,10 +130,10 @@ public class RuleServiceImpl implements IRuleService {
         }
         return ruleList.stream().map(rule -> {
             RuleVO ruleVO = new RuleVO();
-            IncidentDTO incidentDTO = guavaIncidentCache.getCache(rule.getIncidentCode());
+            IncidentPO incident = guavaIncidentCache.getCacheIncident(rule.getIncidentCode());
             ruleVO.setId(rule.getId());
             ruleVO.setIncidentCode(rule.getIncidentCode());
-            ruleVO.setIncidentName(incidentDTO.getIncidentName());
+            ruleVO.setIncidentName(incident.getIncidentName());
             ruleVO.setRuleCode(rule.getRuleCode());
             ruleVO.setRuleName(rule.getRuleName());
             ruleVO.setStatus(rule.getStatus());
@@ -144,7 +146,10 @@ public class RuleServiceImpl implements IRuleService {
 
     @Override
     public Boolean delete(RuleParam ruleParam) {
-        return ruleMapper.deleteByPrimaryKey(ruleParam.getId()) > 0;
+        RulePO rule = ruleMapper.selectByPrimaryKey(ruleParam.getId());
+        boolean flag = ruleMapper.deleteByPrimaryKey(ruleParam.getId()) > 0 && ruleVersionService.deleteByRuleCode(rule.getRuleCode());
+        if (flag) guavaIncidentCache.refreshCache();
+        return flag;
     }
 
     @Override
@@ -171,7 +176,9 @@ public class RuleServiceImpl implements IRuleService {
         rule.setUpdateTime(LocalDateTime.now());
         //规则版本
         RuleVersionPO ruleVersionPO = getRuleVersion(rule);
-        return ruleMapper.updateByPrimaryKey(rule) > 0 && ruleVersionService.insert(ruleVersionPO);
+        boolean flag = ruleMapper.updateByPrimaryKey(rule) > 0 && ruleVersionService.insert(ruleVersionPO);
+        if (flag) guavaIncidentCache.refreshCache();
+        return flag;
     }
 
     @Override
@@ -218,6 +225,5 @@ public class RuleServiceImpl implements IRuleService {
         ruleVersionPO.setUpdateTime(LocalDateTime.now());
         return ruleVersionPO;
     }
-
 
 }

@@ -26,9 +26,9 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+  <delete id="deleteByRuleCode" parameterType="java.lang.String">
     delete from rule_version
-    where id = #{id,jdbcType=BIGINT}
+    where rule_code = #{ruleCode,jdbcType=VARCHAR}
   </delete>
 
   <insert id="insert" parameterType="risk.engine.db.entity.RuleVersionPO">

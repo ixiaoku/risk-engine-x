@@ -4,7 +4,7 @@ import risk.engine.db.entity.RuleVersionPO;
 
 public interface RuleVersionMapper {
 
-    int deleteByPrimaryKey(Long id);
+    int deleteByRuleCode(String ruleCode);
 
     int insert(RuleVersionPO record);
 

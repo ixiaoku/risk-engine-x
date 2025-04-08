@@ -19,8 +19,8 @@ public class RuleVersionServiceImpl implements IRuleVersionService {
     private RuleVersionMapper ruleVersionMapper;
 
     @Override
-    public boolean deleteByPrimaryKey(Long id) {
-        return ruleVersionMapper.deleteByPrimaryKey(id) > 0;
+    public boolean deleteByRuleCode(String ruleCode) {
+        return ruleVersionMapper.deleteByRuleCode(ruleCode) > 0;
     }
 
     @Override

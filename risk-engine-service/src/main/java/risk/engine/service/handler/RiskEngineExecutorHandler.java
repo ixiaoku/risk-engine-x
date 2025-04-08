@@ -61,6 +61,10 @@ public class RiskEngineExecutorHandler {
      * @param executeEngineDTO 参数
      */
     public void savePenalty(RiskExecuteEngineDTO executeEngineDTO) {
+        if (CollectionUtils.isEmpty(executeEngineDTO.getHitOnlineRules())) {
+            log.error("Penalty hit rules is empty");
+            return;
+        }
         PenaltyActionPO actionPO = new PenaltyActionPO();
         actionPO.setStatus(1);
         List<PenaltyActionPO> penaltieList = penaltyService.selectByExample(actionPO);
@@ -111,7 +115,6 @@ public class RiskEngineExecutorHandler {
             //保存处罚记录
             penaltyRecordService.batchInsert(penaltyRecords);
         });
-        log.info("PenaltyRecord 保存成功");
     }
 
     /**

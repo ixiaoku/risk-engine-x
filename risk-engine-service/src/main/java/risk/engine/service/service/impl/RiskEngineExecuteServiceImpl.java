@@ -2,10 +2,12 @@ package risk.engine.service.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import groovy.lang.Script;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import risk.engine.common.grovvy.GroovyShellUtil;
+import risk.engine.common.redis.RedisUtil;
 import risk.engine.components.mq.RiskEngineProducer;
 import risk.engine.db.entity.IncidentPO;
 import risk.engine.db.entity.RulePO;
@@ -13,14 +15,13 @@ import risk.engine.dto.dto.engine.EssentialElementDTO;
 import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;
 import risk.engine.dto.dto.rule.HitRuleDTO;
 import risk.engine.dto.dto.rule.RuleMetricDTO;
-import risk.engine.dto.enums.RuleDecisionResultEnum;
 import risk.engine.dto.enums.IncidentStatusEnum;
+import risk.engine.dto.enums.RuleDecisionResultEnum;
 import risk.engine.dto.enums.RuleStatusEnum;
 import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.dto.vo.RiskEngineExecuteVO;
-import risk.engine.service.service.IIncidentService;
+import risk.engine.service.common.cache.GuavaIncidentRuleCache;
 import risk.engine.service.service.IRiskEngineExecuteService;
-import risk.engine.service.service.IRuleService;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -38,13 +39,13 @@ import java.util.stream.Collectors;
 public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
 
     @Resource
-    private IRuleService ruleService;
-
-    @Resource
-    private IIncidentService incidentService;
+    private RedisUtil redisUtil;
 
     @Resource
     private RiskEngineProducer producer;
+
+    @Resource
+    private GuavaIncidentRuleCache guavaIncidentRuleCache;
 
     /**
      * 引擎执行 主逻辑
@@ -58,22 +59,40 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
         RiskEngineExecuteVO result = new RiskEngineExecuteVO();
         result.setDecisionResult(RuleDecisionResultEnum.SUCCESS.getCode());
         try {
-            List<RulePO> ruleList = getRuleListByIncidentCode(riskEngineParam.getIncidentCode());
-            if (CollectionUtils.isEmpty(ruleList)) {
-                log.error("Rule is not found {}", riskEngineParam.getIncidentCode());
+            //一、幂等性、获取事件和规则
+            String key = riskEngineParam.getIncidentCode() + ":" + riskEngineParam.getFlowNo();
+            Boolean isExisting = redisUtil.setNX(key, "EngineExecutorLock", 3600);
+            if (!isExisting) {
+                log.error("Duplicate request cannot be processed： {}", riskEngineParam.getIncidentCode());
                 return result;
+            }
+            //查询事件
+            IncidentPO incident = guavaIncidentRuleCache.getCacheIncident(riskEngineParam.getIncidentCode());
+            if (incident == null) {
+                log.error("Incident not found {}", riskEngineParam.getIncidentCode());
+                return null;
+            }
+            //校验事件状态
+            if (!IncidentStatusEnum.ONLINE.getCode().equals(incident.getStatus())) {
+                log.error("Incident status is not ONLINE {}", riskEngineParam.getIncidentCode());
+                return null;
+            }
+            //查询事件下的策略
+            List<RulePO> ruleList = guavaIncidentRuleCache.getCacheRuleList(riskEngineParam.getIncidentCode());
+            if  (CollectionUtils.isEmpty(ruleList)) {
+                return null;
             }
             long mysqlStartTime = System.currentTimeMillis();
             log.info("查询mysql 获取 Rule 耗时:{}", mysqlStartTime - startTime);
-
             JSONObject paramMap = JSON.parseObject(riskEngineParam.getRequestPayload());
-            //上线规则 分数降序
+
+            //二、规则执行
+            //上线规则 执行
             List<RulePO> onlineRuleList = ruleList.stream()
                     .filter(rule -> rule.getStatus().equals(RuleStatusEnum.ONLINE.getCode()))
                     .sorted(Comparator.comparingInt(RulePO::getScore).reversed())
                     .collect(Collectors.toList());
             List<RulePO> hitOnlineRuleList = getHitRuleList(paramMap, onlineRuleList);
-            //模拟规则 分数降序
             List<RulePO> mockRuleList = ruleList.stream()
                     .filter(rule -> rule.getStatus().equals(RuleStatusEnum.MOCK.getCode()))
                     .sorted(Comparator.comparingInt(RulePO::getScore).reversed())
@@ -81,27 +100,21 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             //优化点 模拟策略异步执行
             List<RulePO> hitMockRuleList = getHitRuleList(paramMap, mockRuleList);
             //返回分数最高的命中策略 先返回上线的然后再看模拟的
-            RulePO hitRule = new RulePO();
+            RulePO hitRule = null;
             if (CollectionUtils.isNotEmpty(hitMockRuleList)) {
                 hitRule = hitMockRuleList.get(0);
                 result.setDecisionResult(hitRule.getDecisionResult());
-                log.info("命中模拟规则：{}", hitRule.getRuleName());
             } else if (CollectionUtils.isNotEmpty(hitOnlineRuleList)) {
                 hitRule = hitOnlineRuleList.get(0);
                 result.setDecisionResult(hitRule.getDecisionResult());
-                log.info("命中上线规则：{}", hitRule.getRuleName());
             }
-
             long ruleStartTime = System.currentTimeMillis();
             log.info(" Rule 脚本执行 耗时:{}", ruleStartTime - mysqlStartTime);
-
-            RulePO finalHitRule = hitRule;
-            //执行耗时
             Long executionTime = System.currentTimeMillis() - startTime;
-            RiskExecuteEngineDTO executeEngineDTO = getRiskExecuteEngineDTO(result, riskEngineParam, "", paramMap, finalHitRule, hitOnlineRuleList, hitMockRuleList, executionTime);
+            RiskExecuteEngineDTO executeEngineDTO = getRiskExecuteEngineDTO(result, riskEngineParam, incident.getIncidentName(), paramMap, hitRule, hitOnlineRuleList, hitMockRuleList, executionTime);
             log.info("RiskEngineExecuteServiceImpl execute 耗时 :{}", executionTime);
 
-            //异步保存数据和发送mq消息 规则熔断
+            //三、异步保存数据和发送mq消息 规则熔断
             CompletableFuture.runAsync(() -> {
                 // 异步发消息 分消费者组监听 1mysql保存引擎执行结果并且同步es 2执行处罚 加名单以及调三方接口
                 producer.sendMessage("engine_result_topic", JSON.toJSONString(executeEngineDTO));
@@ -115,27 +128,6 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             log.error("引擎执行 错误信息: {}, 事件code: {}, ", e.getMessage(), riskEngineParam.getIncidentCode(), e);
             return result;
         }
-    }
-
-    /**
-     * 查询事件和策略
-     * @param incidentCode 参数
-     * @return 结果
-     */
-    private List<RulePO> getRuleListByIncidentCode (String incidentCode) {
-        //查询事件
-        IncidentPO incident = incidentService.selectByIncidentCode(incidentCode);
-        if (incident == null) {
-            log.error("Incident not found {}", incidentCode);
-            return List.of();
-        }
-        //校验事件状态
-        if (!IncidentStatusEnum.ONLINE.getCode().equals(incident.getStatus())) {
-            log.error("Incident status is not ONLINE {}", incidentCode);
-            return List.of();
-        }
-        //查询事件下的策略
-        return ruleService.selectByIncidentCode(incident.getIncidentCode());
     }
 
     /**
@@ -219,7 +211,12 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
     private List<RulePO> getHitRuleList(JSONObject paramMap, List<RulePO> ruleList) {
         return ruleList.stream().filter(rule -> {
             try {
-                return GroovyShellUtil.runGroovy(rule.getGroovyScript(), paramMap);
+                Script groovyScript = guavaIncidentRuleCache.getCacheScript(rule.getRuleCode());
+                if (Objects.isNull(groovyScript)) {
+                    log.error("Groovy 获取缓存失败");
+                    return false;
+                }
+                return GroovyShellUtil.runGroovy(groovyScript, paramMap);
             } catch (Exception e) {
                 log.error("Groovy 执行失败，跳过 ruleCode: {}", rule.getRuleCode(), e);
                 return false;
