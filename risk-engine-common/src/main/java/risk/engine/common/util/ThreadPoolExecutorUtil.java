@@ -20,8 +20,8 @@ public class ThreadPoolExecutorUtil implements DisposableBean {
     // 默认构造函数，使用固定参数初始化线程池
     public ThreadPoolExecutorUtil() {
         this.executor = new ThreadPoolExecutor(
-                10, // 核心线程数
-                20, // 最大线程数
+                4, // 核心线程数
+                8, // 最大线程数
                 60L, // 非核心线程存活时间
                 TimeUnit.SECONDS, // 时间单位
                 new ArrayBlockingQueue<>(100), // 有界队列，容量100

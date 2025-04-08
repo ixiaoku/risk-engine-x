@@ -21,6 +21,7 @@ public enum MetricSourceEnum {
     USER(3, "用户类指标"),
     // 计数器指标 通过redis 计数或者flink
     COUNT(4, "计数器指标"),
+    OFFLINE(5, "离线指标"),
     ;
 
     /**

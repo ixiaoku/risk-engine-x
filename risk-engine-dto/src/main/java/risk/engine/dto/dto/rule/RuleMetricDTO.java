@@ -43,4 +43,10 @@ public class RuleMetricDTO {
      */
     private Integer operationSymbol;
 
+    /**
+     * 指标来源
+     * @see risk.engine.dto.enums.MetricSourceEnum
+     */
+    private String metricSource;
+
 }

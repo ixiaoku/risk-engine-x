@@ -1,9 +1,12 @@
 package risk.engine.common.redis;
 
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.time.Duration;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -17,6 +20,9 @@ public class RedisUtil {
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
 //    @Resource
 //    private RedissonClient redissonClient;
@@ -35,6 +41,32 @@ public class RedisUtil {
         } catch (Exception e) {
             throw new RuntimeException("Failed to set value for key: " + key, e);
         }
+    }
+
+    /**
+     * 自增计数器
+     *
+     * @param key         Redis key
+     * @param delta       增加的值（默认传 1）
+     * @param expireTime  过期时间（可选，为 null 不设置）
+     */
+    public void increment(String key, long delta, Duration expireTime) {
+        stringRedisTemplate.opsForValue().increment(key, delta);
+        if (expireTime != null && stringRedisTemplate.hasKey(key)) {
+            stringRedisTemplate.expire(key, expireTime);
+        }
+    }
+
+    /**
+     * 获取当前计数值
+     *
+     * @param key Redis key
+     * @return 当前值，默认为 0
+     */
+    public long getCount(String key) {
+        return Optional.ofNullable(stringRedisTemplate.opsForValue().get(key))
+                .map(Long::valueOf)
+                .orElse(0L);
     }
 
     public void set(String key, Object value, long expireTime) {
