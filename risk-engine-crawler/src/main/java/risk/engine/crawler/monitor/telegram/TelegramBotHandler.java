@@ -4,14 +4,18 @@ import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.BotOptions;
 import org.telegram.telegrambots.meta.generics.LongPollingBot;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.dto.dto.crawler.CrawlerNoticeDTO;
@@ -30,7 +34,7 @@ import java.util.concurrent.CompletableFuture;
  */
 @Slf4j
 @Component
-public class TelegramBotHandler implements LongPollingBot {
+public class TelegramBotHandler implements LongPollingBot, ApplicationRunner {
 
     @Resource
     private ICrawlerTaskService crawlerTaskService;
@@ -50,7 +54,6 @@ public class TelegramBotHandler implements LongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        log.info("onUpdateReceived--------------------->start");
         List<CrawlerTaskPO> crawlerTaskList = new ArrayList<>();
         //监听频道
         if (update.hasChannelPost()) {
@@ -64,7 +67,6 @@ public class TelegramBotHandler implements LongPollingBot {
                 if (StringUtils.isEmpty(messageText)) {
                     return;
                 }
-                log.info("监听频道发言 messageText:{}", messageText);
                 CrawlerNoticeDTO noticeDTO = new CrawlerNoticeDTO();
                 noticeDTO.setCreatedAt(DateTimeUtil.getCurrentDateTime());
                 noticeDTO.setTitle(messageText);
@@ -90,7 +92,6 @@ public class TelegramBotHandler implements LongPollingBot {
                 return;
             }
             String messageText = message.getText();
-            log.info("监听群组某个用户发言 messageText:{}", messageText);
             CrawlerNoticeDTO noticeDTO = new CrawlerNoticeDTO();
             noticeDTO.setCreatedAt(DateTimeUtil.getTimeByTimestamp(message.getDate().longValue() * 1000));
             noticeDTO.setTitle(messageText);
@@ -100,7 +101,6 @@ public class TelegramBotHandler implements LongPollingBot {
                 return;
             }
             crawlerTaskList.add(crawlerTask);
-            log.info("update.hasMessage()--------------------->end");
         }
         CompletableFuture.runAsync(() -> crawlerTaskService.batchInsert(crawlerTaskList)).exceptionally(ex -> {
             log.error("监听telegram 异步任务失败, 异常: {}", ex.getMessage(), ex);
@@ -132,4 +132,10 @@ public class TelegramBotHandler implements LongPollingBot {
         LongPollingBot.super.onClosing();
     }
 
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+        botsApi.registerBot(this);
+        log.info("Bot 手动注册成功");
+    }
 }

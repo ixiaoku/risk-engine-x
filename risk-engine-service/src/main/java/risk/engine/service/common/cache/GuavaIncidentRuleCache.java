@@ -13,7 +13,6 @@ import risk.engine.db.dao.IncidentMapper;
 import risk.engine.db.dao.RuleMapper;
 import risk.engine.db.entity.IncidentPO;
 import risk.engine.db.entity.RulePO;
-import risk.engine.dto.dto.IncidentDTO;
 import risk.engine.dto.enums.IncidentStatusEnum;
 
 import javax.annotation.Resource;
@@ -88,15 +87,6 @@ public class GuavaIncidentRuleCache implements ApplicationRunner {
         log.info("Loaded {} incidents to Guava cache,耗时：{}", incidentList.size(), System.currentTimeMillis() - start);
     }
 
-    private IncidentDTO getIncidentDTO(IncidentPO incident) {
-        IncidentDTO result = new IncidentDTO();
-        result.setIncidentCode(incident.getIncidentCode());
-        result.setIncidentName(incident.getIncidentName());
-        result.setDecisionResult(incident.getDecisionResult());
-        result.setDecisionResult(incident.getDecisionResult());
-        return result;
-    }
-
     /**
      * 获取规则缓存
      * @param incidentCode 事件code
@@ -108,6 +98,7 @@ public class GuavaIncidentRuleCache implements ApplicationRunner {
             loadRulesToCache();
             return ruleCache.getIfPresent(CACHE_KEY + incidentCode);
         }
+        log.info("Rule Guava 缓存命中: {}", incidentCode);
         return rules;
     }
 
@@ -122,6 +113,7 @@ public class GuavaIncidentRuleCache implements ApplicationRunner {
             loadRulesToCache();
             return incidentCache.getIfPresent(CACHE_KEY + incidentCode);
         }
+        log.info("Incident Guava 缓存命中: {}", incidentCode);
         return incidentPO;
     }
 
