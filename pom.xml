@@ -4,7 +4,7 @@
 
   <groupId>risk.engine.x</groupId>
   <artifactId>risk-engine-x</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0-RELEASE</version>
   <packaging>pom</packaging>
 
   <name>risk-engine-x</name>
@@ -25,16 +25,16 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.6.0</version>
-    <relativePath/> <!-- lookup parent from repository -->
+    <version>2.7.18</version>
+    <relativePath/>
   </parent>
 
   <properties>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.version>1.0-SNAPSHOT</project.version>
-    <springboot.version>2.6.0</springboot.version>
+    <project.version>1.0.0-RELEASE</project.version>
+    <springboot.version>2.7.18</springboot.version>
     <mapper.version>4.0.0</mapper.version>
     <mysql.version>8.0.28</mysql.version>
     <junit.version>4.13</junit.version>
@@ -48,8 +48,8 @@
     <xxl-job.version>2.4.0</xxl-job.version>
 
     <rocketmq.version>2.3.3</rocketmq.version>
-    <spring.kafka.version>2.8.0</spring.kafka.version>
-    <jackson.databind.version>2.13.0</jackson.databind.version>
+    <spring.kafka.version>2.8.11</spring.kafka.version>
+    <jackson.databind.version>2.13.5</jackson.databind.version>
     <apache.groovy.version>4.0.20</apache.groovy.version>
     <alibaba.fastjson2.version>2.0.53</alibaba.fastjson2.version>
     <squareup.okhttp3.version>4.9.0</squareup.okhttp3.version>
@@ -154,7 +154,7 @@
       <dependency>
         <groupId>org.redisson</groupId>
         <artifactId>redisson-spring-boot-starter</artifactId>
-        <version>3.16.0</version>
+        <version>3.17.7</version>
       </dependency>
 
       <dependency>

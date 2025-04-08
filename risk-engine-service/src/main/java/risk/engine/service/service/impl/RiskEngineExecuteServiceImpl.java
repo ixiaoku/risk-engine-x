@@ -58,23 +58,13 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
         RiskEngineExecuteVO result = new RiskEngineExecuteVO();
         result.setDecisionResult(RuleDecisionResultEnum.SUCCESS.getCode());
         try {
-            //查询事件
-            IncidentPO incident = incidentService.selectByIncidentCode(riskEngineParam.getIncidentCode());
-            if (incident == null) {
-                log.error("Incident not found {}", riskEngineParam.getIncidentCode());
-                return result;
-            }
-            //校验事件状态
-            if (!IncidentStatusEnum.ONLINE.getCode().equals(incident.getStatus())) {
-                log.error("Incident status is not ONLINE {}", riskEngineParam.getIncidentCode());
-                return result;
-            }
-            //查询事件下的策略
-            List<RulePO> ruleList = ruleService.selectByIncidentCode(incident.getIncidentCode());
+            List<RulePO> ruleList = getRuleListByIncidentCode(riskEngineParam.getIncidentCode());
             if (CollectionUtils.isEmpty(ruleList)) {
-                log.error("Rule not found {}", riskEngineParam.getIncidentCode());
+                log.error("Rule is not found {}", riskEngineParam.getIncidentCode());
                 return result;
             }
+            long mysqlStartTime = System.currentTimeMillis();
+            log.info("查询mysql 获取 Rule 耗时:{}", mysqlStartTime - startTime);
 
             JSONObject paramMap = JSON.parseObject(riskEngineParam.getRequestPayload());
             //上线规则 分数降序
@@ -102,11 +92,13 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
                 log.info("命中上线规则：{}", hitRule.getRuleName());
             }
 
+            long ruleStartTime = System.currentTimeMillis();
+            log.info(" Rule 脚本执行 耗时:{}", ruleStartTime - mysqlStartTime);
 
             RulePO finalHitRule = hitRule;
             //执行耗时
             Long executionTime = System.currentTimeMillis() - startTime;
-            RiskExecuteEngineDTO executeEngineDTO = getRiskExecuteEngineDTO(result, riskEngineParam, incident.getIncidentName(), paramMap, finalHitRule, hitOnlineRuleList, hitMockRuleList, executionTime);
+            RiskExecuteEngineDTO executeEngineDTO = getRiskExecuteEngineDTO(result, riskEngineParam, "", paramMap, finalHitRule, hitOnlineRuleList, hitMockRuleList, executionTime);
             log.info("RiskEngineExecuteServiceImpl execute 耗时 :{}", executionTime);
 
             //异步保存数据和发送mq消息 规则熔断
@@ -123,6 +115,27 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             log.error("引擎执行 错误信息: {}, 事件code: {}, ", e.getMessage(), riskEngineParam.getIncidentCode(), e);
             return result;
         }
+    }
+
+    /**
+     * 查询事件和策略
+     * @param incidentCode 参数
+     * @return 结果
+     */
+    private List<RulePO> getRuleListByIncidentCode (String incidentCode) {
+        //查询事件
+        IncidentPO incident = incidentService.selectByIncidentCode(incidentCode);
+        if (incident == null) {
+            log.error("Incident not found {}", incidentCode);
+            return List.of();
+        }
+        //校验事件状态
+        if (!IncidentStatusEnum.ONLINE.getCode().equals(incident.getStatus())) {
+            log.error("Incident status is not ONLINE {}", incidentCode);
+            return List.of();
+        }
+        //查询事件下的策略
+        return ruleService.selectByIncidentCode(incident.getIncidentCode());
     }
 
     /**
