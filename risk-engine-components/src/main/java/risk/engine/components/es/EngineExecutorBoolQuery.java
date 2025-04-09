@@ -23,6 +23,9 @@ public class EngineExecutorBoolQuery {
         if (StringUtils.isNotEmpty(executorParam.getRiskFlowNo())) {
             boolQuery.filter(QueryBuilders.termQuery("riskFlowNo", executorParam.getRiskFlowNo()));
         }
+        if (StringUtils.isNotEmpty(executorParam.getRuleCode())) {
+            boolQuery.filter(QueryBuilders.termQuery("primaryRule.ruleCode", executorParam.getRuleCode()));
+        }
 //        if (StringUtils.isNotEmpty(executorParam.getIncidentName())) {
 //            boolQuery.filter(QueryBuilders.wildcardQuery("incidentName", "*" + executorParam.getIncidentName() + "*"));
 //        }

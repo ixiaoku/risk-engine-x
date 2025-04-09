@@ -28,6 +28,11 @@ public class EngineExecutorParam extends PageHelperQuery{
     private String incidentCode;
 
     /**
+     * 规则code
+     */
+    private String ruleCode;
+
+    /**
      * 开始时间
      */
     private String startTime;

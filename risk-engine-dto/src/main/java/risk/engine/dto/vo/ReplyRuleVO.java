@@ -17,6 +17,8 @@ public class ReplyRuleVO {
 
     private List<LinkedHashMap<String, Object>> conditions;
 
+    private String logicScript;
+
     private Boolean resultFlag;
 
 }

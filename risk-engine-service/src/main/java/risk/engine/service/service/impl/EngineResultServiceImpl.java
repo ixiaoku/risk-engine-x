@@ -23,6 +23,7 @@ import risk.engine.db.entity.RuleVersionPO;
 import risk.engine.dto.constant.BusinessConstant;
 import risk.engine.dto.dto.rule.HitRuleDTO;
 import risk.engine.dto.dto.rule.RuleMetricDTO;
+import risk.engine.dto.enums.OperationSymbolEnum;
 import risk.engine.dto.param.EngineExecutorParam;
 import risk.engine.dto.vo.EngineExecutorVO;
 import risk.engine.dto.vo.ReplyRuleVO;
@@ -82,10 +83,12 @@ public class EngineResultServiceImpl implements IEngineResultService {
                 reject = count;
             }
         }
+        BigDecimal approvalRate = total == 0L ? BigDecimal.ZERO : new BigDecimal(pass).divide(BigDecimal.valueOf(total), 4, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100));
+        BigDecimal rejectionRate = total == 0L ? BigDecimal.ZERO : new BigDecimal(reject).divide(BigDecimal.valueOf(total), 4, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100));
         Map<String, BigDecimal> result = new HashMap<>();
         result.put("dailyVolume", BigDecimal.valueOf(total));
-        result.put("approvalRate", new BigDecimal(pass).divide(BigDecimal.valueOf(total), 4, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)));
-        result.put("rejectionRate", new BigDecimal(reject).divide(BigDecimal.valueOf(total), 4, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)));
+        result.put("approvalRate", approvalRate);
+        result.put("rejectionRate",rejectionRate );
         return result;
     }
 
@@ -109,8 +112,9 @@ public class EngineResultServiceImpl implements IEngineResultService {
         ReplyRuleVO replyRuleVO = new ReplyRuleVO();
         GroovyShell groovyShell = new GroovyShell();
         EngineExecutorVO engineExecutorVO = getOne(executorParam);
+        if (Objects.isNull(engineExecutorVO) || Objects.isNull(engineExecutorVO.getPrimaryRule())) return replyRuleVO;
+        Map<String, Object> metricMap = new HashMap<>(engineExecutorVO.getMetric());
         HitRuleDTO hitRuleDTO = engineExecutorVO.getPrimaryRule();
-        if (Objects.isNull(hitRuleDTO)) return replyRuleVO;
         RuleVersionPO ruleVersionQuery = new RuleVersionPO();
         ruleVersionQuery.setVersion(hitRuleDTO.getRuleVersion());
         ruleVersionQuery.setRuleCode(hitRuleDTO.getRuleCode());
@@ -120,8 +124,8 @@ public class EngineResultServiceImpl implements IEngineResultService {
         List<LinkedHashMap<String, Object>> mapList = hitRuleDTOList.stream()
                 .map(metricDTO -> {
                     Map<String, Object> map = new HashMap<>();
-                    map.put(metricDTO.getMetricCode(), metricDTO.getMetricValue());
-                    String ruleScript = metricDTO.getMetricCode() + " " + metricDTO.getOperationSymbol() + " " + metricDTO.getMetricValue();
+                    map.put(metricDTO.getMetricCode(), metricMap.get(metricDTO.getMetricCode()));
+                    String ruleScript = metricDTO.getMetricCode() + " " + OperationSymbolEnum.getOperationSymbolEnumByCode(metricDTO.getOperationSymbol()).getName() + " " + metricDTO.getMetricValue();
                     Script script = groovyShell.parse(ruleScript);
                     boolean resultFlag = GroovyShellUtil.runGroovy(script, map);
                     LinkedHashMap<String, Object> conditionMap = new LinkedHashMap<>();
@@ -131,6 +135,7 @@ public class EngineResultServiceImpl implements IEngineResultService {
                 }).collect(Collectors.toList());
         replyRuleVO.setRuleName(hitRuleDTO.getRuleName());
         replyRuleVO.setConditions(mapList);
+        replyRuleVO.setLogicScript(ruleVersion.getLogicScript());
         replyRuleVO.setResultFlag(Boolean.TRUE);
         return replyRuleVO;
     }
