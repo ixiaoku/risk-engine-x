@@ -13,7 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @Slf4j
 @SpringBootApplication()
-@ComponentScan(basePackages = {"risk.engine.job", "risk.engine.service", "risk.engine.db", "risk.engine.common", "risk.engine.crawler", "risk.engine.components"})
+@ComponentScan(basePackages = {"risk.engine.job", "risk.engine.service", "risk.engine.db", "risk.engine.common", "risk.engine.crawler", "risk.engine.components", "risk.engine.metric"})
 @MapperScan("risk.engine.db.dao")
 public class RiskEngineJobApplication {
 
