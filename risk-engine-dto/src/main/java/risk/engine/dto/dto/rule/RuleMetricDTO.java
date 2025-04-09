@@ -1,7 +1,6 @@
 package risk.engine.dto.dto.rule;
 
 import lombok.Data;
-import risk.engine.dto.enums.MetricTypeEnum;
 
 /**
  * @Author: X
@@ -33,9 +32,15 @@ public class RuleMetricDTO {
 
     /**
      * 指标数据类型
-     * @see MetricTypeEnum
+     * @see risk.engine.dto.enums.MetricTypeEnum
      */
     private Integer metricType;
+
+    /**
+     * 指标来源
+     * @see risk.engine.dto.enums.MetricSourceEnum
+     */
+    private Integer metricSource;
 
     /**
      * 操作符
@@ -44,9 +49,30 @@ public class RuleMetricDTO {
     private Integer operationSymbol;
 
     /**
-     * 指标来源
+     * 类型1自定义 2特征
+     */
+    private String type;
+
+    /**
+     * 右侧指标code
+     */
+    private String rightMetricCode;
+
+    /**
+     * 右侧指标名称
+     */
+    private String rightMetricName;
+
+    /**
+     * 右侧指标数据类型
+     * @see risk.engine.dto.enums.MetricTypeEnum
+     */
+    private Integer rightMetricType;
+
+    /**
+     * 右侧指标来源
      * @see risk.engine.dto.enums.MetricSourceEnum
      */
-    private Integer metricSource;
+    private Integer rightMetricSource;
 
 }
