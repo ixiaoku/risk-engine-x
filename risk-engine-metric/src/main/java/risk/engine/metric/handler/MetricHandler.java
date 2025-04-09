@@ -47,7 +47,7 @@ public class MetricHandler {
      */
     public Map<String, Object> getMetricValue(String incidentCode, List<RuleMetricDTO> metrics, Map<String, Object> paramMap) {
         if (StringUtils.isEmpty(incidentCode) || CollectionUtils.isEmpty(metrics)) {
-            log.warn("IncidentCode or metrics is empty, returning empty map");
+            log.error("IncidentCode or metrics is empty, returning empty map");
             return Collections.emptyMap();
         }
 
@@ -58,8 +58,7 @@ public class MetricHandler {
         // 每个指标一个任务
         List<CompletableFuture<Void>> futures = metrics.stream()
                 .map(metric -> {
-                    MetricSourceEnum source = MetricSourceEnum.getIncidentSourceEnumByCode(
-                            metric.getMetricSource());
+                    MetricSourceEnum source = MetricSourceEnum.getIncidentSourceEnumByCode(metric.getMetricSource());
                     return CompletableFuture.runAsync(() -> {
                         long startTime = System.currentTimeMillis();
                         try {
@@ -69,7 +68,7 @@ public class MetricHandler {
                                     if (value != null) {
                                         result.put(metric.getMetricCode(), value);
                                     } else {
-                                        log.warn("Metric {} not found in paramMap", metric.getMetricCode());
+                                        log.error("Metric {} not found in paramMap", metric.getMetricCode());
                                     }
                                     break;
                                 case COUNT:
@@ -114,7 +113,7 @@ public class MetricHandler {
     // 模拟三方调用
     private Object mockThirdPartyCall(RuleMetricDTO metric) {
         try {
-            Thread.sleep(50); // 模拟 50ms 延迟
+            Thread.sleep(10); // 模拟 50ms 延迟
             log.debug("Third party call for metric: {}", metric.getMetricCode());
             return "thirdValue:" + metric.getMetricCode();
         } catch (InterruptedException e) {
@@ -127,7 +126,7 @@ public class MetricHandler {
     // 模拟 Flink 调用
     private Object mockFlinkCall(RuleMetricDTO metric) {
         try {
-            Thread.sleep(100); // 模拟 100ms 延迟
+            Thread.sleep(10); // 模拟 100ms 延迟
             log.debug("Flink call for metric: {}", metric.getMetricCode());
             return "flinkValue:" + metric.getMetricCode();
         } catch (InterruptedException e) {
