@@ -14,7 +14,6 @@ import risk.engine.common.util.OkHttpUtil;
 import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.crawler.CrawlerNoticeDTO;
-import risk.engine.dto.enums.ExchangeEnum;
 import risk.engine.dto.enums.IncidentCodeEnum;
 import risk.engine.service.service.ICrawlerTaskService;
 
@@ -77,15 +76,11 @@ public class MarketNoticeMonitorHandler {
             for (JsonElement article : articles) {
                 JsonObject articleObject = article.getAsJsonObject();
                 String flowNo = articleObject.get("id").getAsString();
-                String title = articleObject.get("title").getAsString();
+                String content = articleObject.get("title").getAsString();
                 Integer type = articleObject.get("type").getAsInt();
                 String createdAt = DateTimeUtil.getTimeByTimestamp(articleObject.get("releaseDate").getAsLong());
-                CrawlerNoticeDTO noticeDTO = new CrawlerNoticeDTO();
-                noticeDTO.setExchangeCode(ExchangeEnum.BINANCE.getCode());
-                noticeDTO.setFlowNo(flowNo);
-                noticeDTO.setTitle(title);
-                noticeDTO.setCreatedAt(createdAt);
-                noticeDTO.setType(type);
+                CrawlerNoticeDTO noticeDTO = CrawlerNoticeDTO.getCrawlerNoticeDTO("Binance", type,
+                        IncidentCodeEnum.BINANCE_NOTICE_LIST.getDesc(), content, createdAt);
                 CrawlerTaskPO crawlerTask = crawlerTaskService.getCrawlerTask(flowNo, IncidentCodeEnum.BINANCE_NOTICE_LIST.getCode(), JSON.toJSONString(noticeDTO));
                 if (Objects.isNull(crawlerTask)) {
                     continue;

@@ -19,6 +19,7 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.dto.dto.crawler.CrawlerNoticeDTO;
+import risk.engine.dto.enums.IncidentCodeEnum;
 import risk.engine.service.service.ICrawlerTaskService;
 
 import javax.annotation.Resource;
@@ -63,15 +64,16 @@ public class TelegramBotHandler implements LongPollingBot, ApplicationRunner {
             }
             String channelUsername = chat.getUserName();
             if (StringUtils.equals(channelUsername, CHANNEL_USERNAME) || StringUtils.equals(channelUsername, "binance_cn")) {
-                String messageText = update.getChannelPost().getText();
-                if (StringUtils.isEmpty(messageText)) {
+                Message message = update.getChannelPost();
+                if (Objects.isNull(message) || StringUtils.isEmpty(message.getText())) {
                     return;
                 }
-                CrawlerNoticeDTO noticeDTO = new CrawlerNoticeDTO();
-                noticeDTO.setCreatedAt(DateTimeUtil.getCurrentDateTime());
-                noticeDTO.setTitle(messageText);
-                noticeDTO.setFlowNo(chat.getId().toString());
-                CrawlerTaskPO crawlerTask = crawlerTaskService.getCrawlerTask(noticeDTO.getFlowNo(), "TelegramBEWnews", JSON.toJSONString(noticeDTO));
+                String messageText = message.getText();
+                //组装告警消息报文体
+                CrawlerNoticeDTO noticeDTO = CrawlerNoticeDTO.getCrawlerNoticeDTO("Telegram", 1,
+                        IncidentCodeEnum.TELEGRAM_BEW_NEWS.getDesc(), messageText, DateTimeUtil.getCurrentDateTime());
+                String flowNo = update.getChannelPost().getChatId() + update.getChannelPost().getForwardFromMessageId().toString();
+                CrawlerTaskPO crawlerTask = crawlerTaskService.getCrawlerTask(flowNo, IncidentCodeEnum.TELEGRAM_BEW_NEWS.getCode(), JSON.toJSONString(noticeDTO));
                 if (Objects.isNull(crawlerTask)) {
                     return;
                 }
@@ -91,12 +93,12 @@ public class TelegramBotHandler implements LongPollingBot, ApplicationRunner {
             if (!usernameList.contains(senderUsername)) {
                 return;
             }
+            //组装告警消息报文体
             String messageText = message.getText();
-            CrawlerNoticeDTO noticeDTO = new CrawlerNoticeDTO();
-            noticeDTO.setCreatedAt(DateTimeUtil.getTimeByTimestamp(message.getDate().longValue() * 1000));
-            noticeDTO.setTitle(messageText);
-            noticeDTO.setFlowNo(message.getMessageId().toString() + "_" + message.getDate().toString());
-            CrawlerTaskPO crawlerTask = crawlerTaskService.getCrawlerTask(noticeDTO.getFlowNo(), "TelegramBEWnews", JSON.toJSONString(noticeDTO));
+            CrawlerNoticeDTO noticeDTO = CrawlerNoticeDTO.getCrawlerNoticeDTO("Telegram", 1,
+                    IncidentCodeEnum.TELEGRAM_BEW_NEWS.getDesc(), messageText, DateTimeUtil.getTimeByTimestamp(message.getDate().longValue() * 1000));
+            String flowNo = message.getMessageId().toString() + "_" + message.getDate().toString();
+            CrawlerTaskPO crawlerTask = crawlerTaskService.getCrawlerTask(flowNo, IncidentCodeEnum.TELEGRAM_BEW_NEWS.getCode(), JSON.toJSONString(noticeDTO));
             if (Objects.isNull(crawlerTask)) {
                 return;
             }

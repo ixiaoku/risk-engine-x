@@ -58,13 +58,11 @@ public class TwitterCrawlerUserHandler {
             }
             for (JsonElement jsonElement : jsonArray) {
                 JsonObject data = jsonElement.getAsJsonObject();
-                String title = data.get("text").getAsString();
+                String content = data.get("text").getAsString();
                 String createdAt = data.get("created_at").getAsString();
                 String flowNo = data.get("id").getAsString();
-                CrawlerNoticeDTO noticeDTO = new CrawlerNoticeDTO();
-                noticeDTO.setFlowNo(flowNo);
-                noticeDTO.setTitle(title);
-                noticeDTO.setCreatedAt(createdAt);
+                CrawlerNoticeDTO noticeDTO = CrawlerNoticeDTO.getCrawlerNoticeDTO("X", 1,
+                        IncidentCodeEnum.TWITTER_USER_RELEASE_LIST.getDesc(), content, createdAt);
                 CrawlerTaskPO crawlerTask = crawlerTaskService.getCrawlerTask(flowNo, IncidentCodeEnum.TWITTER_USER_RELEASE_LIST.getCode(), JSON.toJSONString(noticeDTO));
                 if (Objects.isNull(crawlerTask)) {
                     continue;

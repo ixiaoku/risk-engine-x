@@ -1,6 +1,7 @@
 package risk.engine.dto.dto.crawler;
 
 import lombok.Data;
+import risk.engine.dto.dto.penalty.AnnouncementDTO;
 
 /**
  * @Author: X
@@ -11,24 +12,28 @@ import lombok.Data;
 public class CrawlerNoticeDTO {
 
     /**
-     * 交易所名称
+     * 来源
      */
-    String exchangeCode;
+    String noticeSource;
     /**
-     * 唯一id
-     */
-    private String flowNo;
-    /**
-     * 公告标题
-     */
-    private String title;
-    /**
-     * 原贴时间
-     */
-    private String createdAt;
-    /**
-     * 类型
+     * 类型 1发送
      */
     private Integer type;
+    /**
+     * 公告
+     */
+    private AnnouncementDTO announcement;
+
+    public static CrawlerNoticeDTO getCrawlerNoticeDTO(String noticeSource, Integer type, String title, String content, String createdAt) {
+        CrawlerNoticeDTO crawlerNotice = new CrawlerNoticeDTO();
+        AnnouncementDTO announcement = new AnnouncementDTO();
+        crawlerNotice.setNoticeSource(noticeSource);
+        crawlerNotice.setType(type);
+        announcement.setContent(content);
+        announcement.setTitle(title);
+        announcement.setCreatedAt(createdAt);
+        crawlerNotice.setAnnouncement(announcement);
+        return crawlerNotice;
+    }
 
 }

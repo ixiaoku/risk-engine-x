@@ -13,11 +13,11 @@ import java.util.Objects;
 @Getter
 public enum IncidentCodeEnum {
 
-
     BINANCE_NOTICE_LIST("BinanceNoticeList", "币安公告监控"),
     TWITTER_USER_RELEASE_LIST("TwitterUserReleaseList", "推特名人监控"),
     TRANSFER_CHAIN("ChainTransfer", "链上转账"),
     TRADE_QUANT_DATA("TradeQuantData", "交易量化"),
+    TELEGRAM_BEW_NEWS("TelegramBEWnews", "TG机器人新闻推送"),
     ;
 
     /**
