@@ -29,7 +29,7 @@ public class RuleVersionServiceImpl implements IRuleVersionService {
     }
 
     @Override
-    public RuleVersionPO selectByPrimaryKey(Long id) {
-        return ruleVersionMapper.selectByPrimaryKey(id);
+    public RuleVersionPO selectByExample(RuleVersionPO record) {
+        return ruleVersionMapper.selectByExample(record);
     }
 }

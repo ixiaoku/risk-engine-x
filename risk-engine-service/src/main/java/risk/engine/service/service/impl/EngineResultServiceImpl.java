@@ -1,7 +1,10 @@
 package risk.engine.service.service.impl;
 
 import com.alibaba.fastjson2.JSON;
+import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.search.SearchHit;
@@ -10,13 +13,19 @@ import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.springframework.stereotype.Service;
+import risk.engine.common.grovvy.GroovyShellUtil;
 import risk.engine.components.es.ElasticsearchClientApi;
 import risk.engine.components.es.EngineExecutorBoolQuery;
 import risk.engine.db.dao.EngineResultMapper;
+import risk.engine.db.dao.RuleVersionMapper;
 import risk.engine.db.entity.EngineResultPO;
+import risk.engine.db.entity.RuleVersionPO;
 import risk.engine.dto.constant.BusinessConstant;
+import risk.engine.dto.dto.rule.HitRuleDTO;
+import risk.engine.dto.dto.rule.RuleMetricDTO;
 import risk.engine.dto.param.EngineExecutorParam;
 import risk.engine.dto.vo.EngineExecutorVO;
+import risk.engine.dto.vo.ReplyRuleVO;
 import risk.engine.service.service.IEngineResultService;
 
 import javax.annotation.Resource;
@@ -37,6 +46,9 @@ public class EngineResultServiceImpl implements IEngineResultService {
 
     @Resource
     private ElasticsearchClientApi elasticsearchClientApi;
+
+    @Resource
+    private RuleVersionMapper ruleVersionMapper;
 
     @Override
     public boolean insert(EngineResultPO record) {
@@ -90,6 +102,37 @@ public class EngineResultServiceImpl implements IEngineResultService {
     @Override
     public Pair<List<EngineExecutorVO>, Long> list(EngineExecutorParam executorParam) {
         return getRiskExecuteEngineDTOList(executorParam);
+    }
+
+    @Override
+    public ReplyRuleVO replay(EngineExecutorParam executorParam) {
+        ReplyRuleVO replyRuleVO = new ReplyRuleVO();
+        GroovyShell groovyShell = new GroovyShell();
+        EngineExecutorVO engineExecutorVO = getOne(executorParam);
+        HitRuleDTO hitRuleDTO = engineExecutorVO.getPrimaryRule();
+        if (Objects.isNull(hitRuleDTO)) return replyRuleVO;
+        RuleVersionPO ruleVersionQuery = new RuleVersionPO();
+        ruleVersionQuery.setVersion(hitRuleDTO.getRuleVersion());
+        ruleVersionQuery.setRuleCode(hitRuleDTO.getRuleCode());
+        RuleVersionPO ruleVersion = ruleVersionMapper.selectByExample(ruleVersionQuery);
+        if (Objects.isNull(ruleVersion) || StringUtils.isEmpty(ruleVersion.getJsonScript())) return replyRuleVO;
+        List<RuleMetricDTO> hitRuleDTOList = JSON.parseArray(ruleVersion.getJsonScript(), RuleMetricDTO.class);
+        List<LinkedHashMap<String, Object>> mapList = hitRuleDTOList.stream()
+                .map(metricDTO -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put(metricDTO.getMetricCode(), metricDTO.getMetricValue());
+                    String ruleScript = metricDTO.getMetricCode() + " " + metricDTO.getOperationSymbol() + " " + metricDTO.getMetricValue();
+                    Script script = groovyShell.parse(ruleScript);
+                    boolean resultFlag = GroovyShellUtil.runGroovy(script, map);
+                    LinkedHashMap<String, Object> conditionMap = new LinkedHashMap<>();
+                    conditionMap.put("resultFlag", resultFlag);
+                    conditionMap.put("ruleScript", ruleScript);
+                    return conditionMap;
+                }).collect(Collectors.toList());
+        replyRuleVO.setRuleName(hitRuleDTO.getRuleName());
+        replyRuleVO.setConditions(mapList);
+        replyRuleVO.setResultFlag(Boolean.TRUE);
+        return replyRuleVO;
     }
 
     /**

@@ -14,7 +14,6 @@ import risk.engine.service.service.IEngineResultService;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author: X
@@ -47,7 +46,7 @@ public class EngineResultController {
 
     @PostMapping("/result/replay")
     public ResponseVO replay(@RequestBody EngineExecutorParam executorParam) {
-        return ResponseVO.success(Map.of());
+        return ResponseVO.success(engineResultService.replay(executorParam));
     }
 
     @PostMapping("/result/snapshot")

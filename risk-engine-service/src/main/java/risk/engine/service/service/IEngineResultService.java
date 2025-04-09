@@ -4,6 +4,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import risk.engine.db.entity.EngineResultPO;
 import risk.engine.dto.param.EngineExecutorParam;
 import risk.engine.dto.vo.EngineExecutorVO;
+import risk.engine.dto.vo.ReplyRuleVO;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,5 +24,7 @@ public interface IEngineResultService {
     EngineExecutorVO getOne(EngineExecutorParam executorParam);
 
     Pair<List<EngineExecutorVO>, Long> list(EngineExecutorParam executorParam);
+
+    ReplyRuleVO replay(EngineExecutorParam executorParam);
 
 }

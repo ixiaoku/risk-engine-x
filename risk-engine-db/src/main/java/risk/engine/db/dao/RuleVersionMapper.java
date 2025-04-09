@@ -8,6 +8,6 @@ public interface RuleVersionMapper {
 
     int insert(RuleVersionPO record);
 
-    RuleVersionPO selectByPrimaryKey(Long id);
+    RuleVersionPO selectByExample(RuleVersionPO record);
 
 }

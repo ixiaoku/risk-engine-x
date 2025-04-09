@@ -19,11 +19,12 @@
     id, rule_code, status, logic_script, groovy_script, json_script, version, operator, create_time, update_time
   </sql>
 
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+  <select id="selectByExample" parameterType="risk.engine.db.entity.RuleVersionPO" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
     from rule_version
-    where id = #{id,jdbcType=BIGINT}
+    where rule_code = #{ruleCode,jdbcType=VARCHAR}
+    and version = #{version,jdbcType=VARCHAR}
   </select>
 
   <delete id="deleteByRuleCode" parameterType="java.lang.String">
