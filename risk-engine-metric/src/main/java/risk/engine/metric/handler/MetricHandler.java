@@ -59,7 +59,7 @@ public class MetricHandler {
         List<CompletableFuture<Void>> futures = metrics.stream()
                 .map(metric -> {
                     MetricSourceEnum source = MetricSourceEnum.getIncidentSourceEnumByCode(
-                            Integer.parseInt(metric.getMetricSource()));
+                            metric.getMetricSource());
                     return CompletableFuture.runAsync(() -> {
                         long startTime = System.currentTimeMillis();
                         try {

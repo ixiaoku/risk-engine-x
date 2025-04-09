@@ -111,6 +111,7 @@ public class RuleServiceImpl implements IRuleService {
                     MetricPO metric = resultMap.get(metricDTO.getMetricCode());
                     ruleMetricDTO.setMetricType(metric.getMetricType());
                     ruleMetricDTO.setMetricName(metric.getMetricName());
+                    ruleMetricDTO.setMetricSource(metric.getMetricSource());
                     return ruleMetricDTO;
                 }).collect(Collectors.toList());
     }

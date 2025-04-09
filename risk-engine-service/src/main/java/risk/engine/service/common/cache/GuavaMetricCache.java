@@ -47,7 +47,7 @@ public class GuavaMetricCache {
      * @param incidentCode 事件code
      * @return 结果
      */
-    public List<MetricDTO> getCache(String incidentCode) {
+    public List<MetricDTO> getMetricCache(String incidentCode) {
         List<MetricDTO> metricDTOList = metricCache.getIfPresent(incidentCode);
         if (CollectionUtils.isNotEmpty(metricDTOList)) {
             return metricDTOList;
@@ -87,6 +87,7 @@ public class GuavaMetricCache {
             metricDTO.setMetricCode(metric.getMetricCode());
             metricDTO.setMetricName(metric.getMetricName());
             metricDTO.setMetricType(metric.getMetricType());
+            metricDTO.setMetricSource(metric.getMetricSource());
             return metricDTO;
         }).collect(Collectors.groupingByConcurrent(MetricDTO::getIncidentCode));
     }

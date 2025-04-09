@@ -32,8 +32,17 @@
         </dependency>
 
         <dependency>
+            <groupId>risk.engine.dto</groupId>
+            <artifactId>risk-engine-dto</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>risk.engine.db</groupId>
+            <artifactId>risk-engine-db</artifactId>
         </dependency>
     </dependencies>
 </project>

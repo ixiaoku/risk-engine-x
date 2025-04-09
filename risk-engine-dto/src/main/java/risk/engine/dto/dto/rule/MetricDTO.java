@@ -38,6 +38,11 @@ public class MetricDTO {
     private String metricDesc;
 
     /**
+     * 指标来源
+     */
+    private Integer metricSource;
+
+    /**
      * 指标示例值
      */
     private String sampleValue;
