@@ -35,6 +35,11 @@
         </dependency>
 
         <dependency>
+            <groupId>risk.engine.metric</groupId>
+            <artifactId>risk-engine-metric</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>risk.engine.components</groupId>
             <artifactId>risk-engine-components</artifactId>
         </dependency>

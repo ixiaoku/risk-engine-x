@@ -27,8 +27,8 @@
         </dependency>
 
         <dependency>
-            <groupId>risk.engine.service</groupId>
-            <artifactId>risk-engine-service</artifactId>
+            <groupId>risk.engine.common</groupId>
+            <artifactId>risk-engine-common</artifactId>
         </dependency>
 
         <dependency>

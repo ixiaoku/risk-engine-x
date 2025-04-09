@@ -16,9 +16,9 @@ public enum MetricSourceEnum {
     // 事件定义
     ATTRIBUTE(1, "属性指标"),
     // 通过第三方API获取
-    THIRD(2, "三方服务指标"),
+    THIRD(2, "三方指标"),
     // 用户类指标
-    USER(3, "用户类指标"),
+    USER(3, "用户指标"),
     // 计数器指标 通过redis 计数或者flink
     COUNT(4, "计数器指标"),
     OFFLINE(5, "离线指标"),

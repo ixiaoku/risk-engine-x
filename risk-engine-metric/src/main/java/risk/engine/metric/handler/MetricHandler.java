@@ -12,10 +12,13 @@ import risk.engine.dto.enums.MetricSourceEnum;
 
 import javax.annotation.Resource;
 import java.time.Duration;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -35,85 +38,102 @@ public class MetricHandler {
     @Resource
     private ThreadPoolExecutorUtil threadPoolExecutorUtil;
 
+    /**
+     * 获取指标值（多线程并行，同步返回）
+     * @param incidentCode 事件代码
+     * @param metrics 指标列表
+     * @param paramMap 请求参数
+     * @return 指标结果
+     */
     public Map<String, Object> getMetricValue(String incidentCode, List<RuleMetricDTO> metrics, Map<String, Object> paramMap) {
         if (StringUtils.isEmpty(incidentCode) || CollectionUtils.isEmpty(metrics)) {
-            return Map.of();
+            log.warn("IncidentCode or metrics is empty, returning empty map");
+            return Collections.emptyMap();
         }
-        // 分组按来源
-        Map<String, List<RuleMetricDTO>> sourceMap = metrics.stream()
-                .collect(Collectors.groupingBy(RuleMetricDTO::getMetricSource));
 
         // 结果容器
-        Map<String, Object> result = new ConcurrentHashMap<>();
-        CountDownLatch latch = new CountDownLatch(sourceMap.size());
-        List<Callable<Void>> tasks = new ArrayList<>();
+        Map<String, Object> result = new ConcurrentHashMap<>(metrics.size());
+        ExecutorService executor = threadPoolExecutorUtil.getExecutor();
 
-        for (Map.Entry<String, List<RuleMetricDTO>> entry : sourceMap.entrySet()) {
-            String source = entry.getKey();
-            List<RuleMetricDTO> sourceMetrics = entry.getValue();
-            MetricSourceEnum metricSourceEnum = MetricSourceEnum.getIncidentSourceEnumByCode(Integer.parseInt(source));
-            Callable<Void> task = () -> {
-                switch (metricSourceEnum) {
-                    case ATTRIBUTE:
-                        for (RuleMetricDTO metric : sourceMetrics) {
-                            result.put(metric.getMetricCode(), paramMap.get(metric.getMetricCode()));
+        // 每个指标一个任务
+        List<CompletableFuture<Void>> futures = metrics.stream()
+                .map(metric -> {
+                    MetricSourceEnum source = MetricSourceEnum.getIncidentSourceEnumByCode(
+                            Integer.parseInt(metric.getMetricSource()));
+                    return CompletableFuture.runAsync(() -> {
+                        long startTime = System.currentTimeMillis();
+                        try {
+                            switch (source) {
+                                case ATTRIBUTE:
+                                    Object value = paramMap.get(metric.getMetricCode());
+                                    if (value != null) {
+                                        result.put(metric.getMetricCode(), value);
+                                    } else {
+                                        log.warn("Metric {} not found in paramMap", metric.getMetricCode());
+                                    }
+                                    break;
+                                case COUNT:
+                                    String key = RedisKeyConstant.COUNTER + incidentCode + ":" + metric.getMetricCode();
+                                    long count = redisUtil.getCount(key);
+                                    result.put(metric.getMetricCode(), count);
+                                    //加1 然后有效期一天
+                                    redisUtil.increment(key, 1, Duration.ofDays(1));
+                                    break;
+                                case THIRD:
+                                    result.put(metric.getMetricCode(), mockThirdPartyCall(metric));
+                                    break;
+                                case OFFLINE:
+                                    result.put(metric.getMetricCode(), mockFlinkCall(metric));
+                                    break;
+                                default:
+                                    log.warn("Unsupported metric source: {}", source);
+                                    break;
+                            }
+                            log.debug("Metric {} processed in {}ms", metric.getMetricCode(), System.currentTimeMillis() - startTime);
+                        } catch (Exception e) {
+                            log.error("Failed to process metric {}: {}", metric.getMetricCode(), e.getMessage(), e);
                         }
-                        break;
-                    case COUNT:
-                        for (RuleMetricDTO metric : sourceMetrics) {
-                            String keyStr = RedisKeyConstant.COUNTER + incidentCode + ":" + metric.getMetricCode();
-                            long count = redisUtil.getCount(keyStr);
-                            result.put(metric.getMetricCode(), count);
-                            redisUtil.increment(keyStr, 1, Duration.ofDays(1));
-                        }
-                        break;
-                    case THIRD:
-                        for (RuleMetricDTO metric : sourceMetrics) {
-                            // mock 三方服务调用
-                            Object value = mockThirdPartyCall(metric);
-                            result.put(metric.getMetricCode(), value);
-                        }
-                        break;
-                    case OFFLINE:
-                        for (RuleMetricDTO metric : sourceMetrics) {
-                            // mock Flink 查询
-                            Object value = mockFlinkCall(metric);
-                            result.put(metric.getMetricCode(), value);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                return null;
-            };
-            tasks.add(task);
-        }
-        // 提交任务并等待执行，最多 1 秒
+                    }, executor);
+                }).collect(Collectors.toList());
+
+        // 等待所有任务完成，1 秒超时
         try {
-            List<Future<Void>> futures = threadPoolExecutorUtil.getExecutor()
-                    .invokeAll(tasks, 1, TimeUnit.SECONDS);
-            for (Future<Void> f : futures) {
-                try {
-                    f.get();
-                } catch (Exception e) {
-                    //log.error(e.getMessage(), e);
-                }
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                    .orTimeout(1, TimeUnit.SECONDS)
+                    .exceptionally(throwable -> {
+                        log.error("Metric processing failed or timed out: {}", throwable.getMessage(), throwable);
+                        return null;
+                    })
+                    .join();
+        } catch (Exception e) {
+            log.error("Error waiting for metric tasks: {}", e.getMessage(), e);
         }
         return result;
     }
 
-    // mock 示例方法
+    // 模拟三方调用
     private Object mockThirdPartyCall(RuleMetricDTO metric) {
-        // 模拟调用时间
-        System.out.println("三分服务调用");
-        return "thirdValue:" + metric.getMetricCode();
+        try {
+            Thread.sleep(50); // 模拟 50ms 延迟
+            log.debug("Third party call for metric: {}", metric.getMetricCode());
+            return "thirdValue:" + metric.getMetricCode();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Interrupted during third party call for metric {}: {}", metric.getMetricCode(), e.getMessage());
+            return null;
+        }
     }
 
+    // 模拟 Flink 调用
     private Object mockFlinkCall(RuleMetricDTO metric) {
-        System.out.println("flink服务调用");
-        return "flinkValue:" + metric.getMetricCode();
+        try {
+            Thread.sleep(100); // 模拟 100ms 延迟
+            log.debug("Flink call for metric: {}", metric.getMetricCode());
+            return "flinkValue:" + metric.getMetricCode();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Interrupted during Flink call for metric {}: {}", metric.getMetricCode(), e.getMessage());
+            return null;
+        }
     }
 }

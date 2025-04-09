@@ -20,6 +20,7 @@ import risk.engine.dto.enums.RuleDecisionResultEnum;
 import risk.engine.dto.enums.RuleStatusEnum;
 import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.dto.vo.RiskEngineExecuteVO;
+import risk.engine.metric.handler.MetricHandler;
 import risk.engine.service.common.cache.GuavaIncidentRuleCache;
 import risk.engine.service.service.IRiskEngineExecuteService;
 
@@ -46,6 +47,9 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
 
     @Resource
     private GuavaIncidentRuleCache guavaIncidentRuleCache;
+
+    @Resource
+    private MetricHandler metricHandler;
 
     /**
      * 引擎执行 主逻辑
@@ -84,21 +88,21 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             }
             long mysqlStartTime = System.currentTimeMillis();
             log.info("查询mysql 获取 Rule 耗时:{}", mysqlStartTime - startTime);
-            JSONObject paramMap = JSON.parseObject(riskEngineParam.getRequestPayload());
 
             //二、规则执行
             //上线规则 执行
+            JSONObject paramMap = JSON.parseObject(riskEngineParam.getRequestPayload());
             List<RulePO> onlineRuleList = ruleList.stream()
                     .filter(rule -> rule.getStatus().equals(RuleStatusEnum.ONLINE.getCode()))
                     .sorted(Comparator.comparingInt(RulePO::getScore).reversed())
                     .collect(Collectors.toList());
-            List<RulePO> hitOnlineRuleList = getHitRuleList(paramMap, onlineRuleList);
+            List<RulePO> hitOnlineRuleList = getHitRuleList(incident.getIncidentCode(), paramMap, onlineRuleList);
             List<RulePO> mockRuleList = ruleList.stream()
                     .filter(rule -> rule.getStatus().equals(RuleStatusEnum.MOCK.getCode()))
                     .sorted(Comparator.comparingInt(RulePO::getScore).reversed())
                     .collect(Collectors.toList());
             //优化点 模拟策略异步执行
-            List<RulePO> hitMockRuleList = getHitRuleList(paramMap, mockRuleList);
+            List<RulePO> hitMockRuleList = getHitRuleList(incident.getIncidentCode(), paramMap, mockRuleList);
             //返回分数最高的命中策略 先返回上线的然后再看模拟的
             RulePO hitRule = null;
             if (CollectionUtils.isNotEmpty(hitMockRuleList)) {
@@ -208,15 +212,17 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
      * @param ruleList 规则集合
      * @return 获取命中规则集合
      */
-    private List<RulePO> getHitRuleList(JSONObject paramMap, List<RulePO> ruleList) {
+    private List<RulePO> getHitRuleList(String incidentCode, JSONObject paramMap, List<RulePO> ruleList) {
         return ruleList.stream().filter(rule -> {
             try {
+                List<RuleMetricDTO> ruleMetricDTOS = JSON.parseArray(rule.getJsonScript(), RuleMetricDTO.class);
+                Map<String, Object> metricMap = metricHandler.getMetricValue(incidentCode, ruleMetricDTOS, paramMap);
                 Script groovyScript = guavaIncidentRuleCache.getCacheScript(rule.getRuleCode());
                 if (Objects.isNull(groovyScript)) {
                     log.error("Groovy 获取缓存失败");
                     return false;
                 }
-                return GroovyShellUtil.runGroovy(groovyScript, paramMap);
+                return GroovyShellUtil.runGroovy(groovyScript, metricMap);
             } catch (Exception e) {
                 log.error("Groovy 执行失败，跳过 ruleCode: {}", rule.getRuleCode(), e);
                 return false;
