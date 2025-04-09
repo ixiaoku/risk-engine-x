@@ -14,8 +14,6 @@ import java.util.List;
  */
 public interface IRuleService {
 
-    List<RulePO> selectByIncidentCode(String incidentCode);
-
     List<RulePO> selectByExample(RuleExample ruleExample);
 
     Boolean insert(RuleParam ruleParam);

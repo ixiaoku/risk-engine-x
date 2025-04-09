@@ -21,9 +21,7 @@ public interface RuleMapper {
 
     List<RulePO> selectByExample(RuleExample example);
 
-    RulePO selectByRuleCode(String incidentCode);
-
-    List<RulePO> selectByIncidentCode(String incidentCode);
+    List<RulePO> selectByIncidentCode(RuleExample example);
 
     RulePO selectByPrimaryKey(Long id);
 

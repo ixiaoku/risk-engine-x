@@ -35,18 +35,15 @@
         where id = #{id,jdbcType=BIGINT}
     </select>
 
-    <select id="selectByRuleCode" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from rule
-    where rule_code = #{ruleCode,jdbcType=VARCHAR} limit 1
-  </select>
-
-    <select id="selectByIncidentCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByIncidentCode" parameterType="risk.engine.db.entity.example.RuleExample" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
         from rule
         where incident_code = #{incidentCode,jdbcType=VARCHAR}
+        and status in
+            <foreach collection="statusList" item="status" open="(" separator="," close=")">
+                #{status}
+            </foreach>
     </select>
 
     <select id="selectByExample" parameterType="risk.engine.db.entity.example.RuleExample" resultMap="BaseResultMap">

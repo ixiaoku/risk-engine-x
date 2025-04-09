@@ -51,7 +51,7 @@ public class MetricHandler {
             return Collections.emptyMap();
         }
 
-        // 结果容器
+        // 结果
         Map<String, Object> result = new ConcurrentHashMap<>(metrics.size());
         ExecutorService executor = threadPoolExecutorUtil.getExecutor();
 

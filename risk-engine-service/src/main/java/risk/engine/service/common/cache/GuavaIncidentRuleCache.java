@@ -13,7 +13,9 @@ import risk.engine.db.dao.IncidentMapper;
 import risk.engine.db.dao.RuleMapper;
 import risk.engine.db.entity.IncidentPO;
 import risk.engine.db.entity.RulePO;
+import risk.engine.db.entity.example.RuleExample;
 import risk.engine.dto.enums.IncidentStatusEnum;
+import risk.engine.dto.enums.RuleStatusEnum;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -74,7 +76,11 @@ public class GuavaIncidentRuleCache implements ApplicationRunner {
         for (IncidentPO incident : incidentList) {
             //加载事件缓存
             incidentCache.put(CACHE_KEY + incident.getIncidentCode(), incident);
-            List<RulePO> rules = ruleMapper.selectByIncidentCode(incident.getIncidentCode());
+            List<Integer> statusList = List.of(RuleStatusEnum.ONLINE.getCode(), RuleStatusEnum.MOCK.getCode());
+            RuleExample ruleExample = new RuleExample();
+            ruleExample.setIncidentCode(incident.getIncidentCode());
+            ruleExample.setStatusList(statusList);
+            List<RulePO> rules = ruleMapper.selectByIncidentCode(ruleExample);
             if (CollectionUtils.isEmpty(rules)) {
                 continue;
             }

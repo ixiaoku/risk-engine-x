@@ -51,11 +51,6 @@ public class RuleServiceImpl implements IRuleService {
     private IMetricService metricService;
 
     @Override
-    public List<RulePO> selectByIncidentCode(String incidentCode) {
-        return ruleMapper.selectByIncidentCode(incidentCode);
-    }
-
-    @Override
     public List<RulePO> selectByExample(RuleExample ruleExample) {
         return ruleMapper.selectByExample(ruleExample);
     }

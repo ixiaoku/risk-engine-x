@@ -2,6 +2,8 @@ package risk.engine.db.entity.example;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @Author: X
  * @Date: 2025/3/19 17:31
@@ -39,5 +41,7 @@ public class RuleExample {
      * 规则状态 状态（0：删除，1：上线，2：下线，3：模拟）
      */
     private Integer status;
+
+    private List<Integer> statusList;
 
 }
