@@ -20,9 +20,6 @@ telegram:
   group:
     chat:
       id: -1002512873791
-  target:
-    bot:
-      username: btcismoonflyqaq
 
 des:
   secret:

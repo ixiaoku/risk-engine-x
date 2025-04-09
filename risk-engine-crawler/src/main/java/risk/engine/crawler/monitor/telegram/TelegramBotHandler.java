@@ -48,10 +48,9 @@ public class TelegramBotHandler implements LongPollingBot, ApplicationRunner {
     private String CHANNEL_USERNAME;
     @Value("${telegram.group.chat.id}")
     private String GROUP_CHAT_ID;
-    @Value("${telegram.target.bot.username}")
-    private String TARGET_BOT_USERNAME_DCR;
 
-    public final String BINANCE_BOT_USERNAME = "OfficialBinanceFeedBot";
+    public final List<String> USERNAME_LIST = List.of("btcismoonflyqaq", "OfficialBinanceFeedBot", "t00b_bot");
+
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -89,8 +88,7 @@ public class TelegramBotHandler implements LongPollingBot, ApplicationRunner {
             }
             User from = message.getFrom();
             String senderUsername = Objects.isNull(from) ? null : from.getUserName();
-            List<String> usernameList = List.of(TARGET_BOT_USERNAME_DCR, BINANCE_BOT_USERNAME);
-            if (!usernameList.contains(senderUsername)) {
+            if (StringUtils.isEmpty(message.getText()) || !USERNAME_LIST.contains(senderUsername)) {
                 return;
             }
             //组装告警消息报文体

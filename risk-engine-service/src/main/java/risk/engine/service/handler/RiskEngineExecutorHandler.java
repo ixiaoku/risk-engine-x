@@ -62,7 +62,6 @@ public class RiskEngineExecutorHandler {
      */
     public void savePenalty(RiskExecuteEngineDTO executeEngineDTO) {
         if (CollectionUtils.isEmpty(executeEngineDTO.getHitOnlineRules())) {
-            log.error("Penalty hit rules is empty");
             return;
         }
         PenaltyActionPO actionPO = new PenaltyActionPO();

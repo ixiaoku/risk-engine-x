@@ -66,5 +66,12 @@
             <version>6.8.0</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/io.github.binance/binance-connector-java -->
+        <dependency>
+            <groupId>io.github.binance</groupId>
+            <artifactId>binance-connector-java</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+
     </dependencies>
 </project>
