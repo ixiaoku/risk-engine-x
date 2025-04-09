@@ -124,7 +124,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
                 producer.sendMessage("engine_result_topic", JSON.toJSONString(executeEngineDTO));
             }).exceptionally(ex -> {
                 log.error("引擎执行 异步任务失败: {}, 异常: {}", riskEngineParam.getIncidentCode(), ex.getMessage(), ex);
-                //处理失败逻辑 发送告警消息 本来是打算目前mq发送失败 然后写消息表再重试 有时间再加吧
+                //todo 处理失败逻辑 发送告警消息 本来是打算目前mq发送失败 然后写消息表再重试 有时间再加吧
                 return null;
             });
             return result;
