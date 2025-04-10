@@ -78,7 +78,7 @@ public class BinanceKlineFetcher {
         List<String> symbols = List.of("BTCUSDT", "ETHUSDT");
         String interval = "15m";
         for (String symbol : symbols) {
-            List<KLineDTO> binanceKLineList = fetchKLines(symbol, interval, 100);
+            List<KLineDTO> binanceKLineList = fetchKLines(symbol, interval, 2);
             if(CollectionUtils.isEmpty(binanceKLineList)) return;
             KLineDTO kLinePO = binanceKLineList.get(binanceKLineList.size() - 1);
             BinanceKLineDTO binanceKLineDTO = new BinanceKLineDTO();
@@ -93,7 +93,7 @@ public class BinanceKlineFetcher {
             announcement.setCreatedAt(DateTimeUtil.getTimeByTimestamp(kLinePO.getCloseTime()));
             binanceKLineDTO.setAnnouncement(announcement);
             CrawlerTaskPO crawlerTaskPO = crawlerTaskService.getCrawlerTask(kLinePO.getSymbol() + kLinePO.getOpenTime(),
-                    IncidentCodeEnum.TRADE_QUANT_DATA.getCode(), JSON.toJSONString(binanceKLineList)
+                    IncidentCodeEnum.TRADE_QUANT_DATA.getCode(), JSON.toJSONString(binanceKLineDTO)
             );
             if(Objects.isNull(crawlerTaskPO)) return;
 
