@@ -20,11 +20,6 @@ public class MetricServiceImpl implements IMetricService {
     private MetricMapper metricMapper;
 
     @Override
-    public boolean deleteByIncidentCode(String incidentCode) {
-        return metricMapper.deleteByIncidentCode(incidentCode) > 0;
-    }
-
-    @Override
     public List<MetricPO> selectByExample(MetricPO record) {
         return metricMapper.selectByExample(record);
     }

@@ -70,7 +70,10 @@ public class IIncidentServiceImpl implements IIncidentService {
     @Override
     public boolean deleteByPrimaryKey(Long id) {
         IncidentPO incident = incidentMapper.selectByPrimaryKey(id);
-        return incidentMapper.deleteByPrimaryKey(id) > 0 && metricMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
+        MetricPO metricQuery = new MetricPO();
+        metricQuery.setIncidentCode(incident.getIncidentCode());
+        metricQuery.setMetricSource(MetricSourceEnum.ATTRIBUTE.getCode());
+        return incidentMapper.deleteByPrimaryKey(id) > 0 && metricMapper.deleteByIncidentCodeAndSource(metricQuery) > 0;
     }
 
     @Override
@@ -80,8 +83,13 @@ public class IIncidentServiceImpl implements IIncidentService {
         BeanUtils.copyProperties(param, incident);
         incident.setUpdateTime(LocalDateTime.now());
         incident.setRequestPayload(param.getRequestPayload());
+
+        MetricPO metricQuery = new MetricPO();
+        metricQuery.setIncidentCode(incident.getIncidentCode());
+        metricQuery.setMetricSource(MetricSourceEnum.ATTRIBUTE.getCode());
+
         boolean flag1 = incidentMapper.updateByPrimaryKey(incident) > 0;
-        boolean flag2 = metricMapper.deleteByIncidentCode(incident.getIncidentCode()) > 0;
+        boolean flag2 = metricMapper.deleteByIncidentCodeAndSource(metricQuery) > 0;
         List<MetricPO> metricList = getMetricList(param);
         boolean flag3 = metricMapper.batchInsert(metricList) > 0;
         return flag1 && flag2 && flag3;

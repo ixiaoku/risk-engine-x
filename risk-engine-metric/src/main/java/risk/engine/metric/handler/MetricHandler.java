@@ -12,14 +12,12 @@ import risk.engine.dto.dto.crawler.KLineDTO;
 import risk.engine.dto.dto.rule.RuleMetricDTO;
 import risk.engine.dto.enums.IncidentCodeEnum;
 import risk.engine.dto.enums.MetricSourceEnum;
+import risk.engine.dto.enums.MetricValueTypeEnum;
 import risk.engine.metric.counter.MetricTradeSignalHandler;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -58,12 +56,35 @@ public class MetricHandler {
             log.error("Invalid input: incidentCode={} or metrics is empty", incidentCode);
             return Collections.emptyMap();
         }
+        //所有指标按值类型 聚合处理
+        List<RuleMetricDTO> metricDTOList = new ArrayList<>();
+        metrics.forEach(metric -> {
+           if (StringUtils.equals(metric.getMetricValueType(), MetricValueTypeEnum.METRIC.getCode())) {
+               RuleMetricDTO ruleMetricDTO = new RuleMetricDTO();
+               ruleMetricDTO.setMetricCode(metric.getRightMetricCode());
+               ruleMetricDTO.setMetricName(metric.getRightMetricName());
+               ruleMetricDTO.setMetricType(metric.getRightMetricType());
+               ruleMetricDTO.setMetricSource(metric.getRightMetricSource());
+               metricDTOList.add(ruleMetricDTO);
+           }
+           if (StringUtils.equals(metric.getMetricValueType(), MetricValueTypeEnum.CUSTOM.getCode())) {
+               RuleMetricDTO ruleMetricDTO = new RuleMetricDTO();
+               ruleMetricDTO.setMetricCode(metric.getMetricCode());
+               ruleMetricDTO.setMetricName(metric.getMetricName());
+               ruleMetricDTO.setMetricType(metric.getMetricType());
+               ruleMetricDTO.setMetricSource(metric.getMetricSource());
+               metricDTOList.add(ruleMetricDTO);
+           }
+        });
+        if (CollectionUtils.isEmpty(metricDTOList)) {
+            return Collections.emptyMap();
+        }
 
         // 初始化结果容器
-        Map<String, Object> result = new ConcurrentHashMap<>(metrics.size());
+        Map<String, Object> result = new ConcurrentHashMap<>(metricDTOList.size());
 
         // 按指标来源分组
-        Map<Integer, List<RuleMetricDTO>> metricMap = metrics.stream()
+        Map<Integer, List<RuleMetricDTO>> metricMap = metricDTOList.stream()
                 .collect(Collectors.groupingBy(RuleMetricDTO::getMetricSource));
 
         // 为每个来源分组创建一个异步任务

@@ -8,7 +8,7 @@ import java.util.List;
 public interface MetricMapper {
 
 
-    int deleteByIncidentCode(String incidentCode);
+    int deleteByIncidentCodeAndSource(MetricPO record);
 
     List<MetricPO> selectByExample(MetricPO record);
 

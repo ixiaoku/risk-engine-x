@@ -49,9 +49,9 @@ public class RuleMetricDTO {
     private Integer operationSymbol;
 
     /**
-     * 类型1自定义 2特征
+     * 类型 1自定义 2特征
      */
-    private String type;
+    private String metricValueType;
 
     /**
      * 右侧指标code

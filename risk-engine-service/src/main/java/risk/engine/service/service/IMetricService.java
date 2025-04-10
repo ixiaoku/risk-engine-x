@@ -12,8 +12,6 @@ import java.util.List;
  */
 public interface IMetricService {
 
-    boolean deleteByIncidentCode(String incidentCode);
-
     List<MetricPO> selectByExample(MetricPO record);
 
     boolean batchInsert(@Param("list") List<MetricPO> record);

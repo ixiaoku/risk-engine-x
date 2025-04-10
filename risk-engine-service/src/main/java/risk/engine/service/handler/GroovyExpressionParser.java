@@ -1,8 +1,10 @@
 package risk.engine.service.handler;
 
+import org.apache.commons.lang3.StringUtils;
 import risk.engine.common.grovvy.ExpressionParser;
 import risk.engine.dto.dto.rule.RuleMetricDTO;
 import risk.engine.dto.enums.MetricTypeEnum;
+import risk.engine.dto.enums.MetricValueTypeEnum;
 import risk.engine.dto.enums.OperationSymbolEnum;
 
 import java.util.HashMap;
@@ -48,6 +50,11 @@ public class GroovyExpressionParser {
         //指标类型
         boolean isString = Objects.equals(expressionDTO.getMetricType(), MetricTypeEnum.STRING.getCode());
         String value = isString ? "'" + attributeValue + "'" : attributeValue;
+        if (StringUtils.equals(expressionDTO.getMetricValueType(), MetricValueTypeEnum.CUSTOM.getCode())) {
+            value = isString ? "'" + attributeValue + "'" : attributeValue;
+        } else if (StringUtils.equals(expressionDTO.getMetricValueType(), MetricValueTypeEnum.METRIC.getCode())) {
+            value = attributeValue;
+        }
         return attributeCode + " " + operator + " " + value;
     }
 

@@ -3,6 +3,7 @@ package risk.engine.service.service.impl;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import risk.engine.common.util.DateTimeUtil;
@@ -100,13 +101,24 @@ public class RuleServiceImpl implements IRuleService {
                 .map(metricDTO -> {
                     RuleMetricDTO ruleMetricDTO = new RuleMetricDTO();
                     ruleMetricDTO.setMetricCode(metricDTO.getMetricCode());
-                    ruleMetricDTO.setMetricValue(metricDTO.getMetricValue());
                     ruleMetricDTO.setOperationSymbol(metricDTO.getOperationSymbol());
                     ruleMetricDTO.setSerialNumber(metricDTO.getSerialNumber());
                     MetricPO metric = resultMap.get(metricDTO.getMetricCode());
                     ruleMetricDTO.setMetricType(metric.getMetricType());
                     ruleMetricDTO.setMetricName(metric.getMetricName());
                     ruleMetricDTO.setMetricSource(metric.getMetricSource());
+                    ruleMetricDTO.setMetricValueType(metricDTO.getMetricValueType());
+                    if (StringUtils.equals("custom", metricDTO.getMetricValueType())) {
+                        ruleMetricDTO.setMetricValue(metricDTO.getMetricValue());
+                        return ruleMetricDTO;
+                    } else if (StringUtils.equals("metric", metricDTO.getMetricValueType())) {
+                        MetricPO metricPO = resultMap.get(metricDTO.getMetricValue());
+                        ruleMetricDTO.setMetricValue(metricDTO.getMetricValue());
+                        ruleMetricDTO.setRightMetricCode(metricPO.getMetricCode());
+                        ruleMetricDTO.setRightMetricName(metricPO.getMetricName());
+                        ruleMetricDTO.setRightMetricSource(metricPO.getMetricSource());
+                        ruleMetricDTO.setRightMetricType(metricPO.getMetricType());
+                    }
                     return ruleMetricDTO;
                 }).collect(Collectors.toList());
     }

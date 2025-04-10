@@ -30,9 +30,10 @@
     </where>
   </select>
 
-  <delete id="deleteByIncidentCode" parameterType="java.lang.String">
+  <delete id="deleteByIncidentCodeAndSource" parameterType="risk.engine.db.entity.MetricPO">
     delete from metric
     where incident_code = #{incidentCode,jdbcType=VARCHAR}
+    and metric_source = #{metricSource,jdbcType=VARCHAR}
   </delete>
 
   <insert id="batchInsert" parameterType="java.util.List">
