@@ -102,7 +102,7 @@ public class RedisUtil {
     }
 
     // --- Hash Operations ---
-    public void hset(String key, String field, Object value) {
+    public void hSet(String key, String field, Object value) {
         try {
             redisTemplate.opsForHash().put(key, field, value);
         } catch (Exception e) {
@@ -119,7 +119,7 @@ public class RedisUtil {
     }
 
     // --- List Operations ---
-    public void lpush(String key, Object value) {
+    public void lPush(String key, Object value) {
         try {
             redisTemplate.opsForList().leftPush(key, value);
         } catch (Exception e) {

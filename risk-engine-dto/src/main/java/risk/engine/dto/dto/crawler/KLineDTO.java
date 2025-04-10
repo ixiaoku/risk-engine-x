@@ -24,6 +24,8 @@ public class KLineDTO {
     private int tradeCount;     // 成交笔数
     private BigDecimal takerBuyVolume; // 主动买入成交量
     private BigDecimal takerBuyQuoteVolume; // 主动买入成交额
+    private String symbol;
+    private String interval;
 
     public KLineDTO(long openTime, String open, String high, String low, String close, String volume,
                  long closeTime, String quoteVolume, int tradeCount, String takerBuyVolume, String takerBuyQuoteVolume) {
@@ -40,4 +42,6 @@ public class KLineDTO {
         this.takerBuyQuoteVolume = new BigDecimal(takerBuyQuoteVolume);
     }
 
+    public KLineDTO() {
+    }
 }

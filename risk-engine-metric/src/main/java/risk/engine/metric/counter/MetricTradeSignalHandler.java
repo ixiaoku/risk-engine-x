@@ -1,10 +1,11 @@
 package risk.engine.metric.counter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import risk.engine.common.redis.RedisUtil;
 import risk.engine.dto.dto.crawler.KLineDTO;
-import risk.engine.dto.enums.IncidentCodeEnum;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -25,21 +26,23 @@ public class MetricTradeSignalHandler {
 
     @Resource
     private ObjectMapper objectMapper;
+    
+    @Resource
+    private RedisUtil redisUtil;
 
-    private static final String KLINE_KEY = "kline:btcusdt:15m"; // Redis List 存储 K 线数据
-    private static final String INDICATOR_KEY = IncidentCodeEnum.TRADE_QUANT_DATA.getCode() + ":btcusdt:15m"; // Redis Hash 存储指标
     private static final int MAX_KLINE_LENGTH = 1000; // 最多存储 1000 条 K 线数据
 
     // 存储 K 线数据到 Redis
-    public void storeKLine(KLineDTO kLine) throws Exception {
+    public void storeKLine(String key, KLineDTO kLine) throws Exception {
         String kLineJson = objectMapper.writeValueAsString(kLine);
-        redisTemplate.opsForList().rightPush(KLINE_KEY, kLineJson);
-        redisTemplate.opsForList().trim(KLINE_KEY, -MAX_KLINE_LENGTH, -1);
+        redisTemplate.opsForList().rightPush(key, kLineJson);
+        redisTemplate.opsForList().trim(key, -MAX_KLINE_LENGTH, -1);
     }
 
     // 从 Redis 获取 K 线数据
-    public List<KLineDTO> getKLines(int count) throws Exception {
-        List<String> kLineJsons = redisTemplate.opsForList().range(KLINE_KEY, -count, -1);
+    public List<KLineDTO> getKLines(String key, int count) throws Exception {
+        List<String> kLineJsons = redisTemplate.opsForList().range(key, -count, -1);
+        if (CollectionUtils.isEmpty(kLineJsons)) return List.of();
         List<KLineDTO> kLines = new ArrayList<>();
         for (String json : kLineJsons) {
             kLines.add(objectMapper.readValue(json, KLineDTO.class));
@@ -235,42 +238,48 @@ public class MetricTradeSignalHandler {
     }
 
     // 计算所有指标并存储到 Redis
-    public void calculateAndStoreIndicators(KLineDTO newKLine) throws Exception {
-        // 存储新 K 线
-        storeKLine(newKLine);
+    public void calculateAndStoreIndicators(String incidentCode, KLineDTO newKLine) {
+        try {
+            // 存储新 K 线
+            String kLineKey = incidentCode + ":" + newKLine.getSymbol() + ":" + newKLine.getInterval();
 
-        // 获取最近 100 条 K 线数据
-        List<KLineDTO> kLines = getKLines(100);
-        if (kLines.isEmpty()) return;
+            storeKLine(kLineKey, newKLine);
 
-        int index = kLines.size() - 1;
-        long timestamp = newKLine.getOpenTime();
+            // 获取最近 100 条 K 线数据
+            List<KLineDTO> kLines = getKLines(kLineKey, 100);
+            if (kLines.isEmpty()) return;
 
-        // 计算指标
-        BigDecimal ma20 = calculateMA(20, kLines, index);
-        BigDecimal ma60 = calculateMA(60, kLines, index);
-        BigDecimal[] bollingerBands = calculateBollingerBands(20, BigDecimal.valueOf(2), kLines, index);
-        BigDecimal rsi = calculateRSI(14, kLines, index);
-        BigDecimal volumeMA = calculateVolumeMA(20, kLines, index);
-        BigDecimal atr = calculateATR(14, kLines, index);
-        BigDecimal[] macd = calculateMACD(kLines, index);
-        BigDecimal[] kdj = calculateKDJ(9, kLines, index);
+            int index = kLines.size() - 1;
+            long timestamp = newKLine.getOpenTime();
 
-        // 存储指标到 Redis Hash
-        String hashKey = String.valueOf(timestamp);
-        redisTemplate.opsForHash().put(INDICATOR_KEY, hashKey + ":ma20", ma20.toString());
-        redisTemplate.opsForHash().put(INDICATOR_KEY, hashKey + ":ma60", ma60.toString());
-        redisTemplate.opsForHash().put(INDICATOR_KEY, hashKey + ":bollinger:middle", bollingerBands[0].toString());
-        redisTemplate.opsForHash().put(INDICATOR_KEY, hashKey + ":bollinger:upper", bollingerBands[1].toString());
-        redisTemplate.opsForHash().put(INDICATOR_KEY, hashKey + ":bollinger:lower", bollingerBands[2].toString());
-        redisTemplate.opsForHash().put(INDICATOR_KEY, hashKey + ":rsi", rsi.toString());
-        redisTemplate.opsForHash().put(INDICATOR_KEY, hashKey + ":volumeMA", volumeMA.toString());
-        redisTemplate.opsForHash().put(INDICATOR_KEY, hashKey + ":atr", atr.toString());
-        redisTemplate.opsForHash().put(INDICATOR_KEY, hashKey + ":macd:line", macd[0].toString());
-        redisTemplate.opsForHash().put(INDICATOR_KEY, hashKey + ":macd:signal", macd[1].toString());
-        redisTemplate.opsForHash().put(INDICATOR_KEY, hashKey + ":macd:histogram", macd[2].toString());
-        redisTemplate.opsForHash().put(INDICATOR_KEY, hashKey + ":kdj:k", kdj[0].toString());
-        redisTemplate.opsForHash().put(INDICATOR_KEY, hashKey + ":kdj:d", kdj[1].toString());
-        redisTemplate.opsForHash().put(INDICATOR_KEY, hashKey + ":kdj:j", kdj[2].toString());
+            // 计算指标
+            BigDecimal ma20 = calculateMA(20, kLines, index);
+            BigDecimal ma60 = calculateMA(60, kLines, index);
+            BigDecimal[] bollingerBands = calculateBollingerBands(20, BigDecimal.valueOf(2), kLines, index);
+            BigDecimal rsi = calculateRSI(14, kLines, index);
+            BigDecimal volumeMA = calculateVolumeMA(20, kLines, index);
+            BigDecimal atr = calculateATR(14, kLines, index);
+            BigDecimal[] macd = calculateMACD(kLines, index);
+            BigDecimal[] kdj = calculateKDJ(9, kLines, index);
+
+            // 存储指标到 Redis Hash
+            String hashKey = String.valueOf(timestamp);
+            redisUtil.hSet(incidentCode, hashKey + ":ma20", ma20.toString());
+            redisUtil.hSet(incidentCode, hashKey + ":ma60", ma60.toString());
+            redisUtil.hSet(incidentCode, hashKey + ":middle", bollingerBands[0].toString());
+            redisUtil.hSet(incidentCode, hashKey + ":upper", bollingerBands[1].toString());
+            redisUtil.hSet(incidentCode, hashKey + ":lower", bollingerBands[2].toString());
+            redisUtil.hSet(incidentCode, hashKey + ":rsi", rsi.toString());
+            redisUtil.hSet(incidentCode, hashKey + ":volumeMA", volumeMA.toString());
+            redisUtil.hSet(incidentCode, hashKey + ":atr", atr.toString());
+            redisUtil.hSet(incidentCode, hashKey + ":macdLine", macd[0].toString());
+            redisUtil.hSet(incidentCode, hashKey + ":macdSignal", macd[1].toString());
+            redisUtil.hSet(incidentCode, hashKey + ":macdHistogram", macd[2].toString());
+            redisUtil.hSet(incidentCode, hashKey + ":kdjK", kdj[0].toString());
+            redisUtil.hSet(incidentCode, hashKey + ":kdjD", kdj[1].toString());
+            redisUtil.hSet(incidentCode, hashKey + ":kdjJ", kdj[2].toString());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
