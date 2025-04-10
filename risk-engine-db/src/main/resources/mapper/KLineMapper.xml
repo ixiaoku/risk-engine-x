@@ -33,6 +33,9 @@
       <if test="symbol != null and symbol != '' ">
         symbol = #{symbol,jdbcType=VARCHAR}
       </if>
+      <if test="openTime != null and openTime != '' ">
+        and open_time = #{openTime,jdbcType=BIGINT}
+      </if>
     </where>
   </select>
 

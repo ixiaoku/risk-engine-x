@@ -78,7 +78,7 @@ public class BinanceKlineFetcher {
         List<String> symbols = List.of("BTCUSDT", "ETHUSDT");
         String interval = "15m";
         for (String symbol : symbols) {
-            List<KLineDTO> binanceKLineList = fetchKLines(symbol, interval, 2);
+            List<KLineDTO> binanceKLineList = fetchKLines(symbol, interval, 32);
             if(CollectionUtils.isEmpty(binanceKLineList)) return;
             KLineDTO kLinePO = binanceKLineList.get(binanceKLineList.size() - 1);
             BinanceKLineDTO binanceKLineDTO = new BinanceKLineDTO();
@@ -107,6 +107,7 @@ public class BinanceKlineFetcher {
                     })
                     .collect(Collectors.toList());
             klineService.batchInsert(List.of(crawlerTaskPO), kLinePOList);
+            log.info("KLine保存条数：{}", kLinePOList.size());
         }
     }
 
