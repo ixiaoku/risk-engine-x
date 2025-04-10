@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class KLineDTO {
+
     private long openTime;      // 开盘时间
     private BigDecimal open;    // 开盘价
     private BigDecimal high;    // 最高价
@@ -27,19 +28,21 @@ public class KLineDTO {
     private String symbol;
     private String interval;
 
-    public KLineDTO(long openTime, String open, String high, String low, String close, String volume,
-                 long closeTime, String quoteVolume, int tradeCount, String takerBuyVolume, String takerBuyQuoteVolume) {
+    public KLineDTO(long openTime, BigDecimal open, BigDecimal high, BigDecimal low, BigDecimal close, BigDecimal volume, long closeTime,
+                    BigDecimal quoteVolume, int tradeCount, BigDecimal takerBuyVolume, BigDecimal takerBuyQuoteVolume, String symbol, String interval) {
         this.openTime = openTime;
-        this.open = new BigDecimal(open);
-        this.high = new BigDecimal(high);
-        this.low = new BigDecimal(low);
-        this.close = new BigDecimal(close);
-        this.volume = new BigDecimal(volume);
+        this.open = open;
+        this.high = high;
+        this.low = low;
+        this.close = close;
+        this.volume = volume;
         this.closeTime = closeTime;
-        this.quoteVolume = new BigDecimal(quoteVolume);
+        this.quoteVolume = quoteVolume;
         this.tradeCount = tradeCount;
-        this.takerBuyVolume = new BigDecimal(takerBuyVolume);
-        this.takerBuyQuoteVolume = new BigDecimal(takerBuyQuoteVolume);
+        this.takerBuyVolume = takerBuyVolume;
+        this.takerBuyQuoteVolume = takerBuyQuoteVolume;
+        this.symbol = symbol;
+        this.interval = interval;
     }
 
     public KLineDTO() {

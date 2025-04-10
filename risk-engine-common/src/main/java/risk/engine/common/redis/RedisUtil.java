@@ -119,9 +119,25 @@ public class RedisUtil {
     }
 
     // --- List Operations ---
-    public void lPush(String key, Object value) {
+    public void leftPush(String key, Object value) {
         try {
             redisTemplate.opsForList().leftPush(key, value);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to push to list for key: " + key, e);
+        }
+    }
+
+    public void rightPush(String key, Object value) {
+        try {
+            redisTemplate.opsForList().rightPush(key, value);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to push to list for key: " + key, e);
+        }
+    }
+
+    public void rightPushAll(String key, Object ...values) {
+        try {
+            redisTemplate.opsForList().rightPushAll(key, values);
         } catch (Exception e) {
             throw new RuntimeException("Failed to push to list for key: " + key, e);
         }

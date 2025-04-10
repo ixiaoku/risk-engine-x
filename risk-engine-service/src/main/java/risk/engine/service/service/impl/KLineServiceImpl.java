@@ -46,10 +46,10 @@ public class KLineServiceImpl implements IKLineService {
                 kLinePOList.add(kLinePO);
             }
         }
-        if(CollectionUtils.isNotEmpty(crawlerTaskPOList)) {
+        if(CollectionUtils.isNotEmpty(kLinePOList)) {
             kLineMapper.batchInsert(kLinePOList);
         }
-        //crawlerTaskMapper.batchInsert(crawlerTaskPOList);
+        crawlerTaskMapper.batchInsert(crawlerTaskPOList);
         return Boolean.TRUE;
     }
 
