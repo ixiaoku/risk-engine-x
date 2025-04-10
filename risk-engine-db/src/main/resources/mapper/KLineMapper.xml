@@ -21,7 +21,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, symbol, interval, open_time, open, high, low, close, volume, close_time, quote_volume, 
+    id, symbol, `interval`, open_time, open, high, low, close, volume, close_time, quote_volume,
     trade_count, taker_buy_volume, taker_buy_quote_volume, create_time, update_time
   </sql>
 

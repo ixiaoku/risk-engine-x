@@ -1,5 +1,6 @@
 package risk.engine.service.service;
 
+import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.db.entity.KLinePO;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface IKLineService {
 
     boolean deleteByPrimaryKey(Long id);
 
-    boolean batchInsert(List<KLinePO> list);
+    boolean batchInsert(List<CrawlerTaskPO> crawlerTaskPOList, List<KLinePO> kLinePOList);
 
     List<KLinePO> selectByExample(KLinePO kLine);
 

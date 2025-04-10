@@ -72,26 +72,28 @@ public class BinanceKlineFetcher {
     }
 
     public void start() {
-        List<String> symbols = List.of("BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "TRUMPUSDT", "ADAUSDT");
-        List<KLinePO> binanceKLineList = fetchKLines("BTCUSDT", "5m", 1);
-        if(CollectionUtils.isEmpty(binanceKLineList)) return;
-        KLinePO kLinePO = binanceKLineList.get(binanceKLineList.size() - 1);
-        BinanceKLineDTO binanceKLineDTO = new BinanceKLineDTO();
-        BeanUtils.copyProperties(kLinePO, binanceKLineDTO);
-        AnnouncementDTO announcement = new AnnouncementDTO();
-        announcement.setTitle("涨跌幅提醒");
-        BigDecimal changePercent = BigDecimalNumberUtil.calcChangePercent(kLinePO.getOpen(), kLinePO.getClose());
-        binanceKLineDTO.setUpChangePercent(changePercent.compareTo(BigDecimal.ZERO) > 0 ? changePercent : BigDecimal.ZERO);
-        binanceKLineDTO.setDownChangePercent(changePercent.compareTo(BigDecimal.ZERO) < 0 ? changePercent : BigDecimal.ZERO);
-        String content = String.format(CrawlerConstant.TRADE_DATA_BOT_TITLE, kLinePO.getSymbol(), kLinePO.getOpen(), kLinePO.getClose(), changePercent);
-        announcement.setContent(content);
-        announcement.setCreatedAt(DateTimeUtil.getTimeByTimestamp(kLinePO.getCloseTime()));
-        binanceKLineDTO.setAnnouncement(announcement);
-        CrawlerTaskPO crawlerTaskPO = crawlerTaskService.getCrawlerTask(UUID.randomUUID().toString().replace("-", ""),
-                IncidentCodeEnum.TRADE_QUANT_DATA.getCode(), JSON.toJSONString(binanceKLineList)
-                );
-        if(Objects.isNull(crawlerTaskPO)) return;
-        crawlerTaskService.batchInsert(List.of(crawlerTaskPO));
+        List<String> symbols = List.of("BTCUSDT", "ETHUSDT");
+        for (String symbol : symbols) {
+            List<KLinePO> binanceKLineList = fetchKLines(symbol, "15m", 100);
+            if(CollectionUtils.isEmpty(binanceKLineList)) return;
+            KLinePO kLinePO = binanceKLineList.get(binanceKLineList.size() - 1);
+            BinanceKLineDTO binanceKLineDTO = new BinanceKLineDTO();
+            BeanUtils.copyProperties(kLinePO, binanceKLineDTO);
+            AnnouncementDTO announcement = new AnnouncementDTO();
+            announcement.setTitle("涨跌幅提醒");
+            BigDecimal changePercent = BigDecimalNumberUtil.calcChangePercent(kLinePO.getOpen(), kLinePO.getClose());
+            binanceKLineDTO.setUpChangePercent(changePercent.compareTo(BigDecimal.ZERO) > 0 ? changePercent : BigDecimal.ZERO);
+            binanceKLineDTO.setDownChangePercent(changePercent.compareTo(BigDecimal.ZERO) < 0 ? changePercent : BigDecimal.ZERO);
+            String content = String.format(CrawlerConstant.TRADE_DATA_BOT_TITLE, kLinePO.getSymbol(), kLinePO.getOpen(), kLinePO.getClose(), changePercent);
+            announcement.setContent(content);
+            announcement.setCreatedAt(DateTimeUtil.getTimeByTimestamp(kLinePO.getCloseTime()));
+            binanceKLineDTO.setAnnouncement(announcement);
+            CrawlerTaskPO crawlerTaskPO = crawlerTaskService.getCrawlerTask(UUID.randomUUID().toString().replace("-", ""),
+                    IncidentCodeEnum.TRADE_QUANT_DATA.getCode(), JSON.toJSONString(binanceKLineList)
+            );
+            if(Objects.isNull(crawlerTaskPO)) return;
+            klineService.batchInsert(List.of(crawlerTaskPO), binanceKLineList);
+        }
     }
 
 }

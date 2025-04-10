@@ -2,7 +2,10 @@ package risk.engine.service.service.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import risk.engine.db.dao.CrawlerTaskMapper;
 import risk.engine.db.dao.KLineMapper;
+import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.db.entity.KLinePO;
 import risk.engine.service.service.IKLineService;
 
@@ -21,6 +24,9 @@ public class KLineServiceImpl implements IKLineService {
     @Resource
     private KLineMapper kLineMapper;
 
+    @Resource
+    private CrawlerTaskMapper crawlerTaskMapper;
+
 
     @Override
     public boolean deleteByPrimaryKey(Long id) {
@@ -28,7 +34,8 @@ public class KLineServiceImpl implements IKLineService {
     }
 
     @Override
-    public boolean batchInsert(List<KLinePO> list) {
+    @Transactional(rollbackFor = Exception.class)
+    public boolean batchInsert(List<CrawlerTaskPO> crawlerTaskPOList, List<KLinePO> list) {
         List<KLinePO> kLinePOList = new ArrayList<>();
         for (KLinePO kLinePO : list) {
             KLinePO kLineQuery = new KLinePO();
@@ -39,7 +46,11 @@ public class KLineServiceImpl implements IKLineService {
                 kLinePOList.add(kLinePO);
             }
         }
-        return kLineMapper.batchInsert(kLinePOList) > 0;
+        if(CollectionUtils.isNotEmpty(crawlerTaskPOList)) {
+            kLineMapper.batchInsert(kLinePOList);
+        }
+        //crawlerTaskMapper.batchInsert(crawlerTaskPOList);
+        return Boolean.TRUE;
     }
 
     @Override
