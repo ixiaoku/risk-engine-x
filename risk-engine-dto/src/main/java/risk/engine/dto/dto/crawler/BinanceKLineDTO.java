@@ -1,7 +1,6 @@
 package risk.engine.dto.dto.crawler;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import risk.engine.dto.dto.penalty.AnnouncementDTO;
 
 import java.math.BigDecimal;
@@ -11,17 +10,22 @@ import java.math.BigDecimal;
  * @Date: 2025/4/7 12:12
  * @Version: 1.0
  */
-@Getter
-@Setter
+@Data
 public class BinanceKLineDTO {
+
     /**
-     * 币种交易对
+     * 交易对
      */
     private String symbol;
+
     /**
-     * 开始时间
+     * 时间间隔 5min
      */
-    private long openTime;
+    private String interval;
+    /**
+     * 开盘时间
+     */
+    private Long openTime;
     /**
      * 开盘价
      */
@@ -43,49 +47,36 @@ public class BinanceKLineDTO {
      */
     private BigDecimal volume;
     /**
-     * 结束时间
+     * 收盘时间
      */
-    private long closeTime;
+    private Long closeTime;
     /**
-     * 布林带中轨
+     * 成交额
      */
-    private BigDecimal ma;
+    private BigDecimal quoteVolume;
     /**
-     * 布林带上轨
+     * 成交笔数
      */
-    private BigDecimal upperBand;
+    private Integer tradeCount;
     /**
-     * 布林带下轨
+     * 主动买入成交量
      */
-    private BigDecimal lowerBand;
-
+    private BigDecimal takerBuyVolume;
     /**
-     * 涨跌幅
+     * 主动买入成交额
      */
-    private BigDecimal changePercent;
-
+    private BigDecimal takerBuyQuoteVolume;
     /**
      * 公告
      */
     private AnnouncementDTO announcement;
+    /**
+     * 涨幅
+     */
+    private BigDecimal upChangePercent;
+    /**
+     * 跌幅
+     */
+    private BigDecimal downChangePercent;
 
-    public BinanceKLineDTO() {
-    }
-
-    public BinanceKLineDTO(long openTime, BigDecimal open, BigDecimal high, BigDecimal low, BigDecimal close, BigDecimal volume, long closeTime) {
-        this.openTime = openTime;
-        this.open = open;
-        this.high = high;
-        this.low = low;
-        this.close = close;
-        this.volume = volume;
-        this.closeTime = closeTime;
-    }
-
-
-    public void setBollingerBands(BigDecimal ma, BigDecimal upper, BigDecimal lower) {
-        this.ma = ma;
-        this.upperBand = upper;
-        this.lowerBand = lower;
-    }
 }

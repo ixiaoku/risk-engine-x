@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="risk.engine.db.dao.KLineMapper">
+  <resultMap id="BaseResultMap" type="risk.engine.db.entity.KLinePO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="symbol" jdbcType="VARCHAR" property="symbol" />
+    <result column="interval" jdbcType="VARCHAR" property="interval" />
+    <result column="open_time" jdbcType="BIGINT" property="openTime" />
+    <result column="open" jdbcType="DECIMAL" property="open" />
+    <result column="high" jdbcType="DECIMAL" property="high" />
+    <result column="low" jdbcType="DECIMAL" property="low" />
+    <result column="close" jdbcType="DECIMAL" property="close" />
+    <result column="volume" jdbcType="DECIMAL" property="volume" />
+    <result column="close_time" jdbcType="BIGINT" property="closeTime" />
+    <result column="quote_volume" jdbcType="DECIMAL" property="quoteVolume" />
+    <result column="trade_count" jdbcType="INTEGER" property="tradeCount" />
+    <result column="taker_buy_volume" jdbcType="DECIMAL" property="takerBuyVolume" />
+    <result column="taker_buy_quote_volume" jdbcType="DECIMAL" property="takerBuyQuoteVolume" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, symbol, interval, open_time, open, high, low, close, volume, close_time, quote_volume, 
+    trade_count, taker_buy_volume, taker_buy_quote_volume, create_time, update_time
+  </sql>
+
+  <select id="selectByExample" parameterType="risk.engine.db.entity.KLinePO" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from k_line
+    <where>
+      <if test="symbol != null and symbol != '' ">
+        symbol = #{symbol,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from k_line
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from k_line
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into k_line (
+    id, symbol, `interval`,
+    open_time, open, high,
+    low, close, volume,
+    close_time, quote_volume, trade_count,
+    taker_buy_volume, taker_buy_quote_volume, create_time,
+    update_time
+    )
+    values
+    <foreach collection="list" item="item" separator=",">
+      (
+      #{item.id,jdbcType=BIGINT},
+      #{item.symbol,jdbcType=VARCHAR},
+      #{item.interval,jdbcType=VARCHAR},
+      #{item.openTime,jdbcType=BIGINT},
+      #{item.open,jdbcType=DECIMAL},
+      #{item.high,jdbcType=DECIMAL},
+      #{item.low,jdbcType=DECIMAL},
+      #{item.close,jdbcType=DECIMAL},
+      #{item.volume,jdbcType=DECIMAL},
+      #{item.closeTime,jdbcType=BIGINT},
+      #{item.quoteVolume,jdbcType=DECIMAL},
+      #{item.tradeCount,jdbcType=INTEGER},
+      #{item.takerBuyVolume,jdbcType=DECIMAL},
+      #{item.takerBuyQuoteVolume,jdbcType=DECIMAL},
+      #{item.createTime,jdbcType=TIMESTAMP},
+      #{item.updateTime,jdbcType=TIMESTAMP}
+      )
+    </foreach>
+  </insert>
+
+</mapper>
