@@ -28,7 +28,7 @@ public class CrawlerDataJobHandler {
     @Resource
     private BinanceKlineFetcher binanceKlineFetcher;
 
-    @XxlJob("crawlerTwitterUserJob")
+    //@XxlJob("crawlerTwitterUserJob")
     public void crawlerTwitterUser() {
         try {
             String param = XxlJobHelper.getJobParam();
@@ -42,7 +42,7 @@ public class CrawlerDataJobHandler {
         }
     }
 
-    @XxlJob("crawlerBinanceNoticeJob")
+    //@XxlJob("crawlerBinanceNoticeJob")
     public void crawlerBinanceNotice() {
         try {
             String param = XxlJobHelper.getJobParam();

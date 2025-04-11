@@ -28,7 +28,7 @@ public class BlockChainMonitorHandler {
     @Resource
     private BnbFetcherHandler bnbFetcherHandler;
 
-    @XxlJob("bitcoinMonitorJob")
+    //@XxlJob("bitcoinMonitorJob")
     public void executeBitcoinMonitor() {
         try {
             String param = XxlJobHelper.getJobParam();
