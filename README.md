@@ -93,9 +93,12 @@ echo "Deployment completed!"
 
 ⸻
 
+### sql脚本目录
+- ./risk-engine-db/src/main/resources/db.sql
+
 🧱 架构图
 
-![架构图](img.png)
+![架构图](./doc/img.png)
 
 ⸻
 
