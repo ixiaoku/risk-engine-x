@@ -6,8 +6,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import risk.engine.common.function.ValidatorUtils;
+import risk.engine.common.function.ValidatorHandler;
 import risk.engine.dto.PageResult;
+import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.param.IncidentParam;
 import risk.engine.dto.vo.IncidentVO;
 import risk.engine.dto.vo.ResponseVO;
@@ -30,39 +31,39 @@ public class IncidentController {
     private IIncidentService incidentService;
 
     @PostMapping("/insert")
-    public ResponseVO insert(@RequestBody IncidentParam incidentParam) throws Exception {
+    public ResponseVO insert(@RequestBody IncidentParam incidentParam) {
         log.info("insert incident: {}", incidentParam);
-        ValidatorUtils.EmptyThrowException().validateException(incidentParam.getIncidentCode());
-        ValidatorUtils.EmptyThrowException().validateException(incidentParam.getIncidentName());
-        ValidatorUtils.EmptyThrowException().validateException(incidentParam.getStatus());
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(incidentParam.getIncidentCode());
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(incidentParam.getIncidentName());
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(incidentParam.getStatus());
         return ResponseVO.success(incidentService.insert(incidentParam));
     }
 
     @PostMapping("/delete")
-    public ResponseVO delete(@RequestBody IncidentParam incidentParam) throws Exception {
+    public ResponseVO delete(@RequestBody IncidentParam incidentParam) {
         log.info("delete incident: {}", incidentParam);
-        ValidatorUtils.EmptyThrowException().validateException(incidentParam.getId());
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(incidentParam.getId());
         return ResponseVO.success(incidentService.deleteByPrimaryKey(incidentParam.getId()));
     }
 
     @PostMapping("/update")
-    public ResponseVO update(@RequestBody @Validated IncidentParam incidentParam) throws Exception {
+    public ResponseVO update(@RequestBody @Validated IncidentParam incidentParam) {
         log.info("update incident: {}", incidentParam);
-        ValidatorUtils.EmptyThrowException().validateException(incidentParam.getId());
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(incidentParam.getId());
         return ResponseVO.success(incidentService.updateByPrimaryKey(incidentParam));
     }
 
     @PostMapping("/parse")
-    public ResponseVO parseMetric(@RequestBody @Validated IncidentParam incidentParam) throws Exception {
+    public ResponseVO parseMetric(@RequestBody @Validated IncidentParam incidentParam) {
         log.info("parse indicator: {}", incidentParam);
-        ValidatorUtils.EmptyThrowException().validateException(incidentParam.getRequestPayload());
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(incidentParam.getRequestPayload());
         return ResponseVO.success(incidentService.parseMetric(incidentParam.getIncidentCode(), incidentParam.getRequestPayload()));
     }
 
     @PostMapping("/detail")
-    public ResponseVO getOne(@RequestBody IncidentParam incidentParam) throws Exception {
+    public ResponseVO getOne(@RequestBody IncidentParam incidentParam) {
         log.info("detail incident: {}", incidentParam);
-        ValidatorUtils.EmptyThrowException().validateException(incidentParam.getId());
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(incidentParam.getId());
         return ResponseVO.success(incidentService.selectByPrimaryKey(incidentParam.getId()));
     }
 

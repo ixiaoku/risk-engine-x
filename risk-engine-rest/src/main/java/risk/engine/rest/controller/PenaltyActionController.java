@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import risk.engine.common.function.ValidatorHandler;
+import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.param.PenaltyActionParam;
 import risk.engine.dto.vo.ResponseVO;
 import risk.engine.service.service.IPenaltyActionService;
@@ -27,6 +29,7 @@ public class PenaltyActionController {
     @PostMapping("/fields")
     public ResponseVO getFields(@RequestBody PenaltyActionParam penaltyActionParam) throws Exception {
         log.info("get fields: {}", penaltyActionParam);
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(penaltyActionParam.getPenaltyCode());
         return ResponseVO.success(penaltyActionService.getPenaltyFields(penaltyActionParam));
     }
 

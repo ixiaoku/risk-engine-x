@@ -1,13 +1,15 @@
 package risk.engine.common.function;
 
-import java.util.Objects;
+import org.apache.commons.lang3.ObjectUtils;
+import risk.engine.dto.enums.ErrorCodeEnum;
+import risk.engine.dto.exception.RiskException;
 
 /**
  * @Author: X
  * @Date: 2025/3/12 21:04
  * @Version: 1.0
  */
-public class ValidatorUtils {
+public class ValidatorHandler {
 
     // 提供一个静态方法来创建校验器
     public static Validator<String> notEmpty() {
@@ -15,10 +17,10 @@ public class ValidatorUtils {
     }
 
     // 提供一个静态方法来创建校验器
-    public static ValidatorException<Object> EmptyThrowException() {
+    public static ValidatorFunction<Object> EmptyThrowException(ErrorCodeEnum errorCodeEnum) {
         return value -> {
-            if (Objects.isNull(value)) {
-                throw new RuntimeException("Input string must not be null or empty");
+            if (ObjectUtils.isEmpty(value)) {
+                throw new RiskException(errorCodeEnum);
             }
         };
     }

@@ -34,4 +34,12 @@ public class ResponseVO {
         return new ResponseVO(200, "请求成功", data);
     }
 
+    public static ResponseVO fail(Integer code, String message) {
+        return new ResponseVO(code, message);
+    }
+
+    public static ResponseVO fail(String message) {
+        return fail(500, message);
+    }
+
 }

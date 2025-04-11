@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import risk.engine.common.function.ValidatorHandler;
 import risk.engine.dto.PageResult;
+import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.param.EngineExecutorParam;
 import risk.engine.dto.vo.EngineExecutorVO;
 import risk.engine.dto.vo.ResponseVO;
@@ -51,6 +53,8 @@ public class EngineResultController {
 
     @PostMapping("/result/snapshot")
     public ResponseVO snapshot(@RequestBody EngineExecutorParam executorParam) {
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL)
+                .validateException(executorParam.getRiskFlowNo());
         return ResponseVO.success(engineResultService.getOne(executorParam));
     }
 

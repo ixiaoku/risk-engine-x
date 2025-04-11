@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import risk.engine.common.function.ValidatorUtils;
+import risk.engine.common.function.ValidatorHandler;
+import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.dto.vo.RiskEngineExecuteVO;
 import risk.engine.service.service.IRiskEngineExecuteService;
@@ -32,11 +33,11 @@ public class RiskEngineController {
 
         log.info("RiskEngineController execute request：{}", new Gson().toJson(riskEngineParam));
         //不为空校验
-        ValidatorUtils.EmptyThrowException()
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(riskEngineParam.getFlowNo());
-        ValidatorUtils.EmptyThrowException()
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(riskEngineParam.getIncidentCode());
-        ValidatorUtils.EmptyThrowException()
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(riskEngineParam.getRequestPayload());
         return executeService.execute(riskEngineParam);
     }

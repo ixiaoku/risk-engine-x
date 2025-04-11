@@ -2,11 +2,11 @@ package risk.engine.rest.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import risk.engine.common.function.ValidatorHandler;
+import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.param.DictionaryParam;
 import risk.engine.dto.vo.ResponseVO;
 import risk.engine.service.service.IDictionaryService;
-import risk.engine.service.service.IIncidentService;
-import risk.engine.service.service.IRuleVersionService;
 
 import javax.annotation.Resource;
 
@@ -24,20 +24,18 @@ public class DictionaryController {
     @Resource
     private IDictionaryService dictionaryService;
 
-    @Resource
-    private IRuleVersionService ruleVersionService;
-
-    @Resource
-    private IIncidentService incidentService;
-
     /**
      * 字典 带查询参数
      * @param dictionaryParam 参数
      * @return 结果
      */
-    @PostMapping("/options/parameter")
+    @GetMapping("/options/parameter")
     public ResponseVO indicatorOptions(@RequestBody DictionaryParam dictionaryParam) {
         log.info("detail indicator: {}", dictionaryParam);
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL)
+                .validateException(dictionaryParam.getDictKeyList());
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL)
+                .validateException(dictionaryParam.getQueryCode());
         return ResponseVO.success(dictionaryService.getList(dictionaryParam.getDictKeyList(), dictionaryParam.getQueryCode()));
     }
 
@@ -48,11 +46,20 @@ public class DictionaryController {
      */
     @GetMapping("/options")
     public ResponseVO operationOptions(@RequestParam("dictKeyList") String[] dictKeyList) {
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL)
+                .validateException(dictKeyList);
         return ResponseVO.success(dictionaryService.getList(dictKeyList));
     }
 
+    /**
+     * 字典
+     * @param dictionaryParam 参数
+     * @return 结果
+     */
     @GetMapping("/options/db")
     public ResponseVO getDictIncidents(@ModelAttribute DictionaryParam dictionaryParam) {
+        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL)
+                .validateException(dictionaryParam.getDictKeyList());
         return ResponseVO.success(dictionaryService.getDictByDB(dictionaryParam));
     }
 }
