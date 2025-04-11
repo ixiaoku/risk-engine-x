@@ -6,15 +6,20 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import risk.engine.common.function.ValidatorHandler;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.db.dao.IncidentMapper;
 import risk.engine.db.dao.MetricMapper;
+import risk.engine.db.dao.RuleMapper;
 import risk.engine.db.entity.IncidentPO;
 import risk.engine.db.entity.MetricPO;
+import risk.engine.db.entity.RulePO;
+import risk.engine.db.entity.example.RuleExample;
 import risk.engine.dto.dto.rule.MetricDTO;
 import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.enums.MetricSourceEnum;
 import risk.engine.dto.enums.MetricTypeEnum;
+import risk.engine.dto.enums.RuleStatusEnum;
 import risk.engine.dto.exception.RiskException;
 import risk.engine.dto.param.IncidentParam;
 import risk.engine.dto.vo.IncidentVO;
@@ -44,6 +49,9 @@ public class IIncidentServiceImpl implements IIncidentService {
     @Resource
     private MetricMapper metricMapper;
 
+    @Resource
+    private RuleMapper ruleMapper;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean insert(IncidentParam incidentParam) {
@@ -72,6 +80,14 @@ public class IIncidentServiceImpl implements IIncidentService {
     @Override
     public boolean deleteByPrimaryKey(Long id) {
         IncidentPO incident = incidentMapper.selectByPrimaryKey(id);
+        //校验事件是否存在关联规则
+        RuleExample ruleExample = new RuleExample();
+        ruleExample.setIncidentCode(incident.getIncidentCode());
+        ruleExample.setStatusList(List.of(RuleStatusEnum.ONLINE.getCode(), RuleStatusEnum.MOCK.getCode()));
+        List<RulePO> ruleList = ruleMapper.selectByExample(ruleExample);
+        ValidatorHandler.verify(ErrorCodeEnum.INCIDENT_EXIST_RULE)
+                .validateException(CollectionUtils.isNotEmpty(ruleList));
+        //删除事件和指标
         MetricPO metricQuery = new MetricPO();
         metricQuery.setIncidentCode(incident.getIncidentCode());
         metricQuery.setMetricSource(MetricSourceEnum.ATTRIBUTE.getCode());

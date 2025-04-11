@@ -22,6 +22,8 @@ public enum ErrorCodeEnum {
     MESSAGE_SEND_FAIL(1003, "消息发送失败"),
     DATA_SAVE_ERROR(1004, "数据保存失败"),
     INCIDENT_EXIST(1005, "事件标识已存在"),
+    INCIDENT_EXIST_METRIC(1006, "事件提交请先解析"),
+    INCIDENT_EXIST_RULE(1006, "事件存在关联规则 无法删除"),
     ;
 
 
