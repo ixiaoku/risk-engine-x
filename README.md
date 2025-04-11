@@ -95,15 +95,13 @@ echo "Deployment completed!"
 
 🧱 架构图
 
-![架构图](https://your-image-url.com/architecture.png)
-
-
+![架构图](img.png)
 
 ⸻
 
 📍 使用示例
 
-以下是一个使用 RESTful 接口进行风险评估的示例：
+以下是一个使用 RESTFUL 接口进行风险评估的示例：
 ```
 curl -X POST http://localhost:8088/api/risk/engine \
 -H "Content-Type: application/json" \
@@ -127,11 +125,11 @@ curl -X POST http://localhost:8088/api/risk/engine \
 🤝 贡献指南
 
 欢迎对本项目感兴趣的开发者提出建议、报告问题或提交代码。请参考以下步骤参与贡献：
-	1.	Fork 本仓库
-	2.	创建您的特性分支：git checkout -b feature/YourFeature
-	3.	提交您的更改：git commit -m 'Add YourFeature'
-	4.	推送到分支：git push origin feature/YourFeature
-	5.	创建一个新的 Pull Request
+-	Fork 本仓库
+-	创建您的特性分支：git checkout -b feature/YourFeature
+-	提交您的更改：git commit -m 'Add YourFeature'
+-	推送到分支：git push origin feature/YourFeature
+-	创建一个新的 Pull Request
 
 在提交代码前，请确保遵循项目的代码规范，并通过所有测试用例。
 
@@ -146,8 +144,8 @@ curl -X POST http://localhost:8088/api/risk/engine \
 
 📬 联系方式
 
-如果您有任何问题或建议，欢迎通过以下方式与我联系：
-	•	GitHub Issues: https://github.com/ixiaoku/risk-engine-x/issues
-	•	电子邮件: djm88dcr@gmail.com
+如果您有任何问题或建议，欢迎通过以下方式与我联系： 
+- GitHub Issues: https://github.com/ixiaoku/risk-engine-x/issues
+- 邮件: djm88dcr@gmail.com
 
 ---
