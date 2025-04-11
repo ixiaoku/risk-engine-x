@@ -67,14 +67,12 @@ public class MetricHandler {
                ruleMetricDTO.setMetricSource(metric.getRightMetricSource());
                metricDTOList.add(ruleMetricDTO);
            }
-           if (StringUtils.equals(metric.getMetricValueType(), MetricValueTypeEnum.CUSTOM.getCode())) {
-               RuleMetricDTO ruleMetricDTO = new RuleMetricDTO();
-               ruleMetricDTO.setMetricCode(metric.getMetricCode());
-               ruleMetricDTO.setMetricName(metric.getMetricName());
-               ruleMetricDTO.setMetricType(metric.getMetricType());
-               ruleMetricDTO.setMetricSource(metric.getMetricSource());
-               metricDTOList.add(ruleMetricDTO);
-           }
+            RuleMetricDTO ruleMetricDTO = new RuleMetricDTO();
+            ruleMetricDTO.setMetricCode(metric.getMetricCode());
+            ruleMetricDTO.setMetricName(metric.getMetricName());
+            ruleMetricDTO.setMetricType(metric.getMetricType());
+            ruleMetricDTO.setMetricSource(metric.getMetricSource());
+            metricDTOList.add(ruleMetricDTO);
         });
         if (CollectionUtils.isEmpty(metricDTOList)) {
             return Collections.emptyMap();
