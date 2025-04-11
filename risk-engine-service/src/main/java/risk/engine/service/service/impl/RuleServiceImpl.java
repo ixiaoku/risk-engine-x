@@ -6,6 +6,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import risk.engine.common.grovvy.ExpressionValidator;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.db.dao.RuleMapper;
 import risk.engine.db.entity.IncidentPO;
@@ -59,6 +60,8 @@ public class RuleServiceImpl implements IRuleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean insert(RuleParam ruleParam) {
+
+        ExpressionValidator.verify(ruleParam);
         RulePO rule = new RulePO();
         rule.setIncidentCode(ruleParam.getIncidentCode());
         rule.setRuleCode(ruleParam.getRuleCode());
@@ -163,6 +166,7 @@ public class RuleServiceImpl implements IRuleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean update(RuleParam ruleParam) {
+        ExpressionValidator.verify(ruleParam);
         RulePO rule = new RulePO();
         rule.setId(ruleParam.getId());
         rule.setRuleCode(ruleParam.getRuleCode());

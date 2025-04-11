@@ -23,7 +23,8 @@ public enum ErrorCodeEnum {
     DATA_SAVE_ERROR(1004, "数据保存失败"),
     INCIDENT_EXIST(1005, "事件标识已存在"),
     INCIDENT_EXIST_METRIC(1006, "事件提交请先解析"),
-    INCIDENT_EXIST_RULE(1006, "事件存在关联规则 无法删除"),
+    INCIDENT_EXIST_RULE(1007, "事件存在关联规则 无法删除"),
+    RULE_LOGIC_ILLEGAL(1008, "非法表达式"),
     ;
 
 
