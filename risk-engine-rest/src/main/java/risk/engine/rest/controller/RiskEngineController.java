@@ -2,6 +2,7 @@ package risk.engine.rest.controller;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,12 +34,10 @@ public class RiskEngineController {
 
         log.info("RiskEngineController execute request：{}", new Gson().toJson(riskEngineParam));
         //不为空校验
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL)
-                .validateException(riskEngineParam.getFlowNo());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL)
-                .validateException(riskEngineParam.getIncidentCode());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL)
-                .validateException(riskEngineParam.getRequestPayload());
+        ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
+                .validateException(StringUtils.isEmpty(riskEngineParam.getFlowNo())
+                        || StringUtils.isEmpty(riskEngineParam.getIncidentCode())
+                        || StringUtils.isEmpty(riskEngineParam.getRequestPayload()));
         return executeService.execute(riskEngineParam);
     }
 

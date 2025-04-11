@@ -1,6 +1,8 @@
 package risk.engine.rest.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import risk.engine.common.function.ValidatorHandler;
 import risk.engine.dto.enums.ErrorCodeEnum;
@@ -30,12 +32,11 @@ public class DictionaryController {
      * @return 结果
      */
     @GetMapping("/options/parameter")
-    public ResponseVO indicatorOptions(@RequestBody DictionaryParam dictionaryParam) {
+    public ResponseVO indicatorOptions(@ModelAttribute DictionaryParam dictionaryParam) {
         log.info("detail indicator: {}", dictionaryParam);
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL)
-                .validateException(dictionaryParam.getDictKeyList());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL)
-                .validateException(dictionaryParam.getQueryCode());
+        ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
+                .validateException(ObjectUtils.isEmpty(dictionaryParam.getDictKeyList())
+                        || StringUtils.isEmpty(dictionaryParam.getQueryCode()));
         return ResponseVO.success(dictionaryService.getList(dictionaryParam.getDictKeyList(), dictionaryParam.getQueryCode()));
     }
 
@@ -46,8 +47,8 @@ public class DictionaryController {
      */
     @GetMapping("/options")
     public ResponseVO operationOptions(@RequestParam("dictKeyList") String[] dictKeyList) {
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL)
-                .validateException(dictKeyList);
+        ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
+                .validateException(ObjectUtils.isEmpty(dictKeyList));
         return ResponseVO.success(dictionaryService.getList(dictKeyList));
     }
 
@@ -58,8 +59,8 @@ public class DictionaryController {
      */
     @GetMapping("/options/db")
     public ResponseVO getDictIncidents(@ModelAttribute DictionaryParam dictionaryParam) {
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL)
-                .validateException(dictionaryParam.getDictKeyList());
+        ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
+                .validateException(ObjectUtils.isEmpty(dictionaryParam.getDictKeyList()));
         return ResponseVO.success(dictionaryService.getDictByDB(dictionaryParam));
     }
 }

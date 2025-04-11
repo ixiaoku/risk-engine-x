@@ -1,6 +1,5 @@
 package risk.engine.common.function;
 
-import org.apache.commons.lang3.ObjectUtils;
 import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.exception.RiskException;
 
@@ -17,9 +16,9 @@ public class ValidatorHandler {
     }
 
     // 提供一个静态方法来创建校验器
-    public static ValidatorFunction<Object> EmptyThrowException(ErrorCodeEnum errorCodeEnum) {
+    public static ValidatorFunction<Object> verify(ErrorCodeEnum errorCodeEnum) {
         return value -> {
-            if (ObjectUtils.isEmpty(value)) {
+            if (value) {
                 throw new RiskException(errorCodeEnum);
             }
         };

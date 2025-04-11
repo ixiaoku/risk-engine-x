@@ -8,8 +8,8 @@ import risk.engine.dto.exception.RiskException;
  * @Version: 1.0
  */
 @FunctionalInterface
-public interface ValidatorFunction<T> {
+public interface ValidatorFunction {
 
-    void validateException(T value) throws RiskException;
+    void validateException(boolean flag) throws RiskException;
 
 }

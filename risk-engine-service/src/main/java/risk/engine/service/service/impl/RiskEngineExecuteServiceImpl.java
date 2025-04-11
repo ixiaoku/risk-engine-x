@@ -74,17 +74,17 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             IncidentPO incident = guavaIncidentRuleCache.getCacheIncident(riskEngineParam.getIncidentCode());
             if (incident == null) {
                 log.error("Incident not found {}", riskEngineParam.getIncidentCode());
-                return null;
+                return result;
             }
             //校验事件状态
             if (!IncidentStatusEnum.ONLINE.getCode().equals(incident.getStatus())) {
                 log.error("Incident status is not ONLINE {}", riskEngineParam.getIncidentCode());
-                return null;
+                return result;
             }
             //查询事件下的策略
             List<RulePO> ruleList = guavaIncidentRuleCache.getCacheRuleList(riskEngineParam.getIncidentCode());
             if  (CollectionUtils.isEmpty(ruleList)) {
-                return null;
+                return result;
             }
             long mysqlStartTime = System.currentTimeMillis();
             log.info("查询mysql 获取 Rule 耗时:{}", mysqlStartTime - startTime);

@@ -3,7 +3,6 @@ package risk.engine.dto.param;
 import lombok.Data;
 import risk.engine.dto.dto.rule.MetricDTO;
 
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -20,7 +19,6 @@ public class IncidentParam {
      *
      * 事件code
      */
-    @NotBlank(message = "incidentCode不能为空")
     private String incidentCode;
 
     /**

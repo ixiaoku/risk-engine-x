@@ -1,6 +1,9 @@
 package risk.engine.rest.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import risk.engine.common.function.ValidatorHandler;
 import risk.engine.dto.enums.ErrorCodeEnum;
@@ -26,15 +29,16 @@ public class RuleController {
     @PostMapping("/insert")
     public ResponseVO insert(@RequestBody RuleParam ruleParam) throws Exception {
         log.info("Inserting rule: {}", ruleParam);
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getIncidentCode());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getRuleCode());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getRuleName());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getJsonScript());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getLogicScript());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getDecisionResult());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getMetrics());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getResponsiblePerson());
-
+        ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(StringUtils.isEmpty(ruleParam.getIncidentCode())
+                || StringUtils.isEmpty(ruleParam.getIncidentCode())
+                || StringUtils.isEmpty(ruleParam.getRuleCode())
+                || StringUtils.isEmpty(ruleParam.getRuleName())
+                || StringUtils.isEmpty(ruleParam.getJsonScript())
+                || StringUtils.isEmpty(ruleParam.getLogicScript())
+                || StringUtils.isEmpty(ruleParam.getDecisionResult())
+                || CollectionUtils.isEmpty(ruleParam.getMetrics())
+                || StringUtils.isEmpty(ruleParam.getResponsiblePerson())
+        );
         return ResponseVO.success(ruleService.insert(ruleParam));
     }
 
@@ -47,27 +51,28 @@ public class RuleController {
     @PostMapping("/delete")
     public ResponseVO delete(@RequestBody RuleParam ruleParam) {
         log.info("delete rules: {}", ruleParam);
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getId());
+        ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ObjectUtils.isEmpty(ruleParam.getId()));
         return ResponseVO.success(ruleService.delete(ruleParam));
     }
 
     @PostMapping("/update")
     public ResponseVO update(@RequestBody RuleParam ruleParam) {
         log.info("update rules: {}", ruleParam);
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getId());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getRuleName());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getJsonScript());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getLogicScript());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getDecisionResult());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getMetrics());
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ruleParam.getResponsiblePerson());
+        ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ObjectUtils.isEmpty(ruleParam.getId())
+                || StringUtils.isEmpty(ruleParam.getRuleName())
+                || StringUtils.isEmpty(ruleParam.getJsonScript())
+                || StringUtils.isEmpty(ruleParam.getLogicScript())
+                || StringUtils.isEmpty(ruleParam.getDecisionResult())
+                || CollectionUtils.isEmpty(ruleParam.getMetrics())
+                || StringUtils.isEmpty(ruleParam.getResponsiblePerson())
+        );
         return ResponseVO.success(ruleService.update(ruleParam));
     }
 
     @GetMapping("/detail")
     public ResponseVO detail(@RequestParam("id") Long id) {
         log.info("detail rules: {}", id);
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(id);
+        ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ObjectUtils.isEmpty(id));
         return ResponseVO.success(ruleService.detail(id));
     }
 

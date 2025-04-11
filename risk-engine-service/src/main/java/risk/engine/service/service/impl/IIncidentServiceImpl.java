@@ -12,8 +12,10 @@ import risk.engine.db.dao.MetricMapper;
 import risk.engine.db.entity.IncidentPO;
 import risk.engine.db.entity.MetricPO;
 import risk.engine.dto.dto.rule.MetricDTO;
+import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.enums.MetricSourceEnum;
 import risk.engine.dto.enums.MetricTypeEnum;
+import risk.engine.dto.exception.RiskException;
 import risk.engine.dto.param.IncidentParam;
 import risk.engine.dto.vo.IncidentVO;
 import risk.engine.service.service.IIncidentService;
@@ -49,7 +51,7 @@ public class IIncidentServiceImpl implements IIncidentService {
         incidentQuery.setIncidentCode(incidentParam.getIncidentCode());
         List<IncidentPO> incidentList = incidentMapper.selectByExample(incidentQuery);
         if (CollectionUtils.isNotEmpty(incidentList)) {
-            throw new RuntimeException("事件标识已存在");
+            throw new RiskException(ErrorCodeEnum.INCIDENT_EXIST);
         }
         IncidentPO incident = new IncidentPO();
         incident.setIncidentCode(incidentParam.getIncidentCode());

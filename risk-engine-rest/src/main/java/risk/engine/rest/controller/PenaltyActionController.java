@@ -1,6 +1,7 @@
 package risk.engine.rest.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +30,7 @@ public class PenaltyActionController {
     @PostMapping("/fields")
     public ResponseVO getFields(@RequestBody PenaltyActionParam penaltyActionParam) throws Exception {
         log.info("get fields: {}", penaltyActionParam);
-        ValidatorHandler.EmptyThrowException(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(penaltyActionParam.getPenaltyCode());
+        ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(StringUtils.isEmpty(penaltyActionParam.getPenaltyCode()));
         return ResponseVO.success(penaltyActionService.getPenaltyFields(penaltyActionParam));
     }
 

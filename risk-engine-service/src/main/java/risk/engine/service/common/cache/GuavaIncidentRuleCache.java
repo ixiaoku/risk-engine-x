@@ -90,7 +90,6 @@ public class GuavaIncidentRuleCache implements ApplicationRunner {
             rules.forEach(rule -> scriptCache.computeIfAbsent(CACHE_KEY + rule.getRuleCode(),
                     k -> groovyShell.parse(rule.getGroovyScript())));
         }
-        log.info("Loaded {} incidents to Guava cache,耗时：{}", incidentList.size(), System.currentTimeMillis() - start);
     }
 
     /**
@@ -104,7 +103,6 @@ public class GuavaIncidentRuleCache implements ApplicationRunner {
             loadRulesToCache();
             return ruleCache.getIfPresent(CACHE_KEY + incidentCode);
         }
-        log.info("Rule Guava 缓存命中: {}", incidentCode);
         return rules;
     }
 
@@ -119,7 +117,6 @@ public class GuavaIncidentRuleCache implements ApplicationRunner {
             loadRulesToCache();
             return incidentCache.getIfPresent(CACHE_KEY + incidentCode);
         }
-        log.info("Incident Guava 缓存命中: {}", incidentCode);
         return incidentPO;
     }
 
@@ -141,7 +138,6 @@ public class GuavaIncidentRuleCache implements ApplicationRunner {
             scriptCache.clear();
             incidentCache.invalidateAll();
             loadRulesToCache();
-            log.info("Guava cache refreshed");
         }).exceptionally(ex -> {
             log.error("Failed to refresh Guava cache: {}", ex.getMessage(), ex);
             return null;
