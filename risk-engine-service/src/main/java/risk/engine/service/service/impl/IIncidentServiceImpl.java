@@ -108,15 +108,12 @@ public class IIncidentServiceImpl implements IIncidentService {
     }
 
     @Override
-    public IncidentVO selectByPrimaryKey(Long id) {
+    public IncidentVO getOne(Long id) {
         IncidentPO incident = incidentMapper.selectByPrimaryKey(id);
         if (incident == null) {
             return null;
         }
-        IncidentVO incidentVO = getIncidentResult(incident);
-        List<MetricDTO> metrics = JSON.parseArray(incident.getRequestPayload(), MetricDTO.class);
-        incidentVO.setMetrics(metrics);
-        return incidentVO;
+        return getIncidentResult(incident);
     }
 
     @Override

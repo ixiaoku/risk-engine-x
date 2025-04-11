@@ -66,7 +66,7 @@ public class IncidentController {
     public ResponseVO getOne(@RequestBody IncidentParam incidentParam) {
         log.info("detail incident: {}", incidentParam);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ObjectUtils.isEmpty(incidentParam.getId()));
-        return ResponseVO.success(incidentService.selectByPrimaryKey(incidentParam.getId()));
+        return ResponseVO.success(incidentService.getOne(incidentParam.getId()));
     }
 
     @PostMapping("/list")

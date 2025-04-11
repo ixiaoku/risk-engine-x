@@ -16,7 +16,7 @@ public class ValidatorHandler {
     }
 
     // 提供一个静态方法来创建校验器
-    public static ValidatorFunction<Object> verify(ErrorCodeEnum errorCodeEnum) {
+    public static ValidatorFunction verify(ErrorCodeEnum errorCodeEnum) {
         return value -> {
             if (value) {
                 throw new RiskException(errorCodeEnum);

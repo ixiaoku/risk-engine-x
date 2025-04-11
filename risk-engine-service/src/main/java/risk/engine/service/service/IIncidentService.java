@@ -22,7 +22,7 @@ public interface IIncidentService {
 
     IncidentPO selectByIncidentCode(String incidentCode);
 
-    IncidentVO selectByPrimaryKey(Long id);
+    IncidentVO getOne(Long id);
 
     List<MetricDTO> parseMetric(String incidentCode, String requestPayload);
 
