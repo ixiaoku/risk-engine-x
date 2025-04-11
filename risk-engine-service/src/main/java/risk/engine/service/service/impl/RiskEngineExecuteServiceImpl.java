@@ -92,17 +92,19 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             //二、规则执行
             //上线规则 执行
             JSONObject paramMap = JSON.parseObject(riskEngineParam.getRequestPayload());
+            //使用的指标
+            Map<String, Object> metricMap = new HashMap<>();
             List<RulePO> onlineRuleList = ruleList.stream()
                     .filter(rule -> rule.getStatus().equals(RuleStatusEnum.ONLINE.getCode()))
                     .sorted(Comparator.comparingInt(RulePO::getScore).reversed())
                     .collect(Collectors.toList());
-            List<RulePO> hitOnlineRuleList = getHitRuleList(incident.getIncidentCode(), paramMap, onlineRuleList);
+            List<RulePO> hitOnlineRuleList = getHitRuleList(incident.getIncidentCode(), paramMap, onlineRuleList, metricMap);
             List<RulePO> mockRuleList = ruleList.stream()
                     .filter(rule -> rule.getStatus().equals(RuleStatusEnum.MOCK.getCode()))
                     .sorted(Comparator.comparingInt(RulePO::getScore).reversed())
                     .collect(Collectors.toList());
             //优化点 模拟策略异步执行
-            List<RulePO> hitMockRuleList = getHitRuleList(incident.getIncidentCode(), paramMap, mockRuleList);
+            List<RulePO> hitMockRuleList = getHitRuleList(incident.getIncidentCode(), paramMap, mockRuleList, metricMap);
             //返回分数最高的命中策略 先返回上线的然后再看模拟的
             RulePO hitRule = null;
             if (CollectionUtils.isNotEmpty(hitMockRuleList)) {
@@ -115,7 +117,8 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             long ruleStartTime = System.currentTimeMillis();
             log.info(" Rule 脚本执行 耗时:{}", ruleStartTime - mysqlStartTime);
             Long executionTime = System.currentTimeMillis() - startTime;
-            RiskExecuteEngineDTO executeEngineDTO = getRiskExecuteEngineDTO(result, riskEngineParam, incident.getIncidentName(), paramMap, hitRule, hitOnlineRuleList, hitMockRuleList, executionTime);
+            RiskExecuteEngineDTO executeEngineDTO = getRiskExecuteEngineDTO(result, riskEngineParam, incident.getIncidentName(), paramMap,
+                    hitRule, hitOnlineRuleList, hitMockRuleList, executionTime, metricMap);
             log.info("RiskEngineExecuteServiceImpl execute 耗时 :{}", executionTime);
 
             //三、异步保存数据和发送mq消息 规则熔断
@@ -143,7 +146,9 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
      * @param hitMOckRuleList 命中模拟规则
      * @return 结果
      */
-    private RiskExecuteEngineDTO getRiskExecuteEngineDTO(RiskEngineExecuteVO result, RiskEngineParam riskEngineParam, String incidentName, JSONObject paramMap, RulePO hitRule, List<RulePO> hitOnlineRuleList, List<RulePO> hitMOckRuleList, Long executionTime) {
+    private RiskExecuteEngineDTO getRiskExecuteEngineDTO(RiskEngineExecuteVO result, RiskEngineParam riskEngineParam, String incidentName,
+                                                         JSONObject paramMap, RulePO hitRule, List<RulePO> hitOnlineRuleList,
+                                                         List<RulePO> hitMOckRuleList, Long executionTime, Map<String, Object> metricMap) {
         RiskExecuteEngineDTO executeEngineDTO = new RiskExecuteEngineDTO();
         executeEngineDTO.setFlowNo(riskEngineParam.getFlowNo());
         executeEngineDTO.setRiskFlowNo(riskEngineParam.getIncidentCode() + ":" + UUID.randomUUID().toString().replace("-", "") + ":" +System.currentTimeMillis());
@@ -154,6 +159,7 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
         //要素
         EssentialElementDTO essentialElementDTO = JSON.parseObject(riskEngineParam.getRequestPayload(), EssentialElementDTO.class);
         executeEngineDTO.setPrimaryElement(essentialElementDTO);
+        executeEngineDTO.setMetric(metricMap);
         //是否命中规则
         if (Objects.isNull(hitRule)) {
             executeEngineDTO.setDecisionResult(result.getDecisionResult());
@@ -175,13 +181,6 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
         hitRuleDTO.setRulePenaltyAction(hitRule.getPenaltyAction());
         hitRuleDTO.setRuleVersion(hitRule.getVersion());
         executeEngineDTO.setPrimaryRule(hitRuleDTO);
-        //命中规则 使用的指标
-        List<RuleMetricDTO> metricDTOS = JSON.parseArray(hitRule.getJsonScript(), RuleMetricDTO.class);
-        if (CollectionUtils.isNotEmpty(metricDTOS)) {
-            Map<String, Object> map = new HashMap<>();
-            metricDTOS.forEach(indicatorDTO -> map.put(indicatorDTO.getMetricCode(), paramMap.get(indicatorDTO.getMetricCode())));
-            executeEngineDTO.setMetric(map);
-        }
         return executeEngineDTO;
     }
 
@@ -212,17 +211,18 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
      * @param ruleList 规则集合
      * @return 获取命中规则集合
      */
-    private List<RulePO> getHitRuleList(String incidentCode, JSONObject paramMap, List<RulePO> ruleList) {
+    private List<RulePO> getHitRuleList(String incidentCode, JSONObject paramMap, List<RulePO> ruleList, Map<String, Object> metricMap) {
         return ruleList.stream().filter(rule -> {
             try {
                 List<RuleMetricDTO> ruleMetricDTOS = JSON.parseArray(rule.getJsonScript(), RuleMetricDTO.class);
-                Map<String, Object> metricMap = metricHandler.getMetricValue(incidentCode, ruleMetricDTOS, paramMap);
+                Map<String, Object> metricValueMap = metricHandler.getMetricValue(incidentCode, ruleMetricDTOS, paramMap);
                 Script groovyScript = guavaIncidentRuleCache.getCacheScript(rule.getRuleCode());
                 if (Objects.isNull(groovyScript)) {
                     log.error("Groovy 获取缓存失败");
                     return false;
                 }
-                return GroovyShellUtil.runGroovy(groovyScript, metricMap);
+                metricMap.putAll(metricValueMap);
+                return GroovyShellUtil.runGroovy(groovyScript, metricValueMap);
             } catch (Exception e) {
                 log.error("Groovy 执行失败，跳过 ruleCode: {}", rule.getRuleCode(), e);
                 return false;

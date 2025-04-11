@@ -1,6 +1,5 @@
 use risk;
--- auto-generated definition
-create table blockchain_block
+create table if not exists risk.blockchain_block
 (
     id                  bigint auto_increment
         primary key,
@@ -23,8 +22,7 @@ create table blockchain_block
 )
     comment '比特币区块信息表';
 
--- auto-generated definition
-create table crawler_task
+create table if not exists risk.crawler_task
 (
     id              bigint auto_increment comment '主键ID'
         primary key,
@@ -39,32 +37,30 @@ create table crawler_task
     comment '任务表';
 
 create index index_incident_code_status
-    on crawler_task (incident_code, status)
+    on risk.crawler_task (incident_code, status)
     comment '索引，按事件code搜索';
 
--- auto-generated definition
-create table engine_result
+create table if not exists risk.engine_result
 (
-    id                   bigint auto_increment
+    id               bigint auto_increment
         primary key,
-    incident_code        varchar(255) not null comment '关联事件编码',
-    incident_name        varchar(255) not null comment '事件名称',
-    request_payload      text         null comment '请求载荷（JSON报文',
-    hit_online_rules     text         null comment '命中上线策略集合',
-    hit_mock_rules       text         null comment '命中模拟策略集合',
-    rule_code            varchar(255) null comment '匹配规则编码 分数最高',
-    rule_name            varchar(255) null comment '规则名称',
-    rule_status          int          null comment '规则状态（0：删除，1：上线，2：下线，3：模拟）',
-    rule_score           int          null comment '风险分数',
-    rule_decision_result varchar(255) null comment '决策结果',
-    rule_label           varchar(255) null comment '标签',
-    rule_penalty_action  varchar(255) null comment '处罚措施',
-    rule_version         varchar(255) null comment '规则版本号',
-    create_time          datetime     not null comment '创建时间'
+    flow_no          varchar(128) not null comment '业务流水号',
+    risk_flow_no     varchar(64)  not null comment '风控流水号',
+    incident_code    varchar(64)  not null comment '事件编码',
+    incident_name    varchar(128) not null comment '事件名称',
+    request_payload  json         null comment '请求载荷（JSON报文)',
+    primary_element  json         null comment '基本要素',
+    metric           json         null comment '使用的指标',
+    extra            json         null comment '扩展数据',
+    hit_online_rules json         null comment '命中上线策略集合',
+    hit_mock_rules   json         null comment '命中模拟策略集合',
+    primary_rule     json         null comment '命中主规则',
+    decision_result  varchar(16)  null comment '决策结果',
+    execution_time   bigint       null comment '决策耗时',
+    create_time      datetime     not null comment '创建时间'
 );
 
--- auto-generated definition
-create table incident
+create table if not exists risk.incident
 (
     id                 bigint auto_increment
         primary key,
@@ -81,8 +77,31 @@ create table incident
         unique (incident_code)
 );
 
--- auto-generated definition
-create table list_data
+create table if not exists risk.k_line
+(
+    id                     bigint auto_increment comment '主键'
+        primary key,
+    symbol                 varchar(20)                         not null comment '交易币对',
+    `interval`             varchar(20)                         not null comment '时间间隔',
+    open_time              bigint                              not null comment '开盘时间',
+    open                   decimal(20, 8)                      not null comment '开盘价',
+    high                   decimal(20, 8)                      not null comment '最高价',
+    low                    decimal(20, 8)                      not null comment '最低价',
+    close                  decimal(20, 8)                      not null comment '收盘价',
+    volume                 decimal(20, 8)                      not null comment '成交量',
+    close_time             bigint                              not null comment '收盘时间',
+    quote_volume           decimal(20, 8)                      not null comment '成交额',
+    trade_count            int                                 not null comment '成交笔数',
+    taker_buy_volume       decimal(20, 8)                      not null comment '主动买入成交量',
+    taker_buy_quote_volume decimal(20, 8)                      not null comment '主动买入成交额',
+    create_time            timestamp default CURRENT_TIMESTAMP null comment '创建时间',
+    update_time            timestamp default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间',
+    constraint unique_symbol_open_close
+        unique (symbol, open_time)
+)
+    comment 'K线数据表';
+
+create table if not exists risk.list_data
 (
     id                bigint auto_increment comment '主键ID'
         primary key,
@@ -102,8 +121,7 @@ create table list_data
 )
     comment '名单数据表';
 
--- auto-generated definition
-create table list_library
+create table if not exists risk.list_library
 (
     id                bigint auto_increment comment '主键，自增ID'
         primary key,
@@ -120,8 +138,7 @@ create table list_library
 )
     comment '风控名单库表';
 
--- auto-generated definition
-create table metric
+create table if not exists risk.metric
 (
     id            bigint auto_increment comment '主键，自增ID'
         primary key,
@@ -141,11 +158,10 @@ create table metric
     comment '风控指标表';
 
 create index idx_incident_code
-    on metric (incident_code)
+    on risk.metric (incident_code)
     comment '索引，按事件code搜索';
 
--- auto-generated definition
-create table penalty_action
+create table if not exists risk.penalty_action
 (
     id                  bigint auto_increment comment '主键，自增ID'
         primary key,
@@ -163,8 +179,7 @@ create table penalty_action
 )
     comment '风控处罚定义表';
 
--- auto-generated definition
-create table penalty_record
+create table if not exists risk.penalty_record
 (
     id                  bigint auto_increment comment '主键，自增ID'
         primary key,
@@ -189,11 +204,10 @@ create table penalty_record
     comment '风控处罚表，存储处罚记录并支持定时任务执行';
 
 create index idx_status_retry
-    on penalty_record (status, retry)
+    on risk.penalty_record (status, retry)
     comment '复合索引，加速按状态和重试次数查询';
 
--- auto-generated definition
-create table rule
+create table if not exists risk.rule
 (
     id                 bigint auto_increment
         primary key,
@@ -218,8 +232,7 @@ create table rule
         unique (rule_code)
 );
 
--- auto-generated definition
-create table rule_version
+create table if not exists risk.rule_version
 (
     id            bigint auto_increment
         primary key,
@@ -236,8 +249,7 @@ create table rule_version
         unique (rule_code, version)
 );
 
--- auto-generated definition
-create table transfer_record
+create table if not exists risk.transfer_record
 (
     id              bigint auto_increment comment '主键ID'
         primary key,
@@ -257,14 +269,13 @@ create table transfer_record
     comment '交易转账表';
 
 create index idx_chain_token
-    on transfer_record (chain, token);
+    on risk.transfer_record (chain, token);
 
 create index idx_hash
-    on transfer_record (hash);
+    on risk.transfer_record (hash);
 
 create index idx_receive_address
-    on transfer_record (receive_address);
+    on risk.transfer_record (receive_address);
 
 create index idx_send_address
-    on transfer_record (send_address);
-
+    on risk.transfer_record (send_address);
