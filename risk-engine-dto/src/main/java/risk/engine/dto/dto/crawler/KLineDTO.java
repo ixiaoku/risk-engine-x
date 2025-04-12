@@ -47,4 +47,23 @@ public class KLineDTO {
 
     public KLineDTO() {
     }
+
+    @Override
+    public String toString() {
+        return "KLineDTO{" +
+                "openTime=" + openTime +
+                ", open=" + open +
+                ", high=" + high +
+                ", low=" + low +
+                ", close=" + close +
+                ", volume=" + volume +
+                ", closeTime=" + closeTime +
+                ", quoteVolume=" + quoteVolume +
+                ", tradeCount=" + tradeCount +
+                ", takerBuyVolume=" + takerBuyVolume +
+                ", takerBuyQuoteVolume=" + takerBuyQuoteVolume +
+                ", symbol='" + symbol + '\'' +
+                ", interval='" + interval + '\'' +
+                '}';
+    }
 }

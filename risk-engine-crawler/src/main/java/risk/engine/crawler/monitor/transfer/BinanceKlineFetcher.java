@@ -9,13 +9,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
-import risk.engine.common.redis.RedisUtil;
 import risk.engine.common.util.BigDecimalNumberUtil;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.common.util.OkHttpUtil;
 import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.db.entity.KLinePO;
-import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.crawler.BinanceKLineDTO;
 import risk.engine.dto.dto.crawler.KLineDTO;
 import risk.engine.dto.dto.penalty.AnnouncementDTO;
@@ -40,9 +38,6 @@ public class BinanceKlineFetcher {
 
     @Resource
     private IKLineService klineService;
-
-    @Resource
-    private RedisUtil redisUtil;
 
     private static final String BASE_URL = "https://api.binance.com";
 
@@ -88,7 +83,7 @@ public class BinanceKlineFetcher {
             BigDecimal changePercent = BigDecimalNumberUtil.calcChangePercent(kLinePO.getOpen(), kLinePO.getClose());
             binanceKLineDTO.setUpChangePercent(changePercent.compareTo(BigDecimal.ZERO) > 0 ? changePercent : BigDecimal.ZERO);
             binanceKLineDTO.setDownChangePercent(changePercent.compareTo(BigDecimal.ZERO) < 0 ? changePercent : BigDecimal.ZERO);
-            String content = String.format(CrawlerConstant.TRADE_DATA_BOT_TITLE, kLinePO.getSymbol(), kLinePO.getOpen(), kLinePO.getClose(), changePercent);
+            String content = binanceKLineDTO.toString();
             announcement.setContent(content);
             announcement.setCreatedAt(DateTimeUtil.getTimeByTimestamp(kLinePO.getCloseTime()));
             binanceKLineDTO.setAnnouncement(announcement);
