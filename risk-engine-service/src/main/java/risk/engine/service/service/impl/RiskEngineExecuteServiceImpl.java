@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import groovy.lang.Script;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Service;
 import risk.engine.common.grovvy.GroovyShellUtil;
 import risk.engine.common.redis.RedisUtil;
@@ -216,6 +217,9 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
             try {
                 List<RuleMetricDTO> ruleMetricDTOS = JSON.parseArray(rule.getJsonScript(), RuleMetricDTO.class);
                 Map<String, Object> metricValueMap = metricHandler.getMetricValue(incidentCode, ruleMetricDTOS, paramMap);
+                if (MapUtils.isEmpty(metricValueMap))  {
+                    return false;
+                }
                 Script groovyScript = guavaIncidentRuleCache.getCacheScript(rule.getRuleCode());
                 if (Objects.isNull(groovyScript)) {
                     log.error("Groovy 获取缓存失败");

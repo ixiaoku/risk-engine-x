@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import risk.engine.common.redis.RedisUtil;
 import risk.engine.common.util.ThreadPoolExecutorUtil;
@@ -39,7 +38,7 @@ public class MetricHandler {
 
     @Resource
     private MetricTradeSignalHandler metricTradeSignalHandler;
-    @Autowired
+    @Resource
     private RedisUtil redisUtil;
 
     /**
@@ -93,7 +92,7 @@ public class MetricHandler {
         // 等待所有任务完成，设置超时
         try {
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                    .orTimeout(1, TimeUnit.SECONDS)
+                    .orTimeout(3, TimeUnit.SECONDS)
                     .exceptionally(throwable -> {
                         log.error("Metric processing timed out or failed: {}", throwable.getMessage(), throwable);
                         return null;
@@ -102,6 +101,7 @@ public class MetricHandler {
         } catch (Exception e) {
             log.error("Error waiting for metric tasks to complete: {}", e.getMessage(), e);
         }
+        log.info("Metric processing completed. {}", JSON.toJSONString(result));
         return result;
     }
 
@@ -175,9 +175,6 @@ public class MetricHandler {
             metricTradeSignalHandler.calculateAndStoreIndicators(incidentCode, kLineDTO);
             for (RuleMetricDTO metric : metrics) {
                 Object value = redisUtil.hget(incidentCode,kLineDTO.getOpenTime() + ":" + metric.getMetricCode());
-                if (Objects.isNull(value)) {
-                    continue;
-                }
                 result.put(metric.getMetricCode(), value);
             }
         }

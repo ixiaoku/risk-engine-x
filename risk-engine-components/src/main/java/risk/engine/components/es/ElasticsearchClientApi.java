@@ -15,6 +15,7 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.xcontent.XContentType;
 import org.springframework.stereotype.Component;
 
@@ -51,6 +52,7 @@ public class ElasticsearchClientApi {
     ) {
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.query(boolQuery);
+        sourceBuilder.sort("createTime", SortOrder.DESC);
         if (pageNum != 0 && pageSize != 0) {
             sourceBuilder.from((pageNum - 1) * pageSize);
             sourceBuilder.size(pageSize);

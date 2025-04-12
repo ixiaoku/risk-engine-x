@@ -264,20 +264,20 @@ public class MetricTradeSignalHandler {
 
             // 存储指标到 Redis Hash
             String hashKey = String.valueOf(timestamp);
-            redisUtil.hSet(incidentCode, hashKey + ":ma20", ma20.toString());
-            redisUtil.hSet(incidentCode, hashKey + ":ma60", ma60.toString());
-            redisUtil.hSet(incidentCode, hashKey + ":middle", bollingerBands[0].toString());
-            redisUtil.hSet(incidentCode, hashKey + ":upper", bollingerBands[1].toString());
-            redisUtil.hSet(incidentCode, hashKey + ":lower", bollingerBands[2].toString());
-            redisUtil.hSet(incidentCode, hashKey + ":rsi", rsi.toString());
-            redisUtil.hSet(incidentCode, hashKey + ":volumeMA", volumeMA.toString());
-            redisUtil.hSet(incidentCode, hashKey + ":atr", atr.toString());
-            redisUtil.hSet(incidentCode, hashKey + ":macdLine", macd[0].toString());
-            redisUtil.hSet(incidentCode, hashKey + ":macdSignal", macd[1].toString());
-            redisUtil.hSet(incidentCode, hashKey + ":macdHistogram", macd[2].toString());
-            redisUtil.hSet(incidentCode, hashKey + ":kdjK", kdj[0].toString());
-            redisUtil.hSet(incidentCode, hashKey + ":kdjD", kdj[1].toString());
-            redisUtil.hSet(incidentCode, hashKey + ":kdjJ", kdj[2].toString());
+            redisUtil.hSet(incidentCode, hashKey + ":ma20", ma20);
+            redisUtil.hSet(incidentCode, hashKey + ":ma60", ma60);
+            redisUtil.hSet(incidentCode, hashKey + ":middle", bollingerBands[0]);
+            redisUtil.hSet(incidentCode, hashKey + ":upper", bollingerBands[1]);
+            redisUtil.hSet(incidentCode, hashKey + ":lower", bollingerBands[2]);
+            redisUtil.hSet(incidentCode, hashKey + ":rsi", rsi);
+            redisUtil.hSet(incidentCode, hashKey + ":volumeMA", volumeMA);
+            redisUtil.hSet(incidentCode, hashKey + ":atr", atr);
+            redisUtil.hSet(incidentCode, hashKey + ":macdLine", macd[0]);
+            redisUtil.hSet(incidentCode, hashKey + ":macdSignal", macd[1]);
+            redisUtil.hSet(incidentCode, hashKey + ":macdHistogram", macd[2]);
+            redisUtil.hSet(incidentCode, hashKey + ":kdjK", kdj[0]);
+            redisUtil.hSet(incidentCode, hashKey + ":kdjD", kdj[1]);
+            redisUtil.hSet(incidentCode, hashKey + ":kdjJ", kdj[2]);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
