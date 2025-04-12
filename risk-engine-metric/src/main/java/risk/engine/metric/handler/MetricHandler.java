@@ -151,18 +151,7 @@ public class MetricHandler {
      */
     private void processAttributeMetrics(List<RuleMetricDTO> metrics, Map<String, Object> paramMap, Map<String, Object> result) {
         for (RuleMetricDTO metric : metrics) {
-            try {
-                String metricCode = metric.getMetricCode();
-                Object value = paramMap.get(metricCode);
-                if (value != null) {
-                    result.put(metricCode, value);
-                } else {
-                    log.warn("Metric {} not found in paramMap", metricCode);
-                    //result.put(metricCode, null); // 明确设置 null，避免后续判断问题
-                }
-            } catch (Exception e) {
-                log.error("Failed to process ATTRIBUTE metric {}: {}", metric.getMetricCode(), e.getMessage(), e);
-            }
+            result.put(metric.getMetricCode(), paramMap.get(metric.getMetricCode()));
         }
     }
 
