@@ -8,6 +8,13 @@ spring:
     password: dcr
     timeout: 2000ms
     database: 1  #默认有16个db(集群模式用hash槽代替)，这里配置具体使用的db，默认是0
+  kafka:
+    bootstrap-servers: 43.156.132.139:9093
+    consumer:
+      group-id: canal-consumer-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 rocketmq:
   name-server: 127.0.0.1:9876
