@@ -23,6 +23,7 @@ public class PenaltyConsumer implements RocketMQListener<String> {
         try {
             RiskExecuteEngineDTO riskExecuteEngineDTO = new Gson().fromJson(message, RiskExecuteEngineDTO.class);
             riskEngineExecutorHandler.savePenalty(riskExecuteEngineDTO);
+            log.info("Consume success penalty saved to rocketmq");
         } catch (Exception e) {
             //应该捕捉进行处理 消费失败存入mysql 进行回放重试 不影响后续消息消费
             log.error("mq消息失败 错误信息：{}", e.getMessage(), e);
