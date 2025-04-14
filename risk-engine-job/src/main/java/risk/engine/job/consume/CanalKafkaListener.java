@@ -1,4 +1,4 @@
-package risk.engine.service.consumer;
+package risk.engine.job.consume;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;

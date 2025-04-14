@@ -1,4 +1,4 @@
-package risk.engine.service.consumer;
+package risk.engine.job.consume;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;

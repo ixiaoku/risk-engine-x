@@ -23,7 +23,6 @@ import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.dto.vo.RiskEngineExecuteVO;
 import risk.engine.metric.handler.MetricHandler;
 import risk.engine.service.common.cache.GuavaIncidentRuleCache;
-import risk.engine.service.consumer.TestKafkaProducer;
 import risk.engine.service.service.IRiskEngineExecuteService;
 
 import javax.annotation.Resource;
@@ -52,9 +51,6 @@ public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
 
     @Resource
     private MetricHandler metricHandler;
-
-    @Resource
-    private TestKafkaProducer testKafkaProducer;
 
     /**
      * 引擎执行 主逻辑
