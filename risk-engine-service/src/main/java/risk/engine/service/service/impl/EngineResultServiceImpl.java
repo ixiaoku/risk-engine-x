@@ -3,6 +3,7 @@ package risk.engine.service.service.impl;
 import com.alibaba.fastjson2.JSON;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,6 +24,8 @@ import risk.engine.db.entity.RuleVersionPO;
 import risk.engine.dto.constant.BusinessConstant;
 import risk.engine.dto.dto.rule.HitRuleDTO;
 import risk.engine.dto.dto.rule.RuleMetricDTO;
+import risk.engine.dto.enums.MetricTypeEnum;
+import risk.engine.dto.enums.MetricValueTypeEnum;
 import risk.engine.dto.enums.OperationSymbolEnum;
 import risk.engine.dto.param.EngineExecutorParam;
 import risk.engine.dto.vo.EngineExecutorVO;
@@ -39,6 +42,7 @@ import java.util.stream.Collectors;
  * @Date: 2025/3/12 21:19
  * @Version: 1.0
  */
+@Slf4j
 @Service
 public class EngineResultServiceImpl implements IEngineResultService {
 
@@ -124,8 +128,20 @@ public class EngineResultServiceImpl implements IEngineResultService {
         List<LinkedHashMap<String, Object>> mapList = hitRuleDTOList.stream()
                 .map(metricDTO -> {
                     Map<String, Object> map = new HashMap<>();
-                    map.put(metricDTO.getMetricCode(), metricMap.get(metricDTO.getMetricCode()));
-                    String ruleScript = metricDTO.getMetricCode() + " " + OperationSymbolEnum.getOperationSymbolEnumByCode(metricDTO.getOperationSymbol()).getName() + " " + metricDTO.getMetricValue();
+                    String ruleScript = "";
+                    if (StringUtils.equals(metricDTO.getMetricValueType(), MetricValueTypeEnum.CUSTOM.getCode())) {
+                        boolean isString = Objects.equals(metricDTO.getMetricType(), MetricTypeEnum.STRING.getCode());
+                        String value = isString ? "'" + metricDTO.getMetricValue() + "'" : metricDTO.getMetricValue();
+                        map.put(metricDTO.getMetricCode(), metricMap.get(metricDTO.getMetricCode()));
+                        ruleScript = metricDTO.getMetricCode() + " " + OperationSymbolEnum.getOperationSymbolEnumByCode(metricDTO.getOperationSymbol()).getName() + " " + value;
+                    } else if (StringUtils.equals(metricDTO.getMetricValueType(), MetricValueTypeEnum.METRIC.getCode())) {
+                        map.put(metricDTO.getMetricCode(), metricMap.get(metricDTO.getMetricCode()));
+                        map.put(metricDTO.getRightMetricCode(), metricMap.get(metricDTO.getRightMetricCode()));
+                        ruleScript = metricDTO.getMetricCode() + " " + OperationSymbolEnum.getOperationSymbolEnumByCode(metricDTO.getOperationSymbol()).getName() + " " + metricDTO.getMetricValue();
+                    } else {
+                        throw new RuntimeException();
+                    }
+                    log.info("ruleScript = {}", ruleScript);
                     Script script = groovyShell.parse(ruleScript);
                     boolean resultFlag = GroovyShellUtil.runGroovy(script, map);
                     LinkedHashMap<String, Object> conditionMap = new LinkedHashMap<>();
