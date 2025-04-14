@@ -26,6 +26,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * expireAfterWrite(Duration duration)
+ * 缓存写入一段时间后，直接过期删除
+ * refreshAfterWrite(Duration duration)
+ * 缓存值写入后超过一定时间，会在下一次访问时异步刷新缓存
  * @Author: X
  * @Date: 2025/4/8 19:19
  * @Version: 1.0
