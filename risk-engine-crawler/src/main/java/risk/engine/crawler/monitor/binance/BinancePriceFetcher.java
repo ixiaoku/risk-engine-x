@@ -62,8 +62,8 @@ public class BinancePriceFetcher {
         List<List<String>> symbols = Lists.partition(symbolList, 100);
         List<CrawlerTaskPO> crawlerList = Lists.newArrayList();
         symbols.forEach(list -> {
-            //String url = BINANCE_TICKER_URL + "?symbols=" + JSON.toJSONString(list)  + "&windowSize=5m&type=FULL";
-            String url = BINANCE_TICKER_URL + "?symbols=[\"BTCUSDT\",\"BNBUSDT\"]"  + "&windowSize=5m&type=FULL";
+            String url = BINANCE_TICKER_URL + "?symbols=" + JSON.toJSONString(list)  + "&windowSize=5m&type=FULL";
+            //String url = BINANCE_TICKER_URL + "?symbols=[\"BTCUSDT\",\"BNBUSDT\"]"  + "&windowSize=5m&type=FULL";
             String json = OkHttpUtil.get(url);
             List<MarketTickerDTO> marketTickerDTOList = JSON.parseArray(json, MarketTickerDTO.class);
             if (CollectionUtils.isEmpty(marketTickerDTOList)) {
