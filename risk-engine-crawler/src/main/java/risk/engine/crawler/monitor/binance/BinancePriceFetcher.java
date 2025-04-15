@@ -11,6 +11,7 @@ import risk.engine.common.redis.RedisUtil;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.common.util.OkHttpUtil;
 import risk.engine.db.entity.CrawlerTaskPO;
+import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.crawler.MarketTickerDTO;
 import risk.engine.dto.dto.penalty.AnnouncementDTO;
 import risk.engine.dto.enums.IncidentCodeEnum;
@@ -22,8 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static risk.engine.dto.constant.CrawlerConstant.TWITTER_USER_RELEASE_LIST_CONTENT;
 
 /**
  * @Author: X
@@ -82,10 +81,10 @@ public class BinancePriceFetcher {
                 AnnouncementDTO announcementDTO = new AnnouncementDTO();
                 announcementDTO.setCreatedAt(DateTimeUtil.getTimeByTimestamp(m.getOpenTime()));
                 announcementDTO.setTitle(m.getSymbol() + "5min价格异常波动（大涨大跌）");
-                String content = String.format(TWITTER_USER_RELEASE_LIST_CONTENT, m.getSymbol(), m.getPriceChange(), m.getPriceChangePercent() + "%", m.getVolume(), m.getLastPrice());
+                String content = String.format(CrawlerConstant.WINDOW_PRICE_CHANGE_STATISTICS_CONTENT, m.getSymbol(), m.getPriceChange(), m.getPriceChangePercent() + "%", m.getVolume(), m.getLastPrice());
                 announcementDTO.setContent(content);
                 m.setAnnouncement(announcementDTO);
-                return crawlerTaskService.getCrawlerTask(flowNo, IncidentCodeEnum.TWITTER_USER_RELEASE_LIST.getCode(),
+                return crawlerTaskService.getCrawlerTask(flowNo, IncidentCodeEnum.WINDOW_PRICE_CHANGE_STATISTICS.getCode(),
                         JSON.toJSONString(m));
             }).collect(Collectors.toList());
             crawlerList.addAll(crawlerTaskPOList);

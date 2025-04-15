@@ -18,7 +18,7 @@ public enum IncidentCodeEnum {
     TRANSFER_CHAIN("ChainTransfer", "链上转账"),
     TRADE_QUANT_DATA("TradeQuantData", "交易量化"),
     TELEGRAM_BEW_NEWS("TelegramBEWnews", "TG机器人新闻推送"),
-    WINDOW_PRICE_CHANGE_STATISTICS("windowPriceChangeStatistics", "滚动窗口价格变动统计"),
+    WINDOW_PRICE_CHANGE_STATISTICS("WindowPriceChangeStatistics", "滚动窗口价格变动统计"),
     ;
 
     /**
