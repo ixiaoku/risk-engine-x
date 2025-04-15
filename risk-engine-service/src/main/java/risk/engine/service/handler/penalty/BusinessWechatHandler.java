@@ -48,7 +48,7 @@ public class BusinessWechatHandler implements IPenaltyHandler {
             GroupChatBotDTO.Markdown markdown = new GroupChatBotDTO.Markdown();
             markdown.setContent(content);
             groupChatBotDTO.setMarkdown(markdown);
-            String result = OkHttpUtil.post(CrawlerConstant.weChatBotUrl + key, gson.toJson(groupChatBotDTO));
+            String result = OkHttpUtil.postJson(CrawlerConstant.weChatBotUrl + key, gson.toJson(groupChatBotDTO));
             if (StringUtils.isEmpty(result)) {
                 log.error("企业微信群bot 消息发送失败： {}", result);
                 return PenaltyStatusEnum.FAIL;

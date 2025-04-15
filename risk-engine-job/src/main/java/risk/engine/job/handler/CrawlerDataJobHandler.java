@@ -4,8 +4,9 @@ import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import risk.engine.crawler.monitor.binance.BinanceKlineFetcher;
+import risk.engine.crawler.monitor.binance.BinancePriceFetcher;
 import risk.engine.crawler.monitor.binance.MarketNoticeMonitorHandler;
-import risk.engine.crawler.monitor.transfer.BinanceKlineFetcher;
 import risk.engine.crawler.monitor.twitter.TwitterCrawlerUserHandler;
 
 import javax.annotation.Resource;
@@ -27,6 +28,9 @@ public class CrawlerDataJobHandler {
 
     @Resource
     private BinanceKlineFetcher binanceKlineFetcher;
+
+    @Resource
+    private BinancePriceFetcher binancePriceFetcher;
 
     //@XxlJob("crawlerTwitterUserJob")
     public void crawlerTwitterUser() {
@@ -66,6 +70,20 @@ public class CrawlerDataJobHandler {
         } catch (Exception e) {
             log.error("tradeQuantDataJob executed failed : {}", e.getMessage(), e);
             XxlJobHelper.log("tradeQuantDataJob executed failed : {}", e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @XxlJob("windowPriceDataJob")
+    public void windowPriceData() {
+        try {
+            String param = XxlJobHelper.getJobParam();
+            binancePriceFetcher.start();
+            XxlJobHelper.log("windowPriceDataJob, param: " + param);
+            log.info("windowPriceDataJob executed successfully!");
+        } catch (Exception e) {
+            log.error("windowPriceDataJob executed failed : {}", e.getMessage(), e);
+            XxlJobHelper.log("windowPriceDataJob executed failed : {}", e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }

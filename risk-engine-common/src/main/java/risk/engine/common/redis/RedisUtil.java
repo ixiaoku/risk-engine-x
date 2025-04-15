@@ -152,7 +152,7 @@ public class RedisUtil {
     }
 
     // --- Set Operations ---
-    public void sadd(String key, Object value) {
+    public void sAdd(String key, Object value) {
         try {
             redisTemplate.opsForSet().add(key, value);
         } catch (Exception e) {
@@ -160,7 +160,15 @@ public class RedisUtil {
         }
     }
 
-    public boolean sismember(String key, Object value) {
+    public Set<Object> sMembers(String key) {
+        try {
+            return redisTemplate.opsForSet().members(key);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to add to set for key: " + key, e);
+        }
+    }
+
+    public boolean dismember(String key, Object value) {
         try {
             return Boolean.TRUE.equals(redisTemplate.opsForSet().isMember(key, value));
         } catch (Exception e) {

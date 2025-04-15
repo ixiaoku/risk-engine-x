@@ -92,7 +92,7 @@ public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
             Transaction tx = (Transaction) txResult.get();
             String txHash = tx.getHash();
             // 去重检查
-            if (redisUtil.sismember(TX_SET_KEY, txHash)) {
+            if (redisUtil.dismember(TX_SET_KEY, txHash)) {
                 continue;
             }
             BigDecimal valueInEther = Convert.fromWei(tx.getValue().toString(), Convert.Unit.ETHER);
@@ -124,7 +124,7 @@ public class EthereumFetcherHandler implements ICrawlerBlockChainHandler {
 
             CrawlerTaskPO task = crawlerTaskService.getCrawlerTask(txHash, IncidentCodeEnum.TRANSFER_CHAIN.getCode(), JSON.toJSONString(dto));
             crawlerTasks.add(task);
-            redisUtil.sadd(TX_SET_KEY, txHash); // 记录已处理交易
+            redisUtil.sAdd(TX_SET_KEY, txHash); // 记录已处理交易
         }
         return crawlerTasks;
     }

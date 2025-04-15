@@ -90,7 +90,7 @@ public class BnbFetcherHandler implements ICrawlerBlockChainHandler {
             String txHash = tx.getHash();
 
             // 去重检查
-            if (redis.sismember(TX_SET_KEY, txHash)) continue;
+            if (redis.dismember(TX_SET_KEY, txHash)) continue;
 
             BigDecimal valueInBnb = Convert.fromWei(tx.getValue().toString(), Convert.Unit.ETHER);
             if (valueInBnb.compareTo(BNB_THRESHOLD) <= 0) continue;
@@ -120,7 +120,7 @@ public class BnbFetcherHandler implements ICrawlerBlockChainHandler {
 
             CrawlerTaskPO task = crawlerTaskService.getCrawlerTask(txHash, IncidentCodeEnum.TRANSFER_CHAIN.getCode(), JSON.toJSONString(dto));
             crawlerTasks.add(task);
-            redis.sadd(TX_SET_KEY, txHash);
+            redis.sAdd(TX_SET_KEY, txHash);
         }
         return crawlerTasks;
     }

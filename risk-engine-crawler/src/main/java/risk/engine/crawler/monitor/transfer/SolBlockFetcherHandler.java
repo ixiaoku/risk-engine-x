@@ -78,7 +78,7 @@ public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
     }
 
     private long getLatestSlot() throws IOException {
-        String result = OkHttpUtil.post(RPC_URL, SLOT_JSON);
+        String result = OkHttpUtil.postJson(RPC_URL, SLOT_JSON);
         if (StringUtils.isEmpty(result)) return -1;
         return JsonParser.parseString(result).getAsJsonObject().get("result").getAsLong();
     }
@@ -86,7 +86,7 @@ public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
     private JsonObject getBlockDetails(long slot) throws IOException {
         String jsonRequest = "{ \"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"getBlock\", " +
                 "\"params\": [" + slot + ", { \"encoding\": \"json\", \"transactionDetails\": \"full\", \"rewards\": false }] }";
-        String result = OkHttpUtil.post(RPC_URL, jsonRequest);
+        String result = OkHttpUtil.postJson(RPC_URL, jsonRequest);
         if (StringUtils.isEmpty(result)) return null;
         return JsonParser.parseString(result).getAsJsonObject().getAsJsonObject("result");
     }
@@ -108,7 +108,7 @@ public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
             String txHash = signatures.get(0).getAsString();
 
             // 去重检查
-            if (redisUtil.sismember(TX_SET_KEY, txHash)) return;
+            if (redisUtil.dismember(TX_SET_KEY, txHash)) return;
 
             String from = "", to = "";
             long amount = 0;
@@ -144,7 +144,7 @@ public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
 
             CrawlerTaskPO task = crawlerTaskService.getCrawlerTask(txHash, IncidentCodeEnum.TRANSFER_CHAIN.getCode(), JSON.toJSONString(dto));
             crawlerTasks.add(task);
-            redisUtil.sadd(TX_SET_KEY, txHash);
+            redisUtil.sAdd(TX_SET_KEY, txHash);
         });
         return crawlerTasks;
     }

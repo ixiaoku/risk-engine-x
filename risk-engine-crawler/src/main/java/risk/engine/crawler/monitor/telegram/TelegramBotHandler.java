@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.objects.Chat;
@@ -34,7 +33,7 @@ import java.util.concurrent.CompletableFuture;
  * @Version: 1.0
  */
 @Slf4j
-@Component
+//@Component
 public class TelegramBotHandler implements LongPollingBot, ApplicationRunner {
 
     @Resource
