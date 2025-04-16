@@ -16,7 +16,7 @@ public class EngineResultKafkaConsumer {
     @Resource
     private RiskEngineExecutorHandler riskEngineExecutorHandler;
 
-    @KafkaListener(topics = "engine_result_topic", groupId = "consumer_group_engine_result")
+    @KafkaListener(topics = "#{'${customer.kafka.topic}'}", groupId = "consumer_group_engine_result")
     public void handleCanalMessage(String message) {
         try {
             RiskExecuteEngineDTO riskExecuteEngineDTO = new Gson().fromJson(message, RiskExecuteEngineDTO.class);

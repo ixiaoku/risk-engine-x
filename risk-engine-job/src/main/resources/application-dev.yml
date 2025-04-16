@@ -16,13 +16,9 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
-rocketmq:
-  name-server: 127.0.0.1:9876
-  consumer:
-    group: consumer-group-test1
-  producer:
-    group: producer-test-group1
-    send-message-timeout: 3000
+customer:
+  kafka:
+    topic: engine_result_topic_test
 
 elasticsearch:
   url: http://106.55.233.79:9200
