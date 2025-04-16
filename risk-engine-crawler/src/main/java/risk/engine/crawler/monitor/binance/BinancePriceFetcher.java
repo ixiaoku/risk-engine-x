@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import risk.engine.common.redis.RedisUtil;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.common.util.OkHttpUtil;
 import risk.engine.db.entity.CrawlerTaskPO;
@@ -41,32 +41,33 @@ public class BinancePriceFetcher {
     @Resource
     private ICrawlerTaskService crawlerTaskService;
 
-    @Resource
-    private RedisUtil redisUtil;
+    @Resource(name = "redisTemplateString")
+    private RedisTemplate<String, String> redisTemplate;
 
     public void start() {
-        Set<Object> symbolSet = redisUtil.sMembers(REDIS_KEY);
-        if (CollectionUtils.isEmpty(symbolSet)) {
-            return;
-        }
+        Set<String> symbolSet = redisTemplate.opsForSet().members(REDIS_KEY);
+        if (CollectionUtils.isEmpty(symbolSet)) return;
         List<CrawlerTaskPO> crawlerTaskPOList = fetchPrices(symbolSet);
+        if (CollectionUtils.isEmpty(crawlerTaskPOList)) return;
+        log.info("crawlerTaskPO 保存成功; size: {}", crawlerTaskPOList.size());
         crawlerTaskService.batchInsert(crawlerTaskPOList);
     }
 
     /**
      * 请求 Binance 所有价格信息，筛选出 USDT 交易对的价格
      */
-    private List<CrawlerTaskPO> fetchPrices(Set<Object> symbolSet) {
+    private List<CrawlerTaskPO> fetchPrices(Set<String> symbolSet) {
         List<String> symbolList = symbolSet.stream().map(Object::toString).collect(Collectors.toList());
-        List<List<String>> symbols = Lists.partition(symbolList, 100);
+        List<List<String>> symbols = Lists.partition(symbolList, 80);
         List<CrawlerTaskPO> crawlerList = Lists.newArrayList();
-        symbols.forEach(list -> {
-            String url = BINANCE_TICKER_URL + "?symbols=" + JSON.toJSONString(list)  + "&windowSize=5m&type=FULL";
-            //String url = BINANCE_TICKER_URL + "?symbols=[\"BTCUSDT\",\"BNBUSDT\"]"  + "&windowSize=5m&type=FULL";
+        for (List<String> list : symbols) {
+            log.info("list：{}; size: {}", list, list.size());
+            String symbolsJson = JSON.toJSONString(list);
+            String url = BINANCE_TICKER_URL + "?symbols=" + symbolsJson + "&windowSize=5m&type=FULL";
             String json = OkHttpUtil.get(url);
             List<MarketTickerDTO> marketTickerDTOList = JSON.parseArray(json, MarketTickerDTO.class);
             if (CollectionUtils.isEmpty(marketTickerDTOList)) {
-                return;
+                continue;
             }
             List<CrawlerTaskPO> crawlerTaskPOList = marketTickerDTOList.stream().map(m -> {
                 boolean flag = m.getPriceChangePercent().compareTo(BigDecimal.ZERO) > 0;
@@ -88,7 +89,7 @@ public class BinancePriceFetcher {
                         JSON.toJSONString(m));
             }).collect(Collectors.toList());
             crawlerList.addAll(crawlerTaskPOList);
-        });
+        }
         return crawlerList;
     }
 

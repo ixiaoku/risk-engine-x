@@ -70,7 +70,7 @@ public class BinanceKlineFetcher {
     }
 
     public void start() {
-        List<String> symbols = List.of("BTCUSDT", "ETHUSDT");
+        List<String> symbols = List.of("BTCUSDT", "ETHUSDT", "BNBUSDT", "XRPUSDT", "ADAUSDT");
         String interval = "15m";
         for (String symbol : symbols) {
             List<KLineDTO> binanceKLineList = fetchKLines(symbol, interval, 4);

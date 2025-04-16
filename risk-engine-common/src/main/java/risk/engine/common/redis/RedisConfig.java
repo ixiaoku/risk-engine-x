@@ -44,4 +44,17 @@ public class RedisConfig {
         template.afterPropertiesSet();
         return template;
     }
+
+    @Bean("redisTemplateString")
+    public RedisTemplate<String, String> redisTemplateString(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, String> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        // 设置 key 和 value 的序列化方式为 String
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(new StringRedisSerializer());
+        template.afterPropertiesSet();
+        return template;
+    }
 }
