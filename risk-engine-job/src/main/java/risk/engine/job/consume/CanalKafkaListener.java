@@ -7,8 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-
 /**
  * @Author: X
  * @Date: 2025/4/12 14:28
@@ -18,7 +16,7 @@ import javax.annotation.PostConstruct;
 @Component
 public class CanalKafkaListener {
 
-    @KafkaListener(topics = "risk_binlog_topic")
+    @KafkaListener(topics = "risk_binlog_topic", groupId = "")
     public void handleCanalMessage(String message) {
         log.info("Received binlog: {}", message);
         JSONObject json = JSON.parseObject(message);
@@ -33,13 +31,6 @@ public class CanalKafkaListener {
             String key = "risk:" + table + ":" + row.getString("id");
             log.info("canal监听的数据 {}" ,row);
         }
-    }
-
-    @PostConstruct
-    public void init() {
-
-
-
     }
 
 }

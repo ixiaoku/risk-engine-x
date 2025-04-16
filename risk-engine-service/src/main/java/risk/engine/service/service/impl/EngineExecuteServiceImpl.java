@@ -9,7 +9,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Service;
 import risk.engine.common.grovvy.GroovyShellUtil;
 import risk.engine.common.redis.RedisUtil;
-import risk.engine.components.mq.RiskEngineProducer;
+import risk.engine.components.mq.RiskKafkaProducer;
 import risk.engine.db.entity.IncidentPO;
 import risk.engine.db.entity.RulePO;
 import risk.engine.dto.dto.engine.EssentialElementDTO;
@@ -23,7 +23,7 @@ import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.dto.vo.RiskEngineExecuteVO;
 import risk.engine.metric.handler.MetricHandler;
 import risk.engine.service.common.cache.GuavaIncidentRuleCache;
-import risk.engine.service.service.IRiskEngineExecuteService;
+import risk.engine.service.service.IEngineExecuteService;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -38,13 +38,13 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class RiskEngineExecuteServiceImpl implements IRiskEngineExecuteService {
+public class EngineExecuteServiceImpl implements IEngineExecuteService {
 
     @Resource
     private RedisUtil redisUtil;
 
     @Resource
-    private RiskEngineProducer producer;
+    private RiskKafkaProducer producer;
 
     @Resource
     private GuavaIncidentRuleCache guavaIncidentRuleCache;

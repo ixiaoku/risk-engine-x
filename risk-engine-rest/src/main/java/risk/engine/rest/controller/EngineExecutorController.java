@@ -11,7 +11,7 @@ import risk.engine.common.function.ValidatorHandler;
 import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.dto.vo.RiskEngineExecuteVO;
-import risk.engine.service.service.IRiskEngineExecuteService;
+import risk.engine.service.service.IEngineExecuteService;
 
 import javax.annotation.Resource;
 
@@ -24,10 +24,10 @@ import javax.annotation.Resource;
 @Slf4j
 @RestController
 @RequestMapping("/risk")
-public class RiskEngineController {
+public class EngineExecutorController {
 
     @Resource
-    private IRiskEngineExecuteService executeService;
+    private IEngineExecuteService executeService;
 
     @PostMapping("/engine")
     public RiskEngineExecuteVO execute(@RequestBody RiskEngineParam riskEngineParam) throws Exception {

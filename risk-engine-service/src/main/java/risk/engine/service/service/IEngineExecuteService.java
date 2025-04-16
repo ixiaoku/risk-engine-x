@@ -10,7 +10,7 @@ import java.util.List;
  * @Date: 2025/3/14 12:16
  * @Version: 1.0
  */
-public interface IRiskEngineExecuteService {
+public interface IEngineExecuteService {
 
     RiskEngineExecuteVO execute(RiskEngineParam riskEngineParam);
 

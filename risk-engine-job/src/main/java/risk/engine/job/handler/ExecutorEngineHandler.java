@@ -10,7 +10,7 @@ import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.dto.constant.BusinessConstant;
 import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.service.service.ICrawlerTaskService;
-import risk.engine.service.service.IRiskEngineExecuteService;
+import risk.engine.service.service.IEngineExecuteService;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -26,7 +26,7 @@ import java.util.List;
 public class ExecutorEngineHandler {
 
     @Resource
-    private IRiskEngineExecuteService engineExecuteService;
+    private IEngineExecuteService engineExecuteService;
 
     @Resource
     private ICrawlerTaskService crawlerTaskService;
