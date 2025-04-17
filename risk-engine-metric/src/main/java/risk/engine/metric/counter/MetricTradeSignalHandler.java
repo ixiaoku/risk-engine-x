@@ -1,6 +1,7 @@
 package risk.engine.metric.counter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import java.util.List;
  * @Date: 2025/4/10 11:30
  * @Version: 1.0
  */
+@Slf4j
 @Component
 public class MetricTradeSignalHandler {
 
@@ -30,7 +32,7 @@ public class MetricTradeSignalHandler {
     @Resource
     private RedisUtil redisUtil;
 
-    private static final int MAX_KLINE_LENGTH = 1000; // 最多存储 1000 条 K 线数据
+    private static final int MAX_KLINE_LENGTH = 1000;
 
     // 存储 K 线数据到 Redis
     public void storeKLine(String key, KLineDTO kLine) throws Exception {
@@ -50,7 +52,42 @@ public class MetricTradeSignalHandler {
         return kLines;
     }
 
-    // 计算 MA（移动平均线）
+    // OBV（On-Balance Volume）
+    public BigDecimal calculateOBV(List<KLineDTO> kLines, int index) {
+        if (index == 0) return BigDecimal.ZERO;
+        BigDecimal prevOBV = BigDecimal.ZERO;
+        for (int i = 1; i <= index; i++) {
+            KLineDTO curr = kLines.get(i);
+            KLineDTO prev = kLines.get(i - 1);
+            int cmp = curr.getClose().compareTo(prev.getClose());
+            if (cmp > 0) {
+                prevOBV = prevOBV.add(curr.getVolume());
+            } else if (cmp < 0) {
+                prevOBV = prevOBV.subtract(curr.getVolume());
+            }
+            // 相等则不变
+        }
+        return prevOBV;
+    }
+
+    // ASR（Average Speed Ratio）
+    public BigDecimal calculateASR(int period, List<KLineDTO> kLines, int index) {
+        if (index < period) return BigDecimal.ZERO;
+        BigDecimal change = kLines.get(index).getClose().subtract(kLines.get(index - period).getClose()).abs();
+        return change.divide(BigDecimal.valueOf(period), 8, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * MA（移动平均线）
+     * 描述：计算一段时间内的平均收盘价，用于平滑价格走势。
+     * 用法：判断趋势方向（上升/下降）。
+     * 多头信号：短期 MA 上穿长期 MA（如 MA20 上穿 MA60）称为“金叉”
+     * 空头信号：短期 MA 下穿长期 MA（如 MA20 下穿 MA60）称为“死叉”
+     * @param period 参数
+     * @param kLines k线
+     * @param index index
+     * @return 结果
+     */
     public BigDecimal calculateMA(int period, List<KLineDTO> kLines, int index) {
         if (index < period - 1) return BigDecimal.ZERO;
         BigDecimal sum = BigDecimal.ZERO;
@@ -60,7 +97,19 @@ public class MetricTradeSignalHandler {
         return sum.divide(BigDecimal.valueOf(period), 8, RoundingMode.HALF_UP);
     }
 
-    // 计算布林带
+    /**
+     *  Bollinger Bands（布林带）
+     *  描述：由中轨（SMA）、上下轨（±2σ）组成，反映价格波动范围。
+     *  用法：衡量波动性及价格是否偏离正常区间。
+     *  多头信号：价格向下轨靠近并反弹（低吸机会）
+     *  空头信号：价格向上轨靠近并回落（高抛机会）
+     *  高波动预警：带宽变宽，可能爆发趋势
+     * @param period  period
+     * @param stdDevFactor stdDevFactor
+     * @param kLines k线数据
+     * @param index index
+     * @return 结果
+     */
     public BigDecimal[] calculateBollingerBands(int period, BigDecimal stdDevFactor, List<KLineDTO> kLines, int index) {
         if (index < period - 1) return new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO};
 
@@ -83,7 +132,18 @@ public class MetricTradeSignalHandler {
         return new BigDecimal[]{middleBand, upperBand, lowerBand};
     }
 
-    // 计算 RSI
+    /**
+     *  RSI（相对强弱指数）
+     *  描述：衡量近期上涨和下跌的强度。
+     *  范围：0-100
+     *  多头信号：RSI < 30，超卖区，可能反弹
+     *  空头信号：RSI > 70，超买区，可能回调
+     *  趋势确认：持续在 50 上方为多头趋势，持续在 50 下方为空头趋势
+     * @param period period
+     * @param kLines k线数据
+     * @param index index
+     * @return 结果
+     */
     public BigDecimal calculateRSI(int period, List<KLineDTO> kLines, int index) {
         if (index < period) return BigDecimal.ZERO;
 
@@ -106,6 +166,16 @@ public class MetricTradeSignalHandler {
         return hundred.subtract(hundred.divide(BigDecimal.ONE.add(rs), 8, RoundingMode.HALF_UP));
     }
 
+    /**
+     *  成交量 MA
+     *  描述：计算平均成交量，用于判断量能变化趋势。
+     *  多头信号：当前成交量 > 均量，量价齐升，趋势强
+     *  空头信号：当前成交量 < 均量，价格可能滞涨
+     * @param period period
+     * @param kLines kLines
+     * @param index index
+     * @return 结果
+     */
     // 计算成交量均线
     public BigDecimal calculateVolumeMA(int period, List<KLineDTO> kLines, int index) {
         if (index < period - 1) return BigDecimal.ZERO;
@@ -116,7 +186,18 @@ public class MetricTradeSignalHandler {
         return sum.divide(BigDecimal.valueOf(period), 8, RoundingMode.HALF_UP);
     }
 
-    // 计算 ATR
+    /**
+     *  ATR（平均真实波幅）
+     *  描述：衡量价格波动的强度。
+     *  多空判断：
+     *  - ATR 升高：波动加大，市场可能进入趋势行情
+     *  - ATR 降低：波动收窄，市场可能进入盘整阶段
+     *  不直接判断多空，但用于结合趋势判断持仓信心
+     * @param period period
+     * @param kLines kLines
+     * @param index index
+     * @return 结果
+     */
     public BigDecimal calculateATR(int period, List<KLineDTO> kLines, int index) {
         if (index < period) return BigDecimal.ZERO;
         BigDecimal sumTR = BigDecimal.ZERO;
@@ -132,7 +213,12 @@ public class MetricTradeSignalHandler {
         return sumTR.divide(BigDecimal.valueOf(period), 8, RoundingMode.HALF_UP);
     }
 
-    // 计算 EMA（指数移动平均线，用于 MACD）
+    /**
+     * @param period period
+     * @param kLines kLines
+     * @param index index
+     * @return 结果
+     */
     private BigDecimal calculateEMA(int period, List<KLineDTO> kLines, int index) {
         if (index < period - 1) return BigDecimal.ZERO;
         BigDecimal multiplier = BigDecimal.valueOf(2).divide(BigDecimal.valueOf(period + 1), 8, RoundingMode.HALF_UP);
@@ -144,7 +230,16 @@ public class MetricTradeSignalHandler {
         return ema.setScale(8, RoundingMode.HALF_UP);
     }
 
-    // 计算 MACD
+    /**
+     *  MACD（指数移动平均线差）
+     *  描述：由快线（DIF）、慢线（DEA）、柱状图组成，用于衡量价格动能。
+     *  多头信号：DIF 上穿 DEA，柱状图转正（称为“金叉”）
+     *  空头信号：DIF 下穿 DEA，柱状图转负（称为“死叉”）
+     *  趋势强度：柱状图越大，趋势越强
+     * @param kLines kLines
+     * @param index index
+     * @return 结果
+     */
     public BigDecimal[] calculateMACD(List<KLineDTO> kLines, int index) {
         if (index < 26 + 9 - 1) return new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO};
 
@@ -176,7 +271,17 @@ public class MetricTradeSignalHandler {
         return new BigDecimal[]{macdLine, signalLine, histogram};
     }
 
-    // 计算 KDJ
+    /**
+     * KDJ（随机指标）
+     * 描述：基于 RSV（未成熟随机值）计算出 K、D、J 值，用于判断短线拐点。
+     * 多头信号：K 上穿 D，特别是处于低位（<20）时，称为“金叉”
+     * 空头信号：K 下穿 D，特别是处于高位（>80）时，称为“死叉”
+     * J > 100 或 < 0 时，视为超买或超卖极端区
+     * @param period period
+     * @param kLines kLines
+     * @param index index
+     * @return 结果
+     */
     public BigDecimal[] calculateKDJ(int period, List<KLineDTO> kLines, int index) {
         if (index < period - 1) return new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO};
 
@@ -279,6 +384,7 @@ public class MetricTradeSignalHandler {
             redisUtil.hSet(incidentCode, hashKey + ":kdjD", kdj[1]);
             redisUtil.hSet(incidentCode, hashKey + ":kdjJ", kdj[2]);
         } catch (Exception e) {
+            log.error("错误信息：{}", e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }

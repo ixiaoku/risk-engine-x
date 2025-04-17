@@ -46,7 +46,12 @@ public class BinancePriceFetcher {
 
     public void start() {
         Set<String> symbolSet = redisTemplate.opsForSet().members(REDIS_KEY);
-        if (CollectionUtils.isEmpty(symbolSet)) return;
+        if (CollectionUtils.isEmpty(symbolSet)) {
+            Set<String> symbolSets = fetchSymbols();
+            String[] symbolArray = symbolSets.toArray(new String[0]);
+            redisTemplate.opsForSet().add(REDIS_KEY, symbolArray);
+            return;
+        }
         List<CrawlerTaskPO> crawlerTaskPOList = fetchPrices(symbolSet);
         if (CollectionUtils.isEmpty(crawlerTaskPOList)) return;
         log.info("crawlerTaskPO 保存成功; size: {}", crawlerTaskPOList.size());
@@ -58,7 +63,7 @@ public class BinancePriceFetcher {
      */
     private List<CrawlerTaskPO> fetchPrices(Set<String> symbolSet) {
         List<String> symbolList = symbolSet.stream().map(Object::toString).collect(Collectors.toList());
-        List<List<String>> symbols = Lists.partition(symbolList, 80);
+        List<List<String>> symbols = Lists.partition(symbolList, 100);
         List<CrawlerTaskPO> crawlerList = Lists.newArrayList();
         for (List<String> list : symbols) {
             log.info("list：{}; size: {}", list, list.size());
@@ -78,7 +83,7 @@ public class BinancePriceFetcher {
                     m.setUpPriceChangePercent(BigDecimal.ZERO);
                     m.setDownPriceChangePercent(m.getPriceChangePercent());
                 }
-                String flowNo = m.getSymbol() + m.getOpenTime();
+                String flowNo = m.getSymbol() + ":" + m.getOpenTime();
                 AnnouncementDTO announcementDTO = new AnnouncementDTO();
                 announcementDTO.setCreatedAt(DateTimeUtil.getTimeByTimestamp(m.getOpenTime()));
                 announcementDTO.setTitle(m.getSymbol() + "5min价格异常波动（大涨大跌）");

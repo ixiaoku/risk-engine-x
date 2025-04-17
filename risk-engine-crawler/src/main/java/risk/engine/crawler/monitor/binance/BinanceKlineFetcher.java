@@ -14,6 +14,8 @@ import risk.engine.common.util.DateTimeUtil;
 import risk.engine.common.util.OkHttpUtil;
 import risk.engine.db.entity.CrawlerTaskPO;
 import risk.engine.db.entity.KLinePO;
+import risk.engine.dto.constant.BinanceConstant;
+import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.dto.dto.crawler.BinanceKLineDTO;
 import risk.engine.dto.dto.crawler.KLineDTO;
 import risk.engine.dto.dto.penalty.AnnouncementDTO;
@@ -70,20 +72,19 @@ public class BinanceKlineFetcher {
     }
 
     public void start() {
-        List<String> symbols = List.of("BTCUSDT", "ETHUSDT", "BNBUSDT", "XRPUSDT", "ADAUSDT");
-        String interval = "15m";
-        for (String symbol : symbols) {
-            List<KLineDTO> binanceKLineList = fetchKLines(symbol, interval, 4);
+        for (String symbol : BinanceConstant.SYMBOLS) {
+            List<KLineDTO> binanceKLineList = fetchKLines(symbol, BinanceConstant.INTERVAL_15M, BinanceConstant.LIMIT_100);
             if(CollectionUtils.isEmpty(binanceKLineList)) return;
             KLineDTO kLinePO = binanceKLineList.get(binanceKLineList.size() - 1);
             BinanceKLineDTO binanceKLineDTO = new BinanceKLineDTO();
             BeanUtils.copyProperties(kLinePO, binanceKLineDTO);
-            AnnouncementDTO announcement = new AnnouncementDTO();
-            announcement.setTitle("涨跌幅提醒");
+
             BigDecimal changePercent = BigDecimalNumberUtil.calcChangePercent(kLinePO.getOpen(), kLinePO.getClose());
             binanceKLineDTO.setUpChangePercent(changePercent.compareTo(BigDecimal.ZERO) > 0 ? changePercent : BigDecimal.ZERO);
             binanceKLineDTO.setDownChangePercent(changePercent.compareTo(BigDecimal.ZERO) < 0 ? changePercent : BigDecimal.ZERO);
-            String content = binanceKLineDTO.toString();
+            AnnouncementDTO announcement = new AnnouncementDTO();
+            announcement.setTitle("二级市场交易信号");
+            String content = String.format(CrawlerConstant.TRADE_DATA_BOT_TITLE, kLinePO.getSymbol(), kLinePO.getOpen(), kLinePO.getClose(), changePercent);
             announcement.setContent(content);
             announcement.setCreatedAt(DateTimeUtil.getTimeByTimestamp(kLinePO.getCloseTime()));
             binanceKLineDTO.setAnnouncement(announcement);
