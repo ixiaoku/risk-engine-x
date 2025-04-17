@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import risk.engine.components.mq.KafkaConfig;
+import risk.engine.components.kafka.KafkaConfig;
 import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;
 import risk.engine.service.handler.RiskEngineExecutorHandler;
 

@@ -1,4 +1,4 @@
-package risk.engine.components.mq;
+package risk.engine.components.kafka;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
