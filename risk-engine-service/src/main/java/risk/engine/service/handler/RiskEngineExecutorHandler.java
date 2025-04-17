@@ -14,7 +14,6 @@ import risk.engine.db.entity.PenaltyActionPO;
 import risk.engine.db.entity.PenaltyRecordPO;
 import risk.engine.dto.constant.BusinessConstant;
 import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;
-import risk.engine.dto.dto.penalty.AnnouncementDTO;
 import risk.engine.dto.dto.rule.HitRuleDTO;
 import risk.engine.dto.enums.PenaltyActionEnum;
 import risk.engine.dto.enums.PenaltyStatusEnum;
@@ -127,16 +126,13 @@ public class RiskEngineExecutorHandler {
      */
     private String getPenaltyJson (HitRuleDTO hitRuleDTO, String penaltyCode, List<PenaltyFieldVO> penaltyFieldVOList, Map<String, Object> requestPayload) {
         if (StringUtils.equals(penaltyCode, PenaltyActionEnum.BUSINESS_WECHAT_BOT.getCode())) {
-            AnnouncementDTO announcementDTO = new AnnouncementDTO();
-            announcementDTO.setTitle(hitRuleDTO.getRuleName());
             Object value = requestPayload.get("announcement");
             if (Objects.isNull(value)) {
                 return null;
             }
             JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(value));
-            announcementDTO.setCreatedAt(jsonObject.getString("createdAt"));
-            announcementDTO.setContent(jsonObject.getString("content"));
-            return JSON.toJSONString(announcementDTO);
+            jsonObject.put("title", hitRuleDTO.getRuleName());
+            return jsonObject.toJSONString();
         } else if (StringUtils.equals(penaltyCode, PenaltyActionEnum.APPEND_LIST.getCode())) {
             Map<String, Object> addListMap = new HashMap<>();
             for (PenaltyFieldVO fieldVO : penaltyFieldVOList) {
