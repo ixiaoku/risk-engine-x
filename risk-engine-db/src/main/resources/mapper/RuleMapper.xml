@@ -8,7 +8,8 @@
     <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="score" jdbcType="INTEGER" property="score" />
-    <result column="decision_result" jdbcType="VARCHAR" property="decisionResult" />
+      <result column="priority" jdbcType="INTEGER" property="priority" />
+      <result column="decision_result" jdbcType="VARCHAR" property="decisionResult" />
     <result column="expiry_time" jdbcType="INTEGER" property="expiryTime" />
     <result column="label" jdbcType="VARCHAR" property="label" />
     <result column="penalty_action" jdbcType="VARCHAR" property="penaltyAction" />
@@ -23,7 +24,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, incident_code, rule_code, rule_name, status, score, decision_result, expiry_time,
+    id, incident_code, rule_code, rule_name, status, score, priority, decision_result, expiry_time,
     label, penalty_action, version, responsible_person, operator, create_time, update_time,
     groovy_script, json_script, logic_script
   </sql>
@@ -74,13 +75,13 @@
 
   <insert id="insert" parameterType="risk.engine.db.entity.RulePO">
     insert into rule (id, incident_code, rule_code,
-                      rule_name, status, score,
+                      rule_name, status, score, priority,
                       decision_result, expiry_time, label,
                       penalty_action, version, responsible_person,
                       operator, create_time, update_time,
                       groovy_script, json_script, logic_script)
     values (#{id,jdbcType=BIGINT}, #{incidentCode,jdbcType=VARCHAR}, #{ruleCode,jdbcType=VARCHAR},
-            #{ruleName,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{score,jdbcType=INTEGER},
+            #{ruleName,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{score,jdbcType=INTEGER}, #{priority,jdbcType=INTEGER},
             #{decisionResult,jdbcType=VARCHAR}, #{expiryTime,jdbcType=INTEGER}, #{label,jdbcType=VARCHAR},
             #{penaltyAction,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{responsiblePerson,jdbcType=VARCHAR},
             #{operator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
@@ -92,6 +93,7 @@
     set rule_name = #{ruleName,jdbcType=VARCHAR},
         status = #{status,jdbcType=INTEGER},
         score = #{score,jdbcType=INTEGER},
+        priority = #{priority,jdbcType=INTEGER},
         decision_result = #{decisionResult,jdbcType=VARCHAR},
         expiry_time = #{expiryTime,jdbcType=INTEGER},
         label = #{label,jdbcType=VARCHAR},

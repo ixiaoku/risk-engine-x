@@ -68,6 +68,7 @@ public class RuleServiceImpl implements IRuleService {
         rule.setRuleName(ruleParam.getRuleName());
         rule.setStatus(ruleParam.getStatus());
         rule.setScore(ruleParam.getScore());
+        rule.setPriority(0);
         List<RuleMetricDTO> metricDTOList = getRuleMetricDTOList(ruleParam.getIncidentCode(), ruleParam.getJsonScript());
         rule.setJsonScript(new Gson().toJson(metricDTOList));
         rule.setLogicScript(ruleParam.getLogicScript());
@@ -173,6 +174,7 @@ public class RuleServiceImpl implements IRuleService {
         rule.setRuleName(ruleParam.getRuleName());
         rule.setStatus(ruleParam.getStatus());
         rule.setScore(ruleParam.getScore());
+        rule.setPriority(0);
         List<RuleMetricDTO> metricDTOList = getRuleMetricDTOList(ruleParam.getIncidentCode(), ruleParam.getJsonScript());
         rule.setJsonScript(new Gson().toJson(metricDTOList));
         rule.setLogicScript(ruleParam.getLogicScript());
@@ -210,6 +212,7 @@ public class RuleServiceImpl implements IRuleService {
         ruleVO.setRuleName(rule.getRuleName());
         ruleVO.setStatus(rule.getStatus());
         ruleVO.setScore(rule.getScore());
+        ruleVO.setPriority(rule.getPriority());
         ruleVO.setGroovyScript(rule.getGroovyScript());
         ruleVO.setJsonScript(rule.getJsonScript());
         ruleVO.setLogicScript(rule.getLogicScript());

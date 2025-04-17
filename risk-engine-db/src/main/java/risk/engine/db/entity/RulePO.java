@@ -43,6 +43,11 @@ public class RulePO {
     private Integer score;
 
     /**
+     * 优先级
+     */
+    private Integer priority;
+
+    /**
      * groovy可执行的表达式
      */
     private String groovyScript;

@@ -46,6 +46,11 @@ public class RuleParam extends PageHelperQuery {
     private Integer score;
 
     /**
+     * 优先级
+     */
+    private Integer priority;
+
+    /**
      * json结构指标
      */
     private List<RuleMetricDTO> metrics;
