@@ -236,6 +236,9 @@ public class MetricTradeSignalHandler {
      *  多头信号：DIF 上穿 DEA，柱状图转正（称为“金叉”）
      *  空头信号：DIF 下穿 DEA，柱状图转负（称为“死叉”）
      *  趋势强度：柱状图越大，趋势越强
+     *  对应 MACD 主线（DIF） macdLine
+     *  对应 DEA（Signal线） signalLine
+     *  对应柱状图 histogram
      * @param kLines kLines
      * @param index index
      * @return 结果

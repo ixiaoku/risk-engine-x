@@ -14,6 +14,8 @@ import risk.engine.db.entity.PenaltyActionPO;
 import risk.engine.db.entity.PenaltyRecordPO;
 import risk.engine.dto.constant.BusinessConstant;
 import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;
+import risk.engine.dto.dto.penalty.AnnouncementDTO;
+import risk.engine.dto.dto.rule.HitRuleDTO;
 import risk.engine.dto.enums.PenaltyActionEnum;
 import risk.engine.dto.enums.PenaltyStatusEnum;
 import risk.engine.dto.vo.PenaltyFieldVO;
@@ -96,7 +98,7 @@ public class RiskEngineExecutorHandler {
                     penaltyRecord.setPenaltyReason(penalty.getPenaltyDescription());
                     penaltyRecord.setPenaltyResult("");
                     penaltyRecord.setPenaltyDescription(penalty.getPenaltyDescription());
-                    String penaltyJson = getPenaltyJson(penalty.getPenaltyCode(), penaltyFieldVOList, executeEngineDTO.getRequestPayload());
+                    String penaltyJson = getPenaltyJson(hitOnlineRule, penalty.getPenaltyCode(), penaltyFieldVOList, executeEngineDTO.getRequestPayload());
                     penaltyRecord.setPenaltyJson(penaltyJson);
                     penaltyRecord.setStatus(PenaltyStatusEnum.WAIT.getCode());
                     penaltyRecord.setRetry(0);
@@ -123,18 +125,18 @@ public class RiskEngineExecutorHandler {
      * @param requestPayload 请求报文
      * @return 结果
      */
-    private String getPenaltyJson (String penaltyCode, List<PenaltyFieldVO> penaltyFieldVOList, Map<String, Object> requestPayload) {
+    private String getPenaltyJson (HitRuleDTO hitRuleDTO, String penaltyCode, List<PenaltyFieldVO> penaltyFieldVOList, Map<String, Object> requestPayload) {
         if (StringUtils.equals(penaltyCode, PenaltyActionEnum.BUSINESS_WECHAT_BOT.getCode())) {
-            Map<String, Object> businessWeChatMap = new HashMap<>();
+            AnnouncementDTO announcementDTO = new AnnouncementDTO();
+            announcementDTO.setTitle(hitRuleDTO.getRuleName());
             Object value = requestPayload.get("announcement");
             if (Objects.isNull(value)) {
                 return null;
             }
             JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(value));
-            for (PenaltyFieldVO fieldVO : penaltyFieldVOList) {
-                businessWeChatMap.put(fieldVO.getFieldCode(), jsonObject.get(fieldVO.getFieldCode()));
-            }
-            return JSON.toJSONString(businessWeChatMap);
+            announcementDTO.setCreatedAt(jsonObject.getString("createdAt"));
+            announcementDTO.setContent(jsonObject.getString("content"));
+            return JSON.toJSONString(announcementDTO);
         } else if (StringUtils.equals(penaltyCode, PenaltyActionEnum.APPEND_LIST.getCode())) {
             Map<String, Object> addListMap = new HashMap<>();
             for (PenaltyFieldVO fieldVO : penaltyFieldVOList) {
