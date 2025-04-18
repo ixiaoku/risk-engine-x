@@ -163,7 +163,7 @@ public class MetricHandler {
             KLineDTO kLineDTO = JSON.parseObject(JSON.toJSONString(paramMap), KLineDTO.class);
             metricTradeSignalHandler.calculateAndStoreIndicators(incidentCode, kLineDTO);
             for (RuleMetricDTO metric : metrics) {
-                Object value = redisUtil.hget(incidentCode,kLineDTO.getOpenTime() + ":" + metric.getMetricCode());
+                Object value = redisUtil.hGet(incidentCode,kLineDTO.getOpenTime() + ":" + metric.getMetricCode());
                 result.put(metric.getMetricCode(), value);
             }
         }

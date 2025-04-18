@@ -83,16 +83,13 @@ public class BinanceKlineFetcher {
             binanceKLineDTO.setUpChangePercent(changePercent.compareTo(BigDecimal.ZERO) > 0 ? changePercent : BigDecimal.ZERO);
             binanceKLineDTO.setDownChangePercent(changePercent.compareTo(BigDecimal.ZERO) < 0 ? changePercent : BigDecimal.ZERO);
             AnnouncementDTO announcement = new AnnouncementDTO();
-            announcement.setTitle("二级市场交易信号");
             String content = String.format(CrawlerConstant.TRADE_DATA_BOT_TITLE, kLinePO.getSymbol(), kLinePO.getOpen(), kLinePO.getClose(), changePercent);
             announcement.setContent(content);
             announcement.setCreatedAt(DateTimeUtil.getTimeByTimestamp(kLinePO.getCloseTime()));
             binanceKLineDTO.setAnnouncement(announcement);
-            CrawlerTaskPO crawlerTaskPO = crawlerTaskService.getCrawlerTask(kLinePO.getSymbol() + kLinePO.getOpenTime(),
-                    IncidentCodeEnum.TRADE_QUANT_DATA.getCode(), JSON.toJSONString(binanceKLineDTO)
-            );
+            String flowNo = kLinePO.getSymbol() + ":" + kLinePO.getOpenTime();
+            CrawlerTaskPO crawlerTaskPO = crawlerTaskService.getCrawlerTask(flowNo, IncidentCodeEnum.TRADE_QUANT_DATA.getCode(), JSON.toJSONString(binanceKLineDTO));
             if(Objects.isNull(crawlerTaskPO)) return;
-
             List<KLinePO> kLinePOList = binanceKLineList.stream()
                     .map(kLineDTO -> {
                         KLinePO kLine = new KLinePO();

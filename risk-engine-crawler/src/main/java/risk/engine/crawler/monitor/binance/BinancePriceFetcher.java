@@ -86,7 +86,6 @@ public class BinancePriceFetcher {
                 String flowNo = m.getSymbol() + ":" + m.getOpenTime();
                 AnnouncementDTO announcementDTO = new AnnouncementDTO();
                 announcementDTO.setCreatedAt(DateTimeUtil.getTimeByTimestamp(m.getOpenTime()));
-                announcementDTO.setTitle(m.getSymbol() + "5min价格异常波动（大涨大跌）");
                 String content = String.format(CrawlerConstant.WINDOW_PRICE_CHANGE_STATISTICS_CONTENT, m.getSymbol(), m.getPriceChange(), m.getPriceChangePercent() + "%", m.getVolume(), m.getLastPrice());
                 announcementDTO.setContent(content);
                 m.setAnnouncement(announcementDTO);

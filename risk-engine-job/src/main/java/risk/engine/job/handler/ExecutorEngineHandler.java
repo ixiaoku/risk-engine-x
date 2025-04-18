@@ -41,7 +41,7 @@ public class ExecutorEngineHandler {
             if (CollectionUtils.isEmpty(crawlerTasks)) {
                 return;
             }
-            Lists.partition(crawlerTasks, 100)
+            Lists.partition(crawlerTasks, 1000)
                     .forEach(taskList -> taskList.forEach(task -> {
                         RiskEngineParam engineParam = new RiskEngineParam();
                         engineParam.setRequestPayload(task.getRequestPayload());

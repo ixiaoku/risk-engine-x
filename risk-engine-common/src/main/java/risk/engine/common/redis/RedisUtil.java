@@ -110,7 +110,7 @@ public class RedisUtil {
         }
     }
 
-    public Object hget(String key, String field) {
+    public Object hGet(String key, String field) {
         try {
             return redisTemplate.opsForHash().get(key, field);
         } catch (Exception e) {

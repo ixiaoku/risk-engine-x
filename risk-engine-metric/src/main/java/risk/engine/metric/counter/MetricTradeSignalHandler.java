@@ -359,6 +359,8 @@ public class MetricTradeSignalHandler {
 
             int index = kLines.size() - 1;
             long timestamp = newKLine.getOpenTime();
+            // 存储指标到 Redis Hash
+            String hashKey = String.valueOf(timestamp);
 
             // 计算指标
             BigDecimal ma20 = calculateMA(20, kLines, index);
@@ -370,8 +372,21 @@ public class MetricTradeSignalHandler {
             BigDecimal[] macd = calculateMACD(kLines, index);
             BigDecimal[] kdj = calculateKDJ(9, kLines, index);
 
-            // 存储指标到 Redis Hash
-            String hashKey = String.valueOf(timestamp);
+            redisUtil.hSet(incidentCode, hashKey + ":preMa20", redisUtil.hGet(incidentCode, hashKey + ":ma20"));
+            redisUtil.hSet(incidentCode, hashKey + ":preMa60", redisUtil.hGet(incidentCode, hashKey + ":ma60"));
+            redisUtil.hSet(incidentCode, hashKey + ":preMiddle", redisUtil.hGet(incidentCode, hashKey + ":middle"));
+            redisUtil.hSet(incidentCode, hashKey + ":preUpper", redisUtil.hGet(incidentCode, hashKey + ":upper"));
+            redisUtil.hSet(incidentCode, hashKey + ":preLower", redisUtil.hGet(incidentCode, hashKey + ":lower"));
+            redisUtil.hSet(incidentCode, hashKey + ":preRsi", redisUtil.hGet(incidentCode, hashKey + ":rsi"));
+            redisUtil.hSet(incidentCode, hashKey + ":preVolumeMA", redisUtil.hGet(incidentCode, hashKey + ":volumeMA"));
+            redisUtil.hSet(incidentCode, hashKey + ":preAtr", redisUtil.hGet(incidentCode, hashKey + ":atr"));
+            redisUtil.hSet(incidentCode, hashKey + ":preMacdLine", redisUtil.hGet(incidentCode, hashKey + ":macdLine"));
+            redisUtil.hSet(incidentCode, hashKey + ":preMacdSignal", redisUtil.hGet(incidentCode, hashKey + ":macdSignal"));
+            redisUtil.hSet(incidentCode, hashKey + ":preMacdHistogram", redisUtil.hGet(incidentCode, hashKey + ":macdHistogram"));
+            redisUtil.hSet(incidentCode, hashKey + ":preKdjK", redisUtil.hGet(incidentCode, hashKey + ":kdjK"));
+            redisUtil.hSet(incidentCode, hashKey + ":preKdjD", redisUtil.hGet(incidentCode, hashKey + ":kdjD"));
+            redisUtil.hSet(incidentCode, hashKey + ":preKdjJ", redisUtil.hGet(incidentCode, hashKey + ":kdjJ"));
+
             redisUtil.hSet(incidentCode, hashKey + ":ma20", ma20);
             redisUtil.hSet(incidentCode, hashKey + ":ma60", ma60);
             redisUtil.hSet(incidentCode, hashKey + ":middle", bollingerBands[0]);
@@ -386,6 +401,7 @@ public class MetricTradeSignalHandler {
             redisUtil.hSet(incidentCode, hashKey + ":kdjK", kdj[0]);
             redisUtil.hSet(incidentCode, hashKey + ":kdjD", kdj[1]);
             redisUtil.hSet(incidentCode, hashKey + ":kdjJ", kdj[2]);
+
         } catch (Exception e) {
             log.error("错误信息：{}", e.getMessage(), e);
             throw new RuntimeException(e);
