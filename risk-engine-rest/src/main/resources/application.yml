@@ -1,6 +1,6 @@
 spring:
   application:
-    name: risk-engine-x
+    name: RISK-ENGINE-X-REST
   profiles:
     active: dev
 

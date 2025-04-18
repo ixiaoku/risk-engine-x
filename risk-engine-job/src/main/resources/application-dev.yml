@@ -41,3 +41,7 @@ xxl:
       logpath: /Users/dongchunrong/Documents/project/data/logs/risk-engine-job  # 日志存储路径
       logretentiondays: 7  # 日志保留天数
 
+logging:
+  file:
+    path: /Users/dongchunrong/Documents/project/data/logs
+

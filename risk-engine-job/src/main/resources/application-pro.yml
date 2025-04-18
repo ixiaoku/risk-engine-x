@@ -37,3 +37,7 @@ xxl:
       address: http://43.163.107.28:9999 # 可选，自动注册时留空
       logpath: /opt/risk-engine-x/logs/risk-engine-job  # 日志存储路径
       logretentiondays: 3  # 日志保留天数
+
+logging:
+  file:
+    path: /app/logs
