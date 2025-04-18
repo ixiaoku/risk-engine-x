@@ -141,7 +141,6 @@ public class EngineResultServiceImpl implements IEngineResultService {
                     } else {
                         throw new RuntimeException();
                     }
-                    log.info("ruleScript = {}", ruleScript);
                     Script script = groovyShell.parse(ruleScript);
                     boolean resultFlag = GroovyShellUtil.runGroovy(script, map);
                     LinkedHashMap<String, Object> conditionMap = new LinkedHashMap<>();

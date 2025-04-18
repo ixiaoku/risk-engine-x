@@ -84,7 +84,6 @@ public class TwitterCrawlerUserHandler {
                 .GET()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        log.info("返回详情： {}", JSON.toJSONString(response));
         if (response.statusCode() != 200) {
             throw new RuntimeException("获取推文失败，状态码: " + response.statusCode() + ", 响应: " + response.body());
         }

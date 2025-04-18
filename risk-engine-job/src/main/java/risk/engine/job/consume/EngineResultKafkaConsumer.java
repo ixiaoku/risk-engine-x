@@ -21,7 +21,6 @@ public class EngineResultKafkaConsumer {
         try {
             RiskExecuteEngineDTO riskExecuteEngineDTO = new Gson().fromJson(message, RiskExecuteEngineDTO.class);
             riskEngineExecutorHandler.saveEngineResult(riskExecuteEngineDTO);
-            log.info("Consume success EngineResult saved to rocketmq");
         } catch (Exception e) {
             log.error("kafka消息失败 错误信息：{}", e.getMessage(), e);
             throw new RuntimeException(e);

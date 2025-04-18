@@ -89,11 +89,9 @@ public class EngineExecuteServiceImpl implements IEngineExecuteService {
             //查询事件下的策略
             List<RulePO> ruleList = guavaIncidentRuleCache.getCacheRuleList(riskEngineParam.getIncidentCode());
             if  (CollectionUtils.isEmpty(ruleList)) {
+                log.error("Incident rule list is empty {}", riskEngineParam.getIncidentCode());
                 return result;
             }
-            long mysqlStartTime = System.currentTimeMillis();
-            log.info("查询mysql 获取 Rule 耗时:{}", mysqlStartTime - startTime);
-
             //二、规则执行
             //上线规则 执行
             JSONObject paramMap = JSON.parseObject(riskEngineParam.getRequestPayload());
@@ -119,8 +117,6 @@ public class EngineExecuteServiceImpl implements IEngineExecuteService {
                 hitRule = hitOnlineRuleList.get(0);
                 result.setDecisionResult(hitRule.getDecisionResult());
             }
-            long ruleStartTime = System.currentTimeMillis();
-            log.info(" Rule 脚本执行 耗时:{}", ruleStartTime - mysqlStartTime);
             Long executionTime = System.currentTimeMillis() - startTime;
             RiskExecuteEngineDTO executeEngineDTO = getRiskExecuteEngineDTO(result, riskEngineParam, incident.getIncidentName(), paramMap,
                     hitRule, hitOnlineRuleList, hitMockRuleList, executionTime, metricMap);

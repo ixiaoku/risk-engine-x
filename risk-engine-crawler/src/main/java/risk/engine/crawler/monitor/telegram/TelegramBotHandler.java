@@ -56,8 +56,6 @@ public class TelegramBotHandler implements LongPollingBot, ApplicationRunner {
 
     @Override
     public void onUpdateReceived(Update update) {
-        log.info("update receive: {}", JSON.toJSONString(update));
-
         List<CrawlerTaskPO> crawlerTaskList = new ArrayList<>();
 
         // 监听频道消息
@@ -113,7 +111,6 @@ public class TelegramBotHandler implements LongPollingBot, ApplicationRunner {
             if (Objects.nonNull(user)) {
                 senderUsername = user.getUserName();
                 if (USERNAME_LIST.contains(senderUsername)) {
-                    log.info("监听到用户发言 - 用户名：{}, 消息内容：{}", senderUsername, messageText);
                     processMessage(message, crawlerTaskList, messageText);
                 }
             }
@@ -124,7 +121,6 @@ public class TelegramBotHandler implements LongPollingBot, ApplicationRunner {
                 senderUsername = senderChat.getUserName();
                 isBotMessage = senderChat.isGroupChat();  // 检查是否为 Bot
                 if (isBotMessage && BOT_USERNAME_LIST.contains(senderUsername)) {
-                    log.info("监听到 Bot 发言 - Bot 用户名：{}, 消息内容：{}", senderUsername, messageText);
                     processMessage(message, crawlerTaskList, messageText);
                 }
             }
@@ -133,8 +129,7 @@ public class TelegramBotHandler implements LongPollingBot, ApplicationRunner {
             if (StringUtils.isEmpty(senderUsername)) {
                 String authorSignature = message.getAuthorSignature();
                 if (StringUtils.isNotEmpty(authorSignature)) {
-                    log.info("监听到匿名消息 - AuthorSignature：{}, 消息内容：{}", authorSignature, messageText);
-                    // 如果需要处理匿名消息，可以在这里添加逻辑
+
                 }
             }
         }

@@ -66,7 +66,6 @@ public class BinancePriceFetcher {
         List<List<String>> symbols = Lists.partition(symbolList, 100);
         List<CrawlerTaskPO> crawlerList = Lists.newArrayList();
         for (List<String> list : symbols) {
-            log.info("list：{}; size: {}", list, list.size());
             String symbolsJson = JSON.toJSONString(list);
             String url = BINANCE_TICKER_URL + "?symbols=" + symbolsJson + "&windowSize=5m&type=FULL";
             String json = OkHttpUtil.get(url);

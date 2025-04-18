@@ -64,7 +64,6 @@ public class GuavaMetricCache {
             ConcurrentHashMap<String, List<MetricDTO>> newData = selectMetricPOList();
             metricCache.invalidateAll();
             metricCache.putAll(newData);
-            log.info("Metric缓存刷新完毕，条数：{}", newData.size());
         }).exceptionally(ex -> {
             log.error("刷新缓存 异步任务失败, 异常: {}", ex.getMessage(), ex);
             return null;
