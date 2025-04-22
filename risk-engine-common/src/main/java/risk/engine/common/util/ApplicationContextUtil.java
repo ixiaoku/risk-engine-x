@@ -20,7 +20,6 @@ public class ApplicationContextUtil {
 
     public Object getBeanByClassName(String className) {
         try {
-            // 尝试从 Spring 容器获取 Bean
             Class<?> clazz = Class.forName(className);
             return applicationContext.getBean(clazz);
         } catch (Exception e) {

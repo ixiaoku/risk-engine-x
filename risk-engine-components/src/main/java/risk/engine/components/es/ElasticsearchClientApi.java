@@ -87,6 +87,7 @@ public class ElasticsearchClientApi {
     ) {
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.query(boolQuery)
+                .trackTotalHits(true)
                 .size(0);
         if (aggregationBuilder != null) {
             sourceBuilder.aggregation(aggregationBuilder);

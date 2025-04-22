@@ -24,8 +24,6 @@ public class RedisUtil {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
-//    @Resource
-//    private RedissonClient redissonClient;
 
     public void set(String key, Object value) {
         try {
