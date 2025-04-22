@@ -24,6 +24,7 @@ import risk.engine.dto.param.RiskEngineParam;
 import risk.engine.dto.vo.RiskEngineExecuteVO;
 import risk.engine.metric.handler.MetricHandler;
 import risk.engine.service.common.cache.GuavaIncidentRuleCache;
+import risk.engine.service.service.IAlarmRecordService;
 import risk.engine.service.service.IEngineExecuteService;
 
 import javax.annotation.Resource;
@@ -56,6 +57,9 @@ public class EngineExecuteServiceImpl implements IEngineExecuteService {
     @Resource
     private KafkaConfig kafkaConfig;
 
+    @Resource
+    private IAlarmRecordService alarmRecordService;
+
     /**
      * 引擎执行 主逻辑
      * @param riskEngineParam 业务参数
@@ -68,6 +72,9 @@ public class EngineExecuteServiceImpl implements IEngineExecuteService {
         RiskEngineExecuteVO result = new RiskEngineExecuteVO();
         result.setDecisionResult(RuleDecisionResultEnum.SUCCESS.getCode());
         try {
+            if(true) {
+                throw new RuntimeException("测试信息抛异常");
+            }
             //一、幂等性、获取事件和规则
             String key = riskEngineParam.getIncidentCode() + ":" + riskEngineParam.getFlowNo();
             Boolean isExisting = redisUtil.setNX(key, "EngineExecutorLock", 3600);
@@ -134,6 +141,7 @@ public class EngineExecuteServiceImpl implements IEngineExecuteService {
             return result;
         } catch (Exception e) {
             log.error("引擎执行 错误信息: {}, 事件code: {}, ", e.getMessage(), riskEngineParam.getIncidentCode(), e);
+            alarmRecordService.insertAsync(e.getMessage(), JSON.toJSONString(e.getStackTrace()));
             return result;
         }
     }

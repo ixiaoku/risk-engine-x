@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="risk.engine.db.dao.AlarmRecordPOMapper">
+  <resultMap id="BaseResultMap" type="risk.engine.db.entity.AlarmRecordPO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="env" jdbcType="VARCHAR" property="env" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="serve_name" jdbcType="VARCHAR" property="serveName" />
+    <result column="alarm_type" jdbcType="VARCHAR" property="alarmType" />
+    <result column="alarm_level" jdbcType="VARCHAR" property="alarmLevel" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="retry" jdbcType="TINYINT" property="retry" />
+    <result column="channel" jdbcType="VARCHAR" property="channel" />
+    <result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="risk.engine.db.entity.AlarmRecordPO">
+    <result column="message" jdbcType="LONGVARCHAR" property="message" />
+    <result column="stack" jdbcType="LONGVARCHAR" property="stack" />
+    <result column="extra_data" jdbcType="LONGVARCHAR" property="extraData" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, env, url, serve_name, alarm_type, alarm_level, status, retry, channel, message, stack, extra_data,
+    send_time, create_time, update_time
+  </sql>
+
+  <select id="selectByExample" parameterType="risk.engine.db.entity.AlarmRecordPO" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from alarm_record
+    <where>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER}
+      </if>
+      <if test="retry != null ">
+        and retry &lt; #{retry,jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    from alarm_record
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <insert id="insert" parameterType="risk.engine.db.entity.AlarmRecordPO">
+    insert into alarm_record (id, env, url, serve_name,
+      alarm_type, alarm_level, status, 
+      retry, channel, send_time, 
+      create_time, update_time, message, 
+      stack, extra_data)
+    values (#{id,jdbcType=BIGINT}, #{env,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{serveName,jdbcType=VARCHAR},
+      #{alarmType,jdbcType=VARCHAR}, #{alarmLevel,jdbcType=VARCHAR}, #{status,jdbcType=BIT}, 
+      #{retry,jdbcType=TINYINT}, #{channel,jdbcType=VARCHAR}, #{sendTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{message,jdbcType=LONGVARCHAR}, 
+      #{stack,jdbcType=LONGVARCHAR}, #{extraData,jdbcType=LONGVARCHAR})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="risk.engine.db.entity.AlarmRecordPO">
+    update alarm_record
+    set status = #{status,jdbcType=BIT},
+      retry = #{retry,jdbcType=TINYINT},
+      send_time = #{sendTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

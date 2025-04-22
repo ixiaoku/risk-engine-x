@@ -9,7 +9,7 @@
     <context id="MySQLContext" targetRuntime="MyBatis3">
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://106.55.233.79:3306/risk?useUnicode=true&amp;characterEncoding=UTF-8&amp;serverTimezone=UTC"
+                        connectionURL="jdbc:mysql://43.163.107.28:3306/risk?useUnicode=true&amp;characterEncoding=UTF-8&amp;serverTimezone=UTC"
                         userId="dcr"
                         password="dcr">
         </jdbcConnection>
@@ -45,7 +45,8 @@
 <!--        <table tableName="metric" domainObjectName="Indicator" />-->
 
 <!--        <table tableName="crawler_task" domainObjectName="CrawlerTask" />-->
-        <table tableName="k_line" domainObjectName="KLine" />
+<!--        <table tableName="k_line" domainObjectName="KLine" />-->
+        <table tableName="alarm_record" domainObjectName="AlarmRecordPO" />
 
         <!-- 可以添加多个<table>元素来指定多个表 -->
     </context>
