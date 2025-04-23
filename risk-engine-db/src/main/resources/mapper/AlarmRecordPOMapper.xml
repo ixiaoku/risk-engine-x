@@ -29,9 +29,6 @@
 
   <select id="selectByExample" parameterType="risk.engine.db.entity.AlarmRecordPO" resultMap="BaseResultMap">
     select
-    <if test="distinct">
-      distinct
-    </if>
     <include refid="Base_Column_List" />
     from alarm_record
     <where>
@@ -42,13 +39,6 @@
         and retry &lt; #{retry,jdbcType=INTEGER}
       </if>
     </where>
-  </select>
-
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
-    select 
-    <include refid="Base_Column_List" />
-    from alarm_record
-    where id = #{id,jdbcType=BIGINT}
   </select>
 
   <insert id="insert" parameterType="risk.engine.db.entity.AlarmRecordPO">

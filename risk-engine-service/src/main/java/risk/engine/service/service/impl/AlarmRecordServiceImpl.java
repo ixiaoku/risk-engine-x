@@ -3,13 +3,16 @@ package risk.engine.service.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import risk.engine.common.util.DateTimeUtil;
 import risk.engine.db.dao.AlarmRecordPOMapper;
 import risk.engine.db.entity.AlarmRecordPO;
+import risk.engine.dto.constant.CrawlerConstant;
 import risk.engine.service.service.IAlarmRecordService;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @Author: X
@@ -40,7 +43,7 @@ public class AlarmRecordServiceImpl implements IAlarmRecordService {
     }
 
     @Override
-    public void insertAsync(String message, String stack) {
+    public void insertAsync(String title, String stack) {
         AlarmRecordPO alarmRecordPO = new AlarmRecordPO();
         alarmRecordPO.setEnv(environment);
         alarmRecordPO.setUrl("https://open.larksuite.com/open-apis/bot/v2/hook/a8dbd31a-9c38-4960-8b5f-adba3766e2e5");
@@ -50,19 +53,18 @@ public class AlarmRecordServiceImpl implements IAlarmRecordService {
         alarmRecordPO.setStatus(2);
         alarmRecordPO.setRetry(0);
         alarmRecordPO.setChannel("lark");
+        String message = String.format(CrawlerConstant.SYSTEM_ALARM_CONTENT, serveName, environment, DateTimeUtil.getCurrentDateTime(), title, stack);
         alarmRecordPO.setMessage(message);
         alarmRecordPO.setStack(stack);
         alarmRecordPO.setExtraData(null);
         alarmRecordPO.setCreateTime(LocalDateTime.now());
         alarmRecordPO.setUpdateTime(LocalDateTime.now());
-        int size = alarmRecordPOMapper.insert(alarmRecordPO);
-        System.out.println("Alarm record size: " + size);
-//        CompletableFuture
-//                .runAsync(() -> alarmRecordPOMapper.insert(alarmRecordPO))
-//                .exceptionally(ex -> {
-//                    log.error("保存告警记录 异步任务失败, 异常: {}", ex.getMessage(), ex);
-//                    return null;
-//                });
+        CompletableFuture
+                .runAsync(() -> alarmRecordPOMapper.insert(alarmRecordPO))
+                .exceptionally(ex -> {
+                    log.error("保存告警记录 异步任务失败, 异常: {}", ex.getMessage(), ex);
+                    return null;
+                });
     }
 
     @Override

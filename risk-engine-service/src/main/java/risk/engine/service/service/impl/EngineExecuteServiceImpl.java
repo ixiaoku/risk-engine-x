@@ -6,6 +6,7 @@ import groovy.lang.Script;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Service;
 import risk.engine.common.grovvy.GroovyShellUtil;
 import risk.engine.common.redis.RedisUtil;
@@ -72,9 +73,6 @@ public class EngineExecuteServiceImpl implements IEngineExecuteService {
         RiskEngineExecuteVO result = new RiskEngineExecuteVO();
         result.setDecisionResult(RuleDecisionResultEnum.SUCCESS.getCode());
         try {
-            if(true) {
-                throw new RuntimeException("测试信息抛异常");
-            }
             //一、幂等性、获取事件和规则
             String key = riskEngineParam.getIncidentCode() + ":" + riskEngineParam.getFlowNo();
             Boolean isExisting = redisUtil.setNX(key, "EngineExecutorLock", 3600);
@@ -141,7 +139,7 @@ public class EngineExecuteServiceImpl implements IEngineExecuteService {
             return result;
         } catch (Exception e) {
             log.error("引擎执行 错误信息: {}, 事件code: {}, ", e.getMessage(), riskEngineParam.getIncidentCode(), e);
-            alarmRecordService.insertAsync(e.getMessage(), JSON.toJSONString(e.getStackTrace()));
+            alarmRecordService.insertAsync("引擎执行 错误信息 事件code:" + riskEngineParam.getIncidentCode(), ExceptionUtils.getStackTrace(e));
             return result;
         }
     }

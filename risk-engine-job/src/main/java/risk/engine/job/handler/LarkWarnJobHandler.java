@@ -15,7 +15,7 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @Component
-public class LarkWarnHandler {
+public class LarkWarnJobHandler {
 
     @Resource
     private AlarmRecordTask alarmRecordTask;

@@ -15,7 +15,7 @@ public interface IAlarmRecordService {
 
     boolean update(AlarmRecordPO alarmRecord);
 
-    void insertAsync(String message, String stack);
+    void insertAsync(String title, String stack);
 
     List<AlarmRecordPO> selectByExample(AlarmRecordPO example);
 

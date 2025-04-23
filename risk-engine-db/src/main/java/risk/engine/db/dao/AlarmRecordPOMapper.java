@@ -10,7 +10,5 @@ public interface AlarmRecordPOMapper {
 
     List<AlarmRecordPO> selectByExample(AlarmRecordPO example);
 
-    AlarmRecordPO selectByPrimaryKey(Long id);
-
     int updateByPrimaryKey(AlarmRecordPO record);
 }

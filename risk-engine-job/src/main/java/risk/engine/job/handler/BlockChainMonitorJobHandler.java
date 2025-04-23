@@ -17,7 +17,7 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @Component
-public class BlockChainMonitorHandler {
+public class BlockChainMonitorJobHandler {
 
     @Resource
     private EthereumFetcherHandler ethereumFetcherHandler;

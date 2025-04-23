@@ -16,7 +16,7 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @Component
-public class ExecutorPenaltyHandler {
+public class ExecutorPenaltyJobHandler {
 
     @Resource
     private PenaltyExecuteTask penaltyExecuteTask;

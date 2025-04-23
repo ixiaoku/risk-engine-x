@@ -32,10 +32,14 @@ public interface CrawlerConstant {
             "\uD83D\uDD25 【内容】: %s \n" +
             "\uD83D\uDDD3 【时间】: %s \n";
 
-    String SYSTEM_ALARM_CONTENT = "\uD83D\uDEA8 【系统告警通知】\n" +
-            "\uD83D\uDD14 【服务名称】: %s \n" +
+    String SYSTEM_ALARM_CONTENT =
+            "\uD83D\uDEA8 【系统告警】\n" +
+            "\uD83D\uDD14 【服务】: %s \n" +
             "\uD83D\uDD25 【环境】: %s \n" +
-            "\uD83D\uDDD3 【内容】: %s \n";
+            "\uD83D\uDCCB 【时间】: %s \n" +
+            "\uD83D\uDE80 【标题】: %s \n" +
+            "\uD83D\uDEA8 【错误】: %s \n"
+            ;
 
     String ADDRESS_BOT_TITLE = "链名称：%s，发送地址: %s ，收款地址：%s，数量：%s";
 
