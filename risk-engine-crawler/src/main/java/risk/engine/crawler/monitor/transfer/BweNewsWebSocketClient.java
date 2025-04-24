@@ -19,6 +19,7 @@ import risk.engine.service.service.ICrawlerTaskService;
 
 import javax.annotation.Resource;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 /**
@@ -36,13 +37,13 @@ public class BweNewsWebSocketClient extends WebSocketClient implements Applicati
     @Resource
     private IAlarmRecordService alarmRecordService;
 
-    public BweNewsWebSocketClient(URI serverUri) {
-        super(serverUri);
+    public BweNewsWebSocketClient() throws URISyntaxException {
+        super(new URI("wss://bwenews-api.bwe-ws.com/ws"));;
     }
 
     @Override
     public void onOpen(ServerHandshake handshake) {
-        System.out.println("✅ Connected to BWEnews WebSocket.");
+        log.info("Connected to BWEnews WebSocket.");
     }
 
     @Override
@@ -86,9 +87,7 @@ public class BweNewsWebSocketClient extends WebSocketClient implements Applicati
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
-        URI uri = new URI("wss://bwenews-api.bwe-ws.com/ws");
-        BweNewsWebSocketClient client = new BweNewsWebSocketClient(uri);
-        client.connect();
+    public void run(ApplicationArguments args) {
+        this.connect();
     }
 }
