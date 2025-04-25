@@ -3,6 +3,8 @@ package risk.engine.dto.dto.crawler;
 import lombok.Data;
 import risk.engine.dto.dto.penalty.AnnouncementDTO;
 
+import java.math.BigDecimal;
+
 /**
  * @Author: X
  * @Date: 2025/4/25 16:42
@@ -19,27 +21,27 @@ public class FundingRateDTO {
     /**
      * 标记价格，用于计算资金费率等。
      */
-    private String markPrice;
+    private BigDecimal markPrice;
 
     /**
      * 指数价格，通常用于参考的市场价格。
      */
-    private String indexPrice;
+    private BigDecimal indexPrice;
 
     /**
      * 预估结算价，仅在交割开始前最后一小时有意义。
      */
-    private String estimatedSettlePrice;
+    private BigDecimal estimatedSettlePrice;
 
     /**
      * 最近更新的资金费率，用于计算资金费用。
      */
-    private String lastFundingRate;
+    private BigDecimal lastFundingRate;
 
     /**
      * 标的资产基础利率，通常用于计算资金费用的一部分。
      */
-    private String interestRate;
+    private BigDecimal interestRate;
 
     /**
      * 下次资金费时间的时间戳，单位为毫秒。
