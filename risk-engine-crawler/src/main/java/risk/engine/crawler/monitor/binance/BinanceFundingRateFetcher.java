@@ -16,6 +16,7 @@ import risk.engine.dto.enums.IncidentCodeEnum;
 import risk.engine.service.service.ICrawlerTaskService;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -44,7 +45,8 @@ public class BinanceFundingRateFetcher {
         for (FundingRateDTO fundingRateDTO : fundingRateDTOS) {
             AnnouncementDTO announcementDTO = new AnnouncementDTO();
             announcementDTO.setCreatedAt(DateTimeUtil.getTimeByTimestamp(fundingRateDTO.getTime()));
-            String content = String.format(CrawlerConstant.CONTRACT_FUNDING_RATE_CONTENT, fundingRateDTO.getSymbol(), fundingRateDTO.getLastFundingRate(), fundingRateDTO.getMarkPrice(), fundingRateDTO.getIndexPrice(), DateTimeUtil.getTimeByTimestamp(fundingRateDTO.getNextFundingTime()));
+            String lastFundingRate = fundingRateDTO.getLastFundingRate().multiply(new BigDecimal(100)) + "%";
+            String content = String.format(CrawlerConstant.CONTRACT_FUNDING_RATE_CONTENT, fundingRateDTO.getSymbol(), lastFundingRate, fundingRateDTO.getMarkPrice(), fundingRateDTO.getIndexPrice(), DateTimeUtil.getTimeByTimestamp(fundingRateDTO.getNextFundingTime()));
             announcementDTO.setContent(content);
             fundingRateDTO.setAnnouncement(announcementDTO);
             String flowNo = fundingRateDTO.getSymbol() + fundingRateDTO.getTime();
