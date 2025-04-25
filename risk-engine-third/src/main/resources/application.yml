@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: RISK-ENGINE-X-THIRD
+
+server:
+  port: 8090
+  servlet:
+    context-path: /gewe
+
+

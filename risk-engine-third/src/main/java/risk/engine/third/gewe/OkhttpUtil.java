@@ -1,4 +1,4 @@
-package risk.engine.common.wechat.base;
+package risk.engine.third.gewe;
 
 import com.alibaba.fastjson2.JSONObject;
 import okhttp3.*;

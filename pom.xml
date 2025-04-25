@@ -20,6 +20,7 @@
     <module>risk-engine-job</module>
     <module>risk-engine-components</module>
     <module>risk-engine-metric</module>
+    <module>risk-engine-third</module>
   </modules>
 
   <parent>
@@ -95,6 +96,12 @@
       <dependency>
         <groupId>risk.engine.metric</groupId>
         <artifactId>risk-engine-metric</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>risk.engine.third</groupId>
+        <artifactId>risk-engine-third</artifactId>
         <version>${project.version}</version>
       </dependency>
 
