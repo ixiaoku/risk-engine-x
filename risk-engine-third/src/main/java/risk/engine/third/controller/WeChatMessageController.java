@@ -1,5 +1,7 @@
 package risk.engine.third.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +18,7 @@ import java.util.Random;
  * @Date: 2025/4/25 21:16
  * @Version: 1.0
  */
-@RestController
+@RestController("/wechat")
 public class WeChatMessageController {
 
     private final static String appId = "wx_XSy8zHvubFNgCNNUT_r3v";
@@ -25,6 +27,7 @@ public class WeChatMessageController {
             "\uD83D\uDD14 【标题】: %s \n" +
             "\uD83D\uDD25 【内容】: %s \n" +
             "\uD83D\uDDD3 【时间】: %s \n";
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping("/sendMsg")
     public ResponseEntity<String> sendMessage(@RequestBody AnnouncementDTO announcementDTO) {
@@ -45,4 +48,41 @@ public class WeChatMessageController {
         }
         return ResponseEntity.status(200).body("发送成功:");
     }
+
+    @PostMapping("/callback")
+    public String handleCallback(@RequestBody String rawJson) {
+        try {
+            JsonNode rootNode = objectMapper.readTree(rawJson);
+            // 判断 TypeName
+            String typeName = rootNode.path("TypeName").asText();
+            if (!"AddMsg".equals(typeName)) {
+                return "Ignored non-AddMsg type";
+            }
+            // 提取 Content
+            JsonNode contentNode = rootNode.path("Data").path("Content").path("string");
+            String content = contentNode.asText("");
+            if (content.contains("/")) {
+                // 发现了带 "/" 的消息
+                recordMessage(content, rootNode);
+            }
+            return "Success";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error parsing JSON";
+        }
+    }
+
+    private void recordMessage(String content, JsonNode fullData) {
+        // 这里做你要的记录，比如打印、存数据库等等
+        String fromUser = fullData.path("Data").path("FromUserName").path("string").asText("");
+        String toUser = fullData.path("Data").path("ToUserName").path("string").asText("");
+        long createTime = fullData.path("Data").path("CreateTime").asLong(0);
+        System.out.println("检测到带斜杠消息！");
+        System.out.println("消息内容: " + content);
+        System.out.println("发送人: " + fromUser);
+        System.out.println("接收人: " + toUser);
+        System.out.println("发送时间: " + createTime);
+        MessageApi.postText(appId, fromUser, "你好啊 贾宝玉","");
+    }
+
 }

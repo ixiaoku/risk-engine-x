@@ -21,7 +21,7 @@ public class PersonWechatHandler implements IPenaltyHandler {
     public PenaltyStatusEnum doPenalty (PenaltyRecordPO record) {
         try {
             AnnouncementDTO announcementDTO = JSONObject.parseObject(record.getPenaltyJson(), AnnouncementDTO.class);
-            OkHttpUtil.postJson("htpp://106.55.233.79:8090/gewe/sendMsg", JSONObject.toJSONString(announcementDTO));
+            OkHttpUtil.postJson("htpp://106.55.233.79:8090/gewe/wechat/sendMsg", JSONObject.toJSONString(announcementDTO));
             return PenaltyStatusEnum.SUCCESS;
         } catch (RuntimeException e) {
             log.error("个人微信 BOT发消息失败：{}", e.getMessage(), e);
