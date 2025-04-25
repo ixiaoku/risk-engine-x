@@ -1,10 +1,13 @@
 package risk.engine.third.controller;
 
+import com.alibaba.fastjson2.JSON;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import risk.engine.third.gewe.AnnouncementDTO;
 import risk.engine.third.gewe.MessageApi;
@@ -18,7 +21,9 @@ import java.util.Random;
  * @Date: 2025/4/25 21:16
  * @Version: 1.0
  */
-@RestController("/wechat")
+@Slf4j
+@RestController
+@RequestMapping("/wechat")
 public class WeChatMessageController {
 
     private final static String appId = "wx_XSy8zHvubFNgCNNUT_r3v";
@@ -32,6 +37,7 @@ public class WeChatMessageController {
     @PostMapping("/sendMsg")
     public ResponseEntity<String> sendMessage(@RequestBody AnnouncementDTO announcementDTO) {
         try {
+            log.info("请求参数：{}", JSON.toJSONString(announcementDTO));
             String textContent = String.format(PERSON_BOT_CONTENT, announcementDTO.getTitle(), announcementDTO.getContent(), announcementDTO.getCreatedAt());
             List<String> toWechatIds = Arrays.asList("44760028169@chatroom", "52067326265@chatroom", "48977305404@chatroom");
             for (String toWechatId : toWechatIds) {
@@ -61,7 +67,7 @@ public class WeChatMessageController {
             // 提取 Content
             JsonNode contentNode = rootNode.path("Data").path("Content").path("string");
             String content = contentNode.asText("");
-            if (content.contains("/")) {
+            if (content.contains("/X")) {
                 // 发现了带 "/" 的消息
                 recordMessage(content, rootNode);
             }
@@ -82,7 +88,7 @@ public class WeChatMessageController {
         System.out.println("发送人: " + fromUser);
         System.out.println("接收人: " + toUser);
         System.out.println("发送时间: " + createTime);
-        MessageApi.postText(appId, fromUser, "你好啊 贾宝玉","");
+        MessageApi.postText(appId, fromUser, "你好啊 贾宝玉 想死你了","");
     }
 
 }
