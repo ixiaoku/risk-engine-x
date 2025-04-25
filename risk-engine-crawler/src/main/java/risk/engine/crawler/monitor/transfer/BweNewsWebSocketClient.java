@@ -66,8 +66,9 @@ public class BweNewsWebSocketClient extends WebSocketClient implements Applicati
             bewNewsDTO.setSourceName(source);
             bewNewsDTO.setAnnouncement(announcementDTO);
             String flowNo = source + timestamp;
-            CrawlerTaskPO crawlerTaskPO = crawlerTaskService.getCrawlerTask(flowNo, IncidentCodeEnum.TRADE_QUANT_DATA.getCode(), JSON.toJSONString(bewNewsDTO));
+            CrawlerTaskPO crawlerTaskPO = crawlerTaskService.getCrawlerTask(flowNo, IncidentCodeEnum.BEWNEWS.getCode(), JSON.toJSONString(bewNewsDTO));
             if (crawlerTaskPO != null) {
+                log.info("BewNews start saved");
                 crawlerTaskService.batchInsert(List.of(crawlerTaskPO));
             }
         } catch (Exception e) {
@@ -88,6 +89,7 @@ public class BweNewsWebSocketClient extends WebSocketClient implements Applicati
 
     @Override
     public void run(ApplicationArguments args) {
+        log.info("BWEnews WebSocket started.");
         this.connect();
     }
 }
