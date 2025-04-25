@@ -232,9 +232,14 @@ public class EngineExecuteServiceImpl implements IEngineExecuteService {
                     return false;
                 }
                 metricMap.putAll(metricValueMap);
-                return GroovyShellUtil.runGroovy(groovyScript, metricValueMap);
+                boolean resultFlag = GroovyShellUtil.runGroovy(groovyScript, metricValueMap);
+                if (resultFlag) {
+                    log.info("命中规则名称：{}, 命中规则标识:{}", rule.getRuleName(), rule.getRuleCode());
+                }
+                return resultFlag;
             } catch (Exception e) {
                 log.error("Groovy 执行失败，跳过 ruleCode: {}", rule.getRuleCode(), e);
+                alarmRecordService.insertAsync("Groovy 执行失败，跳过 ruleCode: " + rule.getRuleCode(), ExceptionUtils.getStackTrace(e));
                 return false;
             }
         }).collect(Collectors.toList());

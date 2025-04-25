@@ -32,18 +32,4 @@ public class GroovyShellUtil {
         }
     }
 
-//    public static void main(String[] args) {
-//        String expression = "amount1<amount2 || fromAddress==toAddress";
-//        Map<String, Object> map = new HashMap<>();
-//        map.put("amount1", 1);
-//        map.put("amount2", 2);
-//        map.put("fromAddress", "from");
-//        map.put("toAddress", "to");
-//        Binding binding = new Binding();
-//        map.forEach(binding::setVariable);
-//        GroovyShell groovyShell = new GroovyShell(binding);
-//        boolean flag = (boolean) groovyShell.evaluate(expression);;
-//        System.out.println(flag);
-//    }
-
 }

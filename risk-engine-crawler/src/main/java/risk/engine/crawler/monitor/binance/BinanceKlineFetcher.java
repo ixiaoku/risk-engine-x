@@ -73,7 +73,7 @@ public class BinanceKlineFetcher {
 
     public void start() {
         for (String symbol : BinanceConstant.SYMBOLS) {
-            List<KLineDTO> binanceKLineList = fetchKLines(symbol, BinanceConstant.INTERVAL_15M, BinanceConstant.LIMIT_100);
+            List<KLineDTO> binanceKLineList = fetchKLines(symbol, BinanceConstant.INTERVAL_15M, BinanceConstant.LIMIT_5);
             if(CollectionUtils.isEmpty(binanceKLineList)) return;
             KLineDTO kLinePO = binanceKLineList.get(binanceKLineList.size() - 1);
             BinanceKLineDTO binanceKLineDTO = new BinanceKLineDTO();

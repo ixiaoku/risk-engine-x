@@ -16,4 +16,6 @@ public interface BinanceConstant {
     List<String> SYMBOLS = List.of("BTCUSDT", "ETHUSDT", "BNBUSDT", "XRPUSDT", "ADAUSDT", "SOLUSDT", "DOGEUSDT");
 
     Integer LIMIT_100 = 100;
+
+    Integer LIMIT_5 = 5;
 }
