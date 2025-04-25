@@ -13,7 +13,6 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @Author: X
@@ -40,13 +39,11 @@ public class PenaltyExecuteTask {
         if (CollectionUtils.isEmpty(penaltyRecordList)) {
             return;
         }
-        AtomicReference<Integer> retry = new AtomicReference<>(0);
         penaltyRecordList.forEach(penaltyRecord -> {
             IPenaltyHandler penaltyHandler = (IPenaltyHandler) applicationContextUtil.getBeanByClassName(penaltyRecord.getPenaltyDef());
             PenaltyStatusEnum penaltyStatusEnum = penaltyHandler.doPenalty(penaltyRecord);
             if (Objects.equals(penaltyStatusEnum.getCode(), PenaltyStatusEnum.WAIT.getCode())) {
-               retry.getAndSet(retry.get() + 1);
-               penaltyRecord.setRetry(penaltyRecord.getRetry());
+               penaltyRecord.setRetry(penaltyRecord.getRetry() + 1);
             }
             penaltyRecord.setStatus(penaltyStatusEnum.getCode());
             penaltyRecord.setPenaltyResult("调用成功");
