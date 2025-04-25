@@ -59,4 +59,25 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- 添加 Spring Boot 插件 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${springboot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>risk.engine.third.RiskEngineThirdApplication</mainClass> <!-- 替换为你的实际主类 -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

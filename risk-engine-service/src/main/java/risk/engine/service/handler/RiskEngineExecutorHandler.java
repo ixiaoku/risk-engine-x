@@ -125,7 +125,7 @@ public class RiskEngineExecutorHandler {
      * @return 结果
      */
     private String getPenaltyJson (HitRuleDTO hitRuleDTO, String penaltyCode, List<PenaltyFieldVO> penaltyFieldVOList, Map<String, Object> requestPayload) {
-        if (StringUtils.equals(penaltyCode, PenaltyActionEnum.BUSINESS_WECHAT_BOT.getCode())) {
+        if (StringUtils.equals(penaltyCode, PenaltyActionEnum.BUSINESS_WECHAT_BOT.getCode()) || StringUtils.equals(penaltyCode, PenaltyActionEnum.PERSON_WECHAT_BOT.getCode())) {
             Object value = requestPayload.get("announcement");
             if (Objects.isNull(value)) {
                 return null;
