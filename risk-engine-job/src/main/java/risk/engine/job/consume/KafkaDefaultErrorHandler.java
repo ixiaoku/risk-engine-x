@@ -1,6 +1,7 @@
 package risk.engine.job.consume;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
@@ -14,7 +15,8 @@ import javax.annotation.Resource;
  * @Date: 2025/4/26 15:04
  * @Version: 1.0
  */
-public class KafkaConfig {
+@Configuration
+public class KafkaDefaultErrorHandler {
 
     @Resource
     private QueueFailedMessagesHandler failedMessagesHandler;

@@ -19,6 +19,9 @@ public class EngineResultKafkaConsumer {
     @KafkaListener(topics = "#{'${customer.kafka.topic}'}", groupId = "consumer_group_engine_result")
     public void handleEngineMessage(String message) {
         try {
+            if (true) {
+                throw new RuntimeException("消费错误信息");
+            }
             RiskExecuteEngineDTO riskExecuteEngineDTO = GsonUtil.fromJson(message, RiskExecuteEngineDTO.class);
             riskEngineExecutorHandler.saveEngineResult(riskExecuteEngineDTO);
         } catch (Exception e) {

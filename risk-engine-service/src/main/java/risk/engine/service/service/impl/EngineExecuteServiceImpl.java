@@ -10,7 +10,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Service;
 import risk.engine.common.grovvy.GroovyShellUtil;
 import risk.engine.common.redis.RedisUtil;
-import risk.engine.components.kafka.KafkaConfig;
+import risk.engine.components.kafka.KafkaConfigProperty;
 import risk.engine.components.kafka.RiskKafkaProducer;
 import risk.engine.db.entity.IncidentPO;
 import risk.engine.db.entity.RulePO;
@@ -56,7 +56,7 @@ public class EngineExecuteServiceImpl implements IEngineExecuteService {
     private MetricHandler metricHandler;
 
     @Resource
-    private KafkaConfig kafkaConfig;
+    private KafkaConfigProperty kafkaConfigProperty;
 
     @Resource
     private IAlarmRecordService alarmRecordService;
@@ -130,7 +130,7 @@ public class EngineExecuteServiceImpl implements IEngineExecuteService {
             //三、异步保存数据和发送mq消息 规则熔断
             CompletableFuture.runAsync(() -> {
                 // 异步发消息 分消费者组监听 1mysql保存引擎执行结果并且同步es 2执行处罚 加名单以及调三方接口
-                producer.sendMessage(kafkaConfig.getTopic(), JSON.toJSONString(executeEngineDTO));
+                producer.sendMessage(kafkaConfigProperty.getTopic(), JSON.toJSONString(executeEngineDTO));
             }).exceptionally(ex -> {
                 log.error("引擎执行 异步任务失败: {}, 异常: {}", riskEngineParam.getIncidentCode(), ex.getMessage(), ex);
                 //todo 处理失败逻辑 发送告警消息 本来是打算目前mq发送失败 然后写消息表再重试 有时间再加吧

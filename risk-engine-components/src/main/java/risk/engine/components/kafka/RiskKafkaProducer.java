@@ -3,7 +3,9 @@ package risk.engine.components.kafka;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
+import org.springframework.util.concurrent.ListenableFuture;
 
 import javax.annotation.Resource;
 
@@ -22,5 +24,9 @@ public class RiskKafkaProducer {
 
     public void sendMessage(String topic, String message) {
         kafkaTemplate.send(topic, message);
+    }
+
+    public ListenableFuture<SendResult<String, String>> sendMessageCallback(String topic, String message) {
+        return kafkaTemplate.send(topic, message);
     }
 }

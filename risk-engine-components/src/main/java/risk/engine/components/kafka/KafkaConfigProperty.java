@@ -12,6 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "customer.kafka")
 @Data
-public class KafkaConfig {
+public class KafkaConfigProperty {
     private String topic;
 }
