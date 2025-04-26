@@ -23,6 +23,7 @@
     <result column="penalty_description" jdbcType="LONGVARCHAR" property="penaltyDescription" />
     <result column="penalty_json" jdbcType="LONGVARCHAR" property="penaltyJson" />
   </resultMap>
+
   <sql id="Base_Column_List">
     id, flow_no, rule_code, rule_name, incident_code, incident_name, penalty_code, penalty_name,
     penalty_def, penalty_reason, penalty_result, status, retry, penalty_description, penalty_json,
@@ -41,6 +42,7 @@
         and retry &lt; #{retry,jdbcType=INTEGER}
       </if>
     </where>
+    limit 1000
   </select>
 
   <insert id="batchInsert" parameterType="java.util.List">
