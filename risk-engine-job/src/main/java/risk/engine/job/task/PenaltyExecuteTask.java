@@ -42,11 +42,12 @@ public class PenaltyExecuteTask {
         penaltyRecordList.forEach(penaltyRecord -> {
             IPenaltyHandler penaltyHandler = (IPenaltyHandler) applicationContextUtil.getBeanByClassName(penaltyRecord.getPenaltyDef());
             PenaltyStatusEnum penaltyStatusEnum = penaltyHandler.doPenalty(penaltyRecord);
+            penaltyRecord.setPenaltyResult("调用成功");
             if (Objects.equals(penaltyStatusEnum.getCode(), PenaltyStatusEnum.WAIT.getCode())) {
                penaltyRecord.setRetry(penaltyRecord.getRetry() + 1);
+               penaltyRecord.setPenaltyResult("调用失败");
             }
             penaltyRecord.setStatus(penaltyStatusEnum.getCode());
-            penaltyRecord.setPenaltyResult("调用成功");
             penaltyRecord.setUpdateTime(LocalDateTime.now());
             penaltyRecordService.updateByPrimaryKey(penaltyRecord);
         });
