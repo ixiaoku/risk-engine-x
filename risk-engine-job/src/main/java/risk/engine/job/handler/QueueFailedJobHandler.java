@@ -4,7 +4,7 @@ import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import risk.engine.job.task.AlarmRecordTask;
+import risk.engine.job.task.QueueFailedTask;
 
 import javax.annotation.Resource;
 
@@ -18,18 +18,18 @@ import javax.annotation.Resource;
 public class QueueFailedJobHandler {
 
     @Resource
-    private AlarmRecordTask alarmRecordTask;
+    private QueueFailedTask queueFailedTask;
 
-    @XxlJob("larkWarnTaskJob")
-    public void larkWarnTask() {
+    @XxlJob("queueFailedTaskJob")
+    public void queueFailedTask() {
         try {
             String param = XxlJobHelper.getJobParam();
-            alarmRecordTask.execute();
-            XxlJobHelper.log("larkWarnTaskJob, param: " + param);
-            log.info("larkWarnTaskJob executed successfully!");
+            queueFailedTask.execute();
+            XxlJobHelper.log("queueFailedTaskJob, param: " + param);
+            log.info("queueFailedTaskJob executed successfully!");
         } catch (Exception e) {
-            log.error("larkWarnTaskJob executed failed : {}", e.getMessage(), e);
-            XxlJobHelper.log("larkWarnTaskJob executed failed : {}", e.getMessage(), e);
+            log.error("queueFailedTaskJob executed failed : {}", e.getMessage(), e);
+            XxlJobHelper.log("queueFailedTaskJob executed failed : {}", e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }

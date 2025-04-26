@@ -20,7 +20,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, topic, partition, offset, `key`, type, message, error_message, status, retry, max_retry, create_time, update_time
+        id, topic, `partition`, offset, `key`, type, message, error_message, status, retry, max_retry, create_time, update_time
     </sql>
 
     <select id="selectByStatus" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -28,6 +28,7 @@
         <include refid="Base_Column_List" />
         from queue_failed_messages
         where status = #{status}
+        order by create_time desc
         limit 1000
     </select>
 
