@@ -8,6 +8,7 @@
         <result column="topic" jdbcType="VARCHAR" property="topic" />
         <result column="partition" jdbcType="INTEGER" property="partition" />
         <result column="offset" jdbcType="BIGINT" property="offset" />
+        <result column="original_key" jdbcType="VARCHAR" property="originalKey" />
         <result column="key" jdbcType="VARCHAR" property="key" />
         <result column="type" jdbcType="VARCHAR" property="type" />
         <result column="message" jdbcType="LONGVARCHAR" property="message" />
@@ -20,7 +21,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, topic, `partition`, offset, `key`, type, message, error_message, status, retry, max_retry, create_time, update_time
+        id, topic, `partition`, offset, original_key, `key`, type, message, error_message, status, retry, max_retry, create_time, update_time
     </sql>
 
     <select id="selectByStatus" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -34,10 +35,10 @@
 
     <insert id="insert" parameterType="risk.engine.db.entity.QueueFailedMessagePO">
         insert ignore into queue_failed_messages (
-            topic, `partition`, offset, `key`, type, message, error_message,
+            topic, `partition`, offset, original_key, `key`, type, message, error_message,
             status, retry, max_retry, create_time, update_time)
         values (
-                   #{topic,jdbcType=VARCHAR}, #{partition,jdbcType=INTEGER}, #{offset,jdbcType=BIGINT},
+                   #{topic,jdbcType=VARCHAR}, #{partition,jdbcType=INTEGER}, #{offset,jdbcType=BIGINT}, #{originalKey,jdbcType=VARCHAR},
                    #{key,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{message,jdbcType=LONGVARCHAR},
                    #{errorMessage,jdbcType=LONGVARCHAR}, #{status,jdbcType=TINYINT}, #{retry,jdbcType=TINYINT},
                    #{maxRetry,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})

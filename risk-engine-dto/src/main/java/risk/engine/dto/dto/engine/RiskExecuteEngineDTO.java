@@ -81,6 +81,11 @@ public class RiskExecuteEngineDTO {
     private List<HitRuleDTO> hitMockRules;
 
     /**
+     * kafka消费的唯一key
+     */
+    private String originalKey;
+
+    /**
      * 创建时间
      */
     private String createTime;

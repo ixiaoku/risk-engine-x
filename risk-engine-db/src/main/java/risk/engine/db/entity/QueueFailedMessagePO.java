@@ -35,6 +35,11 @@ public class QueueFailedMessagePO {
     private String key;
 
     /**
+     * topic+partition+offset
+     */
+    private String originalKey;
+
+    /**
      * 消息类型 kafka、rocketmq、rabbitmq
      */
     private String type;

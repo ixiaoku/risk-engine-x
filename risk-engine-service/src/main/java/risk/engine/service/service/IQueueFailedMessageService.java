@@ -17,4 +17,6 @@ public interface IQueueFailedMessageService {
 
     boolean updateById(QueueFailedMessagePO queueFailedMessagePO);
 
+    void updateAsync(QueueFailedMessagePO queueFailedMessagePO);
+
 }

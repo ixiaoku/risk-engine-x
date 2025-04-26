@@ -52,6 +52,10 @@
         <discardingThreshold>0</discardingThreshold>
     </appender>
 
+    <!-- 单独降低 Kafka相关日志等级 -->
+    <logger name="org.apache.kafka" level="ERROR"/>
+    <logger name="org.springframework.kafka" level="ERROR"/>
+
     <!-- 根日志配置 -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
