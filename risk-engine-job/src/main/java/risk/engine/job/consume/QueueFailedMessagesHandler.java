@@ -22,6 +22,16 @@ public class QueueFailedMessagesHandler implements ConsumerRecordRecoverer {
     @Resource
     private IQueueFailedMessageService failedMessageService;
 
+    /**
+     * 	第一次消费失败时，基于 topic + partition + offset 生成一个唯一key，并将失败信息存储到MySQL，同时在Redis中标记。
+     * 	后续如果需要重试（无论是Kafka自身的消息重试，还是通过XXL-JOB定时轮询触发的补偿机制）：
+     * 	首先根据原始的 topic+partition+offset 查找Redis中是否存在对应的失败标记。
+     * 	如果不存在（Redis没有记录），说明这是一次新的失败消息，应该以新的offset生成新的失败记录和新的key。
+     * 	如果存在（Redis中有记录），说明这条消息是之前那次失败后的重试，应继续沿用第一次失败时生成的原始key，而不是用新的offset。
+     * 	这样可以保证在Kafka自动重试（offset变化）或定时任务重发过程中，所有相关重试操作都归属于同一条失败记录，避免产生重复记录或遗漏更新。
+     * @param record the first input argument
+     * @param exception the second input argument
+     */
     @Override
     public void accept(ConsumerRecord<?, ?> record, Exception exception) {
         QueueFailedMessagePO failed = new QueueFailedMessagePO();
