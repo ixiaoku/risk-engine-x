@@ -35,7 +35,7 @@ xxl:
       accessToken: xxl-job-token
     executor:
       appname: xxl-job-executor-x  # 执行器名称，需与 Admin 中配置一致
-      address: https://d6f3-160-30-128-173.ngrok-free.app # 可选，自动注册时留空
+      address: https://3e58-120-230-139-1.ngrok-free.app # 可选，自动注册时留空
       #ip: 103.167.134.66 # 可选，默认自动获取
       #port: 9999  # 执行器端口，需与 Docker 配置一致
       logpath: /Users/dongchunrong/Documents/project/data/logs/risk-engine-job  # 日志存储路径

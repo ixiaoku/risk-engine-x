@@ -1,6 +1,5 @@
 package risk.engine.crawler.monitor.transfer;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import lombok.extern.java.Log;
@@ -8,6 +7,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.stereotype.Component;
+import risk.engine.common.util.GsonUtil;
 import risk.engine.dto.dto.block.ChainTransferDTO;
 import risk.engine.service.service.IBlockchainService;
 
@@ -40,7 +40,7 @@ public class BitcoinFetcher {
 
             // 获取区块中的交易
             String gsonArray = get(BTC_API + "/block/" + blockHash + "/txs");
-            JsonArray txs = new Gson().fromJson(gsonArray, JsonArray.class);
+            JsonArray txs = GsonUtil.fromJson(gsonArray, JsonArray.class);
             if (!txs.isEmpty()) {
                 System.out.println("该区块中的交易笔数" + txs.size());
                 for (int i = 0; i < txs.size(); i++) {

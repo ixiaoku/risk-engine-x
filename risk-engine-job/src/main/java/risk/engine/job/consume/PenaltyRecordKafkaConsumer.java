@@ -1,9 +1,9 @@
 package risk.engine.job.consume;
 
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import risk.engine.common.util.GsonUtil;
 import risk.engine.dto.dto.engine.RiskExecuteEngineDTO;
 import risk.engine.service.handler.RiskEngineExecutorHandler;
 
@@ -17,9 +17,9 @@ public class PenaltyRecordKafkaConsumer {
     private RiskEngineExecutorHandler riskEngineExecutorHandler;
 
     @KafkaListener(topics = "#{'${customer.kafka.topic}'}", groupId = "consume_group_penalty_record")
-    public void handleCanalMessage(String message) {
+    public void handleEngineMessage(String message) {
         try {
-            RiskExecuteEngineDTO dto = new Gson().fromJson(message, RiskExecuteEngineDTO.class);
+            RiskExecuteEngineDTO dto = GsonUtil.fromJson(message, RiskExecuteEngineDTO.class);
             riskEngineExecutorHandler.savePenalty(dto);
         } catch (Exception e) {
             log.error("kafka消息失败 错误信息：{}", e.getMessage(), e);

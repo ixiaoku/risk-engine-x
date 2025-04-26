@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import risk.engine.common.grovvy.ExpressionValidator;
 import risk.engine.common.util.DateTimeUtil;
+import risk.engine.common.util.GsonUtil;
 import risk.engine.db.dao.RuleMapper;
 import risk.engine.db.entity.IncidentPO;
 import risk.engine.db.entity.MetricPO;
@@ -70,7 +71,7 @@ public class RuleServiceImpl implements IRuleService {
         rule.setScore(ruleParam.getScore());
         rule.setPriority(0);
         List<RuleMetricDTO> metricDTOList = getRuleMetricDTOList(ruleParam.getIncidentCode(), ruleParam.getJsonScript());
-        rule.setJsonScript(new Gson().toJson(metricDTOList));
+        rule.setJsonScript(GsonUtil.toJson(metricDTOList));
         rule.setLogicScript(ruleParam.getLogicScript());
         String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), metricDTOList);
         rule.setGroovyScript(groovyScript);
@@ -176,7 +177,7 @@ public class RuleServiceImpl implements IRuleService {
         rule.setScore(ruleParam.getScore());
         rule.setPriority(0);
         List<RuleMetricDTO> metricDTOList = getRuleMetricDTOList(ruleParam.getIncidentCode(), ruleParam.getJsonScript());
-        rule.setJsonScript(new Gson().toJson(metricDTOList));
+        rule.setJsonScript(GsonUtil.toJson(metricDTOList));
         rule.setLogicScript(ruleParam.getLogicScript());
         String groovyScript = GroovyExpressionParser.parseToGroovyExpression(rule.getLogicScript(), metricDTOList);
         rule.setGroovyScript(groovyScript);
