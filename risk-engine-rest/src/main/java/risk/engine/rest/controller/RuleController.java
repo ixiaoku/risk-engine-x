@@ -58,7 +58,8 @@ public class RuleController {
     @PostMapping("/update")
     public ResponseVO update(@RequestBody RuleParam ruleParam) {
         log.info("update rules: {}", ruleParam);
-        ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ObjectUtils.isEmpty(ruleParam.getId())
+        ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
+                .validateException(ObjectUtils.isEmpty(ruleParam.getId())
                 || StringUtils.isEmpty(ruleParam.getRuleName())
                 || StringUtils.isEmpty(ruleParam.getJsonScript())
                 || StringUtils.isEmpty(ruleParam.getLogicScript())

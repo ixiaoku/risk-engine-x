@@ -6,6 +6,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import risk.engine.common.function.ValidatorHandler;
 import risk.engine.common.grovvy.ExpressionValidator;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.common.util.GsonUtil;
@@ -16,6 +17,8 @@ import risk.engine.db.entity.RulePO;
 import risk.engine.db.entity.RuleVersionPO;
 import risk.engine.db.entity.example.RuleExample;
 import risk.engine.dto.dto.rule.RuleMetricDTO;
+import risk.engine.dto.enums.ErrorCodeEnum;
+import risk.engine.dto.enums.RuleStatusEnum;
 import risk.engine.dto.param.RuleParam;
 import risk.engine.dto.vo.RuleVO;
 import risk.engine.service.common.cache.GuavaIncidentRuleCache;
@@ -160,6 +163,8 @@ public class RuleServiceImpl implements IRuleService {
     @Override
     public Boolean delete(RuleParam ruleParam) {
         RulePO rule = ruleMapper.selectByPrimaryKey(ruleParam.getId());
+        ValidatorHandler.verify(ErrorCodeEnum.ONLINE_STATUS_RULE)
+                .validateException(Objects.isNull(rule) || Objects.equals(rule.getStatus(), RuleStatusEnum.ONLINE.getCode()));
         boolean flag = ruleMapper.deleteByPrimaryKey(ruleParam.getId()) > 0 && ruleVersionService.deleteByRuleCode(rule.getRuleCode());
         if (flag) guavaIncidentCache.refreshCache();
         return flag;

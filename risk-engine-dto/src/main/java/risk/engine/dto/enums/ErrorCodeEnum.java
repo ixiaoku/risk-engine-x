@@ -22,9 +22,10 @@ public enum ErrorCodeEnum {
     MESSAGE_SEND_FAIL(1003, "消息发送失败"),
     DATA_SAVE_ERROR(1004, "数据保存失败"),
     INCIDENT_EXIST(1005, "事件标识已存在"),
-    INCIDENT_EXIST_METRIC(1006, "事件提交请先解析"),
-    INCIDENT_EXIST_RULE(1007, "事件存在关联规则 无法删除"),
-    RULE_LOGIC_ILLEGAL(1008, "非法表达式"),
+    INCIDENT_EXIST_METRIC(1006, "非法操作，事件提交请先解析"),
+    INCIDENT_EXIST_RULE(1007, "非法操作，事件存在关联规则"),
+    RULE_LOGIC_ILLEGAL(1008, "非法操作，逻辑表达式不合法"),
+    ONLINE_STATUS_RULE(1009, "非法操作，上线状态规则不能删除"),
     ;
 
 
