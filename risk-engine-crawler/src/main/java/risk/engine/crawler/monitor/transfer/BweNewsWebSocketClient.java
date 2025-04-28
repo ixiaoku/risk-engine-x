@@ -56,8 +56,8 @@ public class BweNewsWebSocketClient extends WebSocketClient implements Applicati
             String url = json.optString("url");
             long timestamp = json.optLong("timestamp");
             AnnouncementDTO announcementDTO = new AnnouncementDTO();
-            announcementDTO.setTitle(title);
-            announcementDTO.setContent(url);
+            announcementDTO.setTitle(null);
+            announcementDTO.setContent(title);
             announcementDTO.setCreatedAt(DateTimeUtil.getTimeByTimestamp(timestamp*1000));
             BewNewsDTO bewNewsDTO = new BewNewsDTO();
             bewNewsDTO.setTitle(title);
