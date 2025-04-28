@@ -11,10 +11,14 @@ import java.util.List;
  */
 public interface CounterMetricMapper {
 
-    int insert(CounterMetricPO record);
+    CounterMetricPO selectByPrimaryKey(Long id);
 
     List<CounterMetricPO> selectByExample(CounterMetricPO example);
 
+    int insert(CounterMetricPO record);
+
     int updateByPrimaryKey(CounterMetricPO record);
+
+    int deleteByPrimaryKey(Long id);
 
 }

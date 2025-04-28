@@ -23,10 +23,17 @@
         window_size, aggregation_type, status, description, create_time, update_time
     </sql>
 
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from counter_metric
+        id = #{id,jdbcType=BIGINT}
+    </select>
+
     <select id="selectByExample" parameterType="risk.engine.db.entity.CounterMetricPO" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
-        from metric
+        from counter_metric
         <where>
             <if test="status != null">
                 status = #{status,jdbcType=TINYINT}
@@ -60,5 +67,10 @@
             update_time = #{updateTime,jdbcType=TIMESTAMP}
         where id = #{id,jdbcType=BIGINT}
     </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from counter_metric
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
 
 </mapper>
