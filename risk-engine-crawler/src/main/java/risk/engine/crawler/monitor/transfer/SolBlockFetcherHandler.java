@@ -77,13 +77,13 @@ public class SolBlockFetcherHandler implements ICrawlerBlockChainHandler {
         }
     }
 
-    private long getLatestSlot() throws IOException {
+    private long getLatestSlot() {
         String result = OkHttpUtil.postJson(RPC_URL, SLOT_JSON);
         if (StringUtils.isEmpty(result)) return -1;
         return JsonParser.parseString(result).getAsJsonObject().get("result").getAsLong();
     }
 
-    private JsonObject getBlockDetails(long slot) throws IOException {
+    private JsonObject getBlockDetails(long slot) {
         String jsonRequest = "{ \"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"getBlock\", " +
                 "\"params\": [" + slot + ", { \"encoding\": \"json\", \"transactionDetails\": \"full\", \"rewards\": false }] }";
         String result = OkHttpUtil.postJson(RPC_URL, jsonRequest);
