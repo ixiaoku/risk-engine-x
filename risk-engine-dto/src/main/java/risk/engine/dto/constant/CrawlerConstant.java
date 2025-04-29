@@ -45,9 +45,9 @@ public interface CrawlerConstant {
 
     String TRADE_DATA_BOT_TITLE = "15min内，币种交易对：%s, 开盘价: %s, 收盘价：%s, 涨跌幅：%s";
 
-    String CONTRACT_FUNDING_RATE_CONTENT = "5min内币种交易对：%s, 最新资金费率: %s, 标记价格：%s, 指数价格：%s, 下次资金费时间：%s";
+    String CONTRACT_FUNDING_RATE_CONTENT = "15min内，交易对：%s, 最新资金费率: %s, 标记价格：%s, 指数价格：%s, 下次资金费时间：%s";
 
-    String WINDOW_PRICE_CHANGE_STATISTICS_CONTENT = "5min内，交易对：%s, 价格变化：%s, 涨跌幅百分比：%s, 成交量: %s, 收盘价：%s";
+    String WINDOW_PRICE_CHANGE_STATISTICS_CONTENT = "15min内，交易对：%s, 价格变化：%s, 涨跌幅百分比：%s, 成交量: %s, 收盘价：%s";
 
     String OVER_TRANSFER_TITLE = "大额转账";
 
