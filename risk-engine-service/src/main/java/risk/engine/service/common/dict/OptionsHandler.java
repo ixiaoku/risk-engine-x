@@ -109,4 +109,65 @@ public class OptionsHandler {
                 }).collect(Collectors.toList());
     }
 
+    /**
+     * 计数器指标类型字典
+     * @return 结果
+     */
+    @Bean("counterMetricTypeList")
+    public OptionsEnumFunction counterMetricType() {
+        return () -> Arrays.stream(CounterMetricTypeEnum.values())
+                .map(e -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("code", e.getCode());
+                    options.put("msg", e.getDesc());
+                    return options;
+                }).collect(Collectors.toList());
+    }
+
+    /**
+     * 计数器指标时间窗口字典
+     * @return 结果
+     */
+    @Bean("windowSizeList")
+    public OptionsEnumFunction windowSize() {
+        return () -> Arrays.stream(CounterWindowSizeEnum.values())
+                .map(e -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("code", e.getCode());
+                    options.put("msg", e.getDesc());
+                    return options;
+                }).collect(Collectors.toList());
+    }
+
+    /**
+     * 计数器指标 聚合方式字典
+     * @return 结果
+     */
+    @Bean("aggregationTypeList")
+    public OptionsEnumFunction aggregationType() {
+        return () -> Arrays.stream(AggregationTypeEnum.values())
+                .map(e -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("code", e.getCode());
+                    options.put("msg", e.getDesc());
+                    return options;
+                }).collect(Collectors.toList());
+    }
+
+    /**
+     * 计数器指标 状态
+     * @return 结果
+     */
+    @Bean("counterStatusList")
+    public OptionsEnumFunction counterStatus() {
+        return () -> Arrays.stream(CounterStatusEnum.values())
+                .map(e -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("code", e.getCode());
+                    options.put("msg", e.getDesc());
+                    return options;
+                }).collect(Collectors.toList());
+    }
+
+
 }

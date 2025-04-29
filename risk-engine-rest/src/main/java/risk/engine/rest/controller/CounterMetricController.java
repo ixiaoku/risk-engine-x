@@ -20,11 +20,17 @@ import java.util.Objects;
  */
 @Slf4j
 @RestController
-@RequestMapping("/counter")
+@RequestMapping("/metric/counter")
 public class CounterMetricController {
 
     @Resource
     private ICounterMetricService counterMetricService;
+
+    @GetMapping("/list")
+    public ResponseVO list(@ModelAttribute CounterMetricParam param) {
+        log.info("List CounterMetric: {}", param);
+        return ResponseVO.success(counterMetricService.list(param));
+    }
 
     @PostMapping("/insert")
     public ResponseVO insert(@RequestBody CounterMetricParam param) {
@@ -62,12 +68,6 @@ public class CounterMetricController {
                         || Objects.isNull(param.getStatus())
                 );
         return ResponseVO.success(counterMetricService.updateByPrimaryKey(param));
-    }
-
-    @PostMapping("/list")
-    public ResponseVO list(@RequestBody CounterMetricParam param) {
-        log.info("List rules: {}", param);
-        return ResponseVO.success(counterMetricService.list(param));
     }
 
     @GetMapping("/detail")

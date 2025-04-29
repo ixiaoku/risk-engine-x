@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * @Version: 1.0
  */
 @Data
-public class CounterMetricParam {
+public class CounterMetricParam extends PageHelperQuery {
     /**
      * 主键，自增
      */

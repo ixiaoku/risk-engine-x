@@ -1,9 +1,8 @@
 package risk.engine.service.service;
 
+import risk.engine.dto.PageResult;
 import risk.engine.dto.param.CounterMetricParam;
 import risk.engine.dto.vo.CounterMetricVO;
-
-import java.util.List;
 
 /**
  * @Author: X
@@ -14,7 +13,7 @@ public interface ICounterMetricService {
 
     boolean insert(CounterMetricParam param);
 
-    List<CounterMetricVO> list(CounterMetricParam param);
+    PageResult<CounterMetricVO> list(CounterMetricParam param);
 
     boolean updateByPrimaryKey(CounterMetricParam param);
 

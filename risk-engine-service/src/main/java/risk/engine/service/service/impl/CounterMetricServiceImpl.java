@@ -1,9 +1,12 @@
 package risk.engine.service.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.page.PageMethod;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import risk.engine.db.dao.CounterMetricMapper;
 import risk.engine.db.entity.CounterMetricPO;
+import risk.engine.dto.PageResult;
 import risk.engine.dto.param.CounterMetricParam;
 import risk.engine.dto.vo.CounterMetricVO;
 import risk.engine.service.service.ICounterMetricService;
@@ -42,14 +45,25 @@ public class CounterMetricServiceImpl implements ICounterMetricService {
     }
 
     @Override
-    public List<CounterMetricVO> list(CounterMetricParam param) {
+    public PageResult<CounterMetricVO> list(CounterMetricParam param) {
+        PageResult<CounterMetricVO> pageResult = new PageResult<>();
         CounterMetricPO query = new CounterMetricPO();
         query.setIncidentCode(param.getIncidentCode());
         query.setMetricCode(param.getMetricCode());
         query.setMetricName(param.getMetricName());
-        List<CounterMetricPO> counterMetricVOS = counterMetricMapper.selectByExample(query);
-        if (CollectionUtils.isEmpty(counterMetricVOS)) return List.of();
-        return counterMetricVOS.stream().map(this::convertVO).collect(Collectors.toList());
+        // 开启分页并查询
+        Page<CounterMetricPO> counterMetricPage = PageMethod.startPage(param.getPageNum(), param.getPageSize())
+                .doSelectPage(() -> counterMetricMapper.selectByExample(query));
+        if (CollectionUtils.isEmpty(counterMetricPage.getResult())) return pageResult;
+        List<CounterMetricVO> counterMetricVOS = counterMetricPage.getResult()
+                        .stream()
+                        .map(this::convertVO)
+                        .collect(Collectors.toList());
+        pageResult.setPageSize(param.getPageSize());
+        pageResult.setPageNum(param.getPageNum());
+        pageResult.setList(counterMetricVOS);
+        pageResult.setTotal(counterMetricPage.getTotal());
+        return pageResult;
     }
 
     @Override
