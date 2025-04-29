@@ -65,7 +65,6 @@
                 and status = #{status,jdbcType=VARCHAR}
             </if>
         </where>
-        order by id desc;
     </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">

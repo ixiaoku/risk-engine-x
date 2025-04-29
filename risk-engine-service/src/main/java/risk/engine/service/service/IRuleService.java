@@ -2,6 +2,7 @@ package risk.engine.service.service;
 
 import risk.engine.db.entity.RulePO;
 import risk.engine.db.entity.example.RuleExample;
+import risk.engine.dto.PageResult;
 import risk.engine.dto.param.RuleParam;
 import risk.engine.dto.vo.RuleVO;
 
@@ -18,7 +19,7 @@ public interface IRuleService {
 
     Boolean insert(RuleParam ruleParam);
 
-    List<RuleVO> list(RuleParam ruleParam);
+    PageResult<RuleVO> list(RuleParam ruleParam);
 
     Boolean delete(RuleParam ruleParam);
 

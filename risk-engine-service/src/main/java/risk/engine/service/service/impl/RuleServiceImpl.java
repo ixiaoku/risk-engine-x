@@ -1,5 +1,7 @@
 package risk.engine.service.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.page.PageMethod;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections4.CollectionUtils;
@@ -11,11 +13,9 @@ import risk.engine.common.grovvy.ExpressionValidator;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.common.util.GsonUtil;
 import risk.engine.db.dao.RuleMapper;
-import risk.engine.db.entity.IncidentPO;
-import risk.engine.db.entity.MetricPO;
-import risk.engine.db.entity.RulePO;
-import risk.engine.db.entity.RuleVersionPO;
+import risk.engine.db.entity.*;
 import risk.engine.db.entity.example.RuleExample;
+import risk.engine.dto.PageResult;
 import risk.engine.dto.dto.rule.RuleMetricDTO;
 import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.enums.RuleStatusEnum;
@@ -29,10 +29,7 @@ import risk.engine.service.service.IRuleVersionService;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -64,7 +61,6 @@ public class RuleServiceImpl implements IRuleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean insert(RuleParam ruleParam) {
-
         ExpressionValidator.verify(ruleParam);
         RulePO rule = new RulePO();
         rule.setIncidentCode(ruleParam.getIncidentCode());
@@ -132,7 +128,8 @@ public class RuleServiceImpl implements IRuleService {
     }
 
     @Override
-    public List<RuleVO> list(RuleParam ruleParam) {
+    public PageResult<RuleVO> list(RuleParam ruleParam) {
+        PageResult<RuleVO> pageResult = new PageResult<>();
         RuleExample example = new RuleExample();
         example.setPageSize(ruleParam.getPageSize());
         example.setPageNum(ruleParam.getPageNum());
@@ -140,11 +137,13 @@ public class RuleServiceImpl implements IRuleService {
         example.setRuleCode(ruleParam.getRuleCode());
         example.setRuleName(ruleParam.getRuleName());
         example.setStatus(ruleParam.getStatus());
-        List<RulePO> ruleList = ruleMapper.selectByExample(example);
-        if (CollectionUtils.isEmpty(ruleList)) {
-            return List.of();
+        Page<RulePO> rulePage = PageMethod.startPage(example.getPageNum(), example.getPageSize())
+                .doSelectPage(() -> ruleMapper.selectByExample(example));
+        if (Objects.isNull(rulePage) || CollectionUtils.isEmpty(rulePage.getResult())) {
+            return pageResult;
         }
-        return ruleList.stream().map(rule -> {
+        List<RulePO> ruleList = rulePage.getResult();
+        List<RuleVO> ruleVOS = ruleList.stream().map(rule -> {
             RuleVO ruleVO = new RuleVO();
             IncidentPO incident = guavaIncidentCache.getCacheIncident(rule.getIncidentCode());
             ruleVO.setId(rule.getId());
@@ -158,6 +157,11 @@ public class RuleServiceImpl implements IRuleService {
             ruleVO.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(rule.getUpdateTime()));
             return ruleVO;
         }).collect(Collectors.toList());
+        pageResult.setTotal(rulePage.getTotal());
+        pageResult.setList(ruleVOS);
+        pageResult.setPageNum(rulePage.getPageNum());
+        pageResult.setPageSize(rulePage.getPageSize());
+        return pageResult;
     }
 
     @Override
