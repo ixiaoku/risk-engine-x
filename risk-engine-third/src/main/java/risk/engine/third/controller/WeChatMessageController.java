@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
+ * "47530161525@chatroom"禁言群
  * @Author: X
  * @Date: 2025/4/25 21:16
  * @Version: 1.0
@@ -26,7 +27,7 @@ import java.util.Random;
 @RequestMapping("/wechat")
 public class WeChatMessageController {
 
-    private final static String appId = "wx_XSy8zHvubFNgCNNUT_r3v";
+    private final static String appId = "wx_u27HapBW1Jabn4t8oSNss";
     private final static String PERSON_BOT_CONTENT =
             "\uD83D\uDEA8 【监控结果通知】\n" +
             "\uD83D\uDD14 【标题】: %s \n" +
@@ -39,7 +40,7 @@ public class WeChatMessageController {
         try {
             log.info("请求参数：{}", JSON.toJSONString(announcementDTO));
             String textContent = String.format(PERSON_BOT_CONTENT, announcementDTO.getTitle(), announcementDTO.getContent(), announcementDTO.getCreatedAt());
-            List<String> toWechatIds = Arrays.asList("44760028169@chatroom", "52067326265@chatroom", "48977305404@chatroom");
+            List<String> toWechatIds = Arrays.asList("47530161525@chatroom");
             for (String toWechatId : toWechatIds) {
                 MessageApi.postText(appId, toWechatId, textContent,"");
                 int i = new Random().nextInt(6);
