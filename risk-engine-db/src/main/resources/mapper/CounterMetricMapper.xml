@@ -6,7 +6,7 @@
     <resultMap id="BaseResultMap" type="risk.engine.db.entity.CounterMetricPO">
         <id column="id" jdbcType="BIGINT" property="id" />
         <result column="metric_code" jdbcType="VARCHAR" property="metricCode" />
-        <result column="metric_name" jdbcType="VARCHAR" property="MetricName" />
+        <result column="metric_name" jdbcType="VARCHAR" property="metricName" />
         <result column="metric_type" jdbcType="TINYINT" property="metricType" />
         <result column="incident_code" jdbcType="VARCHAR" property="incidentCode" />
         <result column="attribute_key" jdbcType="VARCHAR" property="attributeKey" />
@@ -14,13 +14,14 @@
         <result column="aggregation_type" jdbcType="VARCHAR" property="aggregationType" />
         <result column="status" jdbcType="TINYINT" property="status" />
         <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="operator" jdbcType="VARCHAR" property="operator" />
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     </resultMap>
 
     <sql id="Base_Column_List">
         id, metric_code, metric_name, metric_type, incident_code, attribute_key,
-        window_size, aggregation_type, status, description, create_time, update_time
+        window_size, aggregation_type, status, description, operator, create_time, update_time
     </sql>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -38,8 +39,14 @@
             <if test="status != null">
                 status = #{status,jdbcType=TINYINT}
             </if>
-            <if test="incidentCode != null">
+            <if test="incidentCode != null and incidentCode != ''" >
                 and incident_code = #{incidentCode,jdbcType=VARCHAR}
+            </if>
+            <if test="metricCode != null and metricCode != ''" >
+                and metric_code = #{metricCode,jdbcType=VARCHAR}
+            </if>
+            <if test="metricName != null and metricName != ''" >
+                and metric_name = #{metricName,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
@@ -48,11 +55,11 @@
         insert into counter_metric (
             metric_code, metric_name, metric_type,
             incident_code, attribute_key, window_size, aggregation_type,
-            status, description, create_time, update_time
+            status, description, operator, create_time, update_time
         ) values (
                      #{metricCode,jdbcType=VARCHAR}, #{metricName,jdbcType=VARCHAR}, #{metricType,jdbcType=TINYINT},
                      #{incidentCode,jdbcType=VARCHAR}, #{attributeKey,jdbcType=VARCHAR}, #{windowSize,jdbcType=VARCHAR}, #{aggregationType,jdbcType=VARCHAR},
-                     #{status,jdbcType=TINYINT}, #{description,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+                     #{status,jdbcType=TINYINT}, #{description,jdbcType=VARCHAR},  #{operator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
                  )
     </insert>
 
@@ -64,6 +71,7 @@
             aggregation_type = #{aggregationType,jdbcType=VARCHAR},
             status = #{status,jdbcType=TINYINT},
             description = #{description,jdbcType=VARCHAR},
+            operator = #{operator,jdbcType=VARCHAR},
             update_time = #{updateTime,jdbcType=TIMESTAMP}
         where id = #{id,jdbcType=BIGINT}
     </update>

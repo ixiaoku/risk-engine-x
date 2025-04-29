@@ -2,8 +2,6 @@ package risk.engine.dto.vo;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 /**
  * @Author: X
  * @Date: 2025/4/29 00:13
@@ -64,11 +62,11 @@ public class CounterMetricVO {
     /**
      * 创建时间
      */
-    private LocalDateTime createTime;
+    private String createTime;
 
     /**
      * 更新时间
      */
-    private LocalDateTime updateTime;
+    private String updateTime;
 
 }

@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.page.PageMethod;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import risk.engine.common.util.DateTimeUtil;
 import risk.engine.db.dao.CounterMetricMapper;
 import risk.engine.db.entity.CounterMetricPO;
 import risk.engine.dto.PageResult;
@@ -93,6 +94,7 @@ public class CounterMetricServiceImpl implements ICounterMetricService {
 
     private CounterMetricVO convertVO(CounterMetricPO counterMetric) {
         CounterMetricVO counterMetricVO = new CounterMetricVO();
+        counterMetricVO.setId(counterMetric.getId());
         counterMetricVO.setMetricCode(counterMetric.getMetricCode());
         counterMetricVO.setMetricName(counterMetric.getMetricName());
         counterMetricVO.setMetricType(counterMetric.getMetricType());
@@ -102,8 +104,8 @@ public class CounterMetricServiceImpl implements ICounterMetricService {
         counterMetricVO.setAggregationType(counterMetric.getAggregationType());
         counterMetricVO.setStatus(counterMetric.getStatus());
         counterMetricVO.setDescription(counterMetric.getDescription());
-        counterMetricVO.setCreateTime(counterMetric.getCreateTime());
-        counterMetricVO.setUpdateTime(counterMetric.getUpdateTime());
+        counterMetricVO.setCreateTime(DateTimeUtil.getTimeByLocalDateTime(counterMetric.getCreateTime()));
+        counterMetricVO.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(counterMetric.getUpdateTime()));
         return counterMetricVO;
     }
 
