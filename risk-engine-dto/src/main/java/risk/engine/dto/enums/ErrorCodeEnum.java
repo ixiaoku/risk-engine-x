@@ -26,6 +26,7 @@ public enum ErrorCodeEnum {
     INCIDENT_EXIST_RULE(1007, "非法操作，事件存在关联规则"),
     RULE_LOGIC_ILLEGAL(1008, "非法操作，逻辑表达式不合法"),
     ONLINE_STATUS_RULE(1009, "非法操作，上线状态规则不能删除"),
+    ONLINE_STATUS_COUNTER_METRIC(1009, "非法操作，启用状态计数器不能删除"),
     ;
 
 

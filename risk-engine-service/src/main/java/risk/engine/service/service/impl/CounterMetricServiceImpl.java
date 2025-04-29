@@ -4,10 +4,13 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.page.PageMethod;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import risk.engine.common.function.ValidatorHandler;
 import risk.engine.common.util.DateTimeUtil;
 import risk.engine.db.dao.CounterMetricMapper;
 import risk.engine.db.entity.CounterMetricPO;
 import risk.engine.dto.PageResult;
+import risk.engine.dto.enums.CounterStatusEnum;
+import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.param.CounterMetricParam;
 import risk.engine.dto.vo.CounterMetricVO;
 import risk.engine.service.service.ICounterMetricService;
@@ -15,6 +18,7 @@ import risk.engine.service.service.ICounterMetricService;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -30,19 +34,20 @@ public class CounterMetricServiceImpl implements ICounterMetricService {
 
     @Override
     public boolean insert(CounterMetricParam param) {
-        CounterMetricPO counterMetricPO = new CounterMetricPO();
-        counterMetricPO.setMetricCode(param.getMetricCode());
-        counterMetricPO.setMetricName(param.getMetricName());
-        counterMetricPO.setMetricType(param.getMetricType());
-        counterMetricPO.setIncidentCode(param.getIncidentCode());
-        counterMetricPO.setAttributeKey(param.getAttributeKey());
-        counterMetricPO.setWindowSize(param.getWindowSize());
-        counterMetricPO.setAggregationType(param.getAggregationType());
-        counterMetricPO.setStatus(param.getStatus());
-        counterMetricPO.setDescription(param.getDescription());
-        counterMetricPO.setCreateTime(LocalDateTime.now());
-        counterMetricPO.setUpdateTime(LocalDateTime.now());
-        return counterMetricMapper.insert(counterMetricPO) > 0;
+        CounterMetricPO counterMetric = new CounterMetricPO();
+        counterMetric.setMetricCode(param.getMetricCode());
+        counterMetric.setMetricName(param.getMetricName());
+        counterMetric.setMetricType(param.getMetricType());
+        counterMetric.setIncidentCode(param.getIncidentCode());
+        counterMetric.setAttributeKey(param.getAttributeKey());
+        counterMetric.setWindowSize(param.getWindowSize());
+        counterMetric.setAggregationType(param.getAggregationType());
+        counterMetric.setStatus(param.getStatus());
+        counterMetric.setDescription(param.getDescription());
+        counterMetric.setOperator(param.getOperator());
+        counterMetric.setCreateTime(LocalDateTime.now());
+        counterMetric.setUpdateTime(LocalDateTime.now());
+        return counterMetricMapper.insert(counterMetric) > 0;
     }
 
     @Override
@@ -77,6 +82,7 @@ public class CounterMetricServiceImpl implements ICounterMetricService {
         counterMetric.setAggregationType(param.getAggregationType());
         counterMetric.setStatus(param.getStatus());
         counterMetric.setDescription(param.getDescription());
+        counterMetric.setOperator(param.getOperator());
         counterMetric.setUpdateTime(LocalDateTime.now());
         return false;
     }
@@ -89,6 +95,9 @@ public class CounterMetricServiceImpl implements ICounterMetricService {
 
     @Override
     public boolean delete(Long id) {
+        CounterMetricPO counterMetric = counterMetricMapper.selectByPrimaryKey(id);
+        ValidatorHandler.verify(ErrorCodeEnum.ONLINE_STATUS_COUNTER_METRIC)
+                .validateException(Objects.isNull(counterMetric) || Objects.equals(counterMetric.getStatus(), CounterStatusEnum.ONLINE.getCode()));
         return counterMetricMapper.deleteByPrimaryKey(id) > 0;
     }
 

@@ -61,6 +61,11 @@ public class CounterMetricPO {
     private String description;
 
     /**
+     * 操作人
+     */
+    private String operator;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createTime;
