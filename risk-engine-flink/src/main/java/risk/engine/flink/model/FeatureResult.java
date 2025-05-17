@@ -20,10 +20,13 @@ public class FeatureResult {
 
     public FeatureResult() {
     }
-    public FeatureResult(String metricCode, String uid, double value, long windowSizeSeconds) {
+
+    public FeatureResult(String metricCode, String uid, double value, long windowSizeSeconds, long count, String aggregationType) {
         this.metricCode = metricCode;
         this.uid = uid;
         this.value = value;
         this.windowSizeSeconds = windowSizeSeconds;
+        this.count = count;
+        this.aggregationType = aggregationType;
     }
 }

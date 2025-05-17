@@ -1,6 +1,7 @@
 package risk.engine.flink;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.common.typeinfo.TypeHint;
@@ -12,8 +13,6 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import risk.engine.flink.model.*;
 import risk.engine.flink.sink.RedisSink;
 import risk.engine.flink.util.ConfigLoader;
@@ -28,8 +27,8 @@ import java.util.concurrent.TimeUnit;
  * @Date: 2025/3/14 16:55
  * @Version: 1.0
  */
+@Slf4j
 public class GenericFeatureJob {
-    private static final Logger LOG = LoggerFactory.getLogger(GenericFeatureJob.class);
     private static final ConfigLoader configLoader = new ConfigLoader();
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -53,10 +52,10 @@ public class GenericFeatureJob {
                 .fromSource(source, WatermarkStrategy.noWatermarks(), "KafkaSource")
                 .map(json -> {
                     try {
-                        System.out.println("报文信息：" + json);
+                        log.info("报文信息：{}", json);
                         return mapper.readValue(json, FeatureEvent.class);
                     } catch (Exception e) {
-                        LOG.error("Failed to parse JSON: {}", json, e);
+                        log.error("Failed to parse JSON: {}", json, e);
                         return null;
                     }
                 })
@@ -64,13 +63,16 @@ public class GenericFeatureJob {
                 .assignTimestampsAndWatermarks(
                         WatermarkStrategy
                                 .<FeatureEvent>forBoundedOutOfOrderness(Duration.ofSeconds(10))
-                                .withTimestampAssigner((event, timestamp) -> (Long) event.getAttributes().get("timestamp"))
+                                .withTimestampAssigner((event, timestamp) -> {
+                                    log.info("assignTimestampsAndWatermarks Event: {}", event);
+                                    return (Long) event.getAttributes().get("timestamp");
+                                })
                 );
 
         DataStream<FeatureResult> resultStream = eventStream
                 .flatMap((event, collector) -> {
                     List<CounterMetricConfig> configs = configLoader.getConfigsByMetricCodes(event.getMetricCodes());
-                    System.out.println("计数器特征配置：" + configs);
+                    log.info("计数器特征配置：{}", configs);
                     for (CounterMetricConfig config : configs) {
                         if (!config.getIncidentCode().equals(event.getIncidentCode())) {
                             continue;
@@ -82,7 +84,7 @@ public class GenericFeatureJob {
                         } else if (attributeValue instanceof Number) {
                             value = ((Number) attributeValue).doubleValue();
                         } else {
-                            LOG.warn("Invalid attribute value for key {}: {}", config.getAttributeKey(), attributeValue);
+                            log.warn("Invalid attribute value for key {}: {}", config.getAttributeKey(), attributeValue);
                             value = 0.0;
                         }
                         collector.collect(new IntermediateResult(
@@ -97,15 +99,19 @@ public class GenericFeatureJob {
                 .keyBy(result -> result.getUid() + ":" + result.getMetricCode())
                 .window(SlidingEventTimeWindows.of(Time.hours(24), Time.minutes(5))) // 需改进为动态窗口
                 .aggregate(new FeatureAggregator())
-                .map(result -> new FeatureResult(
-                        result.getMetricCode(),
-                        result.getUid(),
-                        result.getValue(),
-                        result.getWindowSizeSeconds()
-                ));
+                .map(result -> {
+                    log.info("聚合结果：{}", result);
+                    return new FeatureResult(
+                            result.getMetricCode(),
+                            result.getUid(),
+                            result.getValue(),
+                            result.getWindowSizeSeconds(),
+                            result.getCount(),
+                            result.getAggregationType());
+                });
         resultStream.addSink(new RedisSink("redis", 6379, "dcr"));
         env.execute("Generic Feature Computation Job");
-        LOG.info("Flink job started successfully");
+        log.info("Flink job started successfully");
     }
 
     private static long getWindowSizeSeconds(String windowSize) {

@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class ConfigLoader {
-    private static final String MYSQL_URL = "jdbc:mysql://43.163.107.28:3306/risk?useSSL=false";
+    private static final String MYSQL_URL = "jdbc:mysql://43.163.107.28:3306/risk?allowPublicKeyRetrieval=true&useSSL=false";
     private static final String MYSQL_USER = "root";
     private static final String MYSQL_PASSWORD = "dcr";
 

@@ -8,7 +8,9 @@ package risk.engine.flink.sink;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.json.JSONObject;
 
+import java.util.List;
 import java.util.Properties;
 
 public class TestProducer {
@@ -19,7 +21,14 @@ public class TestProducer {
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
         KafkaProducer<String, String> producer = new KafkaProducer<>(props);
-        String message = "{\"incident_code\":\"TradeQuantData\",\"uid\":\"BTCUSDT\",\"attributes\":{\"close\":76662.35000000,\"timestamp\":1744026599999},\"metric_codes\":[\"close-price-btcusdt-sum\",\"close-price-btcusdt-avg\"]}";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("incident_code", "TradeQuantData");
+        jsonObject.put("uid", "BTCUSDT");
+        jsonObject.put("attributes", new JSONObject()
+                .put("close", 76662.35000000)
+                .put("timestamp", System.currentTimeMillis()));
+        jsonObject.put("metric_codes", List.of("close-price-btcusdt-sum", "close-price-btcusdt-avg"));
+        String message = jsonObject.toString();
         producer.send(new ProducerRecord<>("risk_feature_events", message));
         producer.close();
     }

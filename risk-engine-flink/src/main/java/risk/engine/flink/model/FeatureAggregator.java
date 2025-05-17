@@ -1,35 +1,55 @@
 package risk.engine.flink.model;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.flink.api.common.functions.AggregateFunction;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @Author: X
  * @Date: 2025/5/17 20:05
  * @Version: 1.0
  */
-public class FeatureAggregator implements org.apache.flink.api.common.functions.AggregateFunction<IntermediateResult, FeatureResult, FeatureResult> {
+@Slf4j
+public class FeatureAggregator implements AggregateFunction<IntermediateResult, FeatureResult, FeatureResult> {
+
+    private static final Map<String, AggregationStrategy> STRATEGY_MAP = new HashMap<>();
+
+    static {
+        STRATEGY_MAP.put("sum", new SumStrategy());
+        STRATEGY_MAP.put("avg", new AvgStrategy());
+        STRATEGY_MAP.put("max", new MaxStrategy());
+        STRATEGY_MAP.put("min", new MinStrategy());
+        STRATEGY_MAP.put("counter", new CounterStrategy());
+    }
+
     @Override
     public FeatureResult createAccumulator() {
-        return new FeatureResult("", "", 0.0, 0);
+        return new FeatureResult("", "", 0.0, 0L, 0L, "unknown"); // 添加 aggregationType 字段
     }
 
     @Override
     public FeatureResult add(IntermediateResult value, FeatureResult acc) {
-        double newValue;
-        long newCount = acc.getCount() + 1;
-        switch (value.getAggregationType()) {
-            case "sum": newValue = acc.getValue() + value.getValue(); break;
-            case "avg": newValue = (acc.getValue() * acc.getCount() + value.getValue()) / newCount; break;
-            case "max": newValue = Math.max(acc.getValue(), value.getValue()); break;
-            case "min": newValue = Math.min(acc.getValue(), value.getValue()); break;
-            case "counter": newValue = acc.getValue() + 1; break;
-            default: newValue = acc.getValue();
+        log.info("【ADD】uid={}, metric={}, value={}, accBefore={}", value.getUid(), value.getMetricCode(), value.getValue(), acc);
+
+        AggregationStrategy strategy = STRATEGY_MAP.get(value.getAggregationType());
+        if (strategy == null) {
+            log.warn("未知聚合类型：{}", value.getAggregationType());
+            return acc;
         }
+
+        long newCount = acc.getCount() + 1;
+        double newValue = strategy.aggregate(acc.getValue(), value.getValue(), acc.getCount(), value.getValue());
+
         FeatureResult result = new FeatureResult(
                 value.getMetricCode(),
                 value.getUid(),
                 newValue,
-                value.getWindowSizeSeconds()
+                newCount,
+                value.getWindowSizeSeconds(),
+                value.getAggregationType()
         );
-        result.setCount(newCount);
         return result;
     }
 
@@ -40,23 +60,60 @@ public class FeatureAggregator implements org.apache.flink.api.common.functions.
 
     @Override
     public FeatureResult merge(FeatureResult a, FeatureResult b) {
-        double mergedValue;
-        long mergedCount = a.getCount() + b.getCount();
-        switch (a.getAggregationType()) {
-            case "sum": mergedValue = a.getValue() + b.getValue(); break;
-            case "avg": mergedValue = (a.getValue() * a.getCount() + b.getValue() * b.getCount()) / mergedCount; break;
-            case "max": mergedValue = Math.max(a.getValue(), b.getValue()); break;
-            case "min": mergedValue = Math.min(a.getValue(), b.getValue()); break;
-            case "counter": mergedValue = a.getValue() + b.getValue(); break;
-            default: mergedValue = a.getValue();
+        log.info("【MERGE】uid={}, metric={}, a={}, b={}", a.getUid(), a.getMetricCode(), a, b);
+
+        AggregationStrategy strategy = STRATEGY_MAP.get(a.getAggregationType());
+        if (strategy == null) {
+            log.warn("未知聚合类型（merge）：{}", a.getAggregationType());
+            return a;
         }
-        FeatureResult result = new FeatureResult(
+
+        long mergedCount = a.getCount() + b.getCount();
+        double mergedValue = strategy.aggregate(a.getValue(), b.getValue(), a.getCount(), b.getValue());
+
+        return new FeatureResult(
                 a.getMetricCode(),
                 a.getUid(),
                 mergedValue,
-                a.getWindowSizeSeconds()
+                mergedCount,
+                a.getWindowSizeSeconds(),
+                a.getAggregationType()
         );
-        result.setCount(mergedCount);
-        return result;
+    }
+
+    // -------- 聚合策略定义 --------
+    interface AggregationStrategy {
+        double aggregate(double accValue, double newValue, long accCount, double rawNewValue);
+    }
+
+    static class SumStrategy implements AggregationStrategy {
+        public double aggregate(double accValue, double newValue, long accCount, double rawNewValue) {
+            return accValue + newValue;
+        }
+    }
+
+    static class AvgStrategy implements AggregationStrategy {
+        public double aggregate(double accValue, double newValue, long accCount, double rawNewValue) {
+            long newCount = accCount + 1;
+            return newCount == 0 ? 0.0 : (accValue * accCount + rawNewValue) / newCount;
+        }
+    }
+
+    static class MaxStrategy implements AggregationStrategy {
+        public double aggregate(double accValue, double newValue, long accCount, double rawNewValue) {
+            return accCount == 0 ? newValue : Math.max(accValue, newValue);
+        }
+    }
+
+    static class MinStrategy implements AggregationStrategy {
+        public double aggregate(double accValue, double newValue, long accCount, double rawNewValue) {
+            return accCount == 0 ? newValue : Math.min(accValue, newValue);
+        }
+    }
+
+    static class CounterStrategy implements AggregationStrategy {
+        public double aggregate(double accValue, double newValue, long accCount, double rawNewValue) {
+            return accValue + 1;
+        }
     }
 }

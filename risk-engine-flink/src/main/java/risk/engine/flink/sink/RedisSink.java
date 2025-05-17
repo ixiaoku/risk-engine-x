@@ -1,5 +1,6 @@
 package risk.engine.flink.sink;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 import redis.clients.jedis.Jedis;
@@ -12,6 +13,7 @@ import risk.engine.flink.model.FeatureResult;
  * @Date: 2025/3/14 16:55
  * @Version: 1.0
  */
+@Slf4j
 public class RedisSink extends RichSinkFunction<FeatureResult> {
 
     private final String redisHost;
@@ -41,25 +43,27 @@ public class RedisSink extends RichSinkFunction<FeatureResult> {
         } else {
             jedisPool = new JedisPool(poolConfig, redisHost, redisPort);
         }
+        log.info("RedisSink 初始化完成，连接到 {}:{}", redisHost, redisPort);
     }
 
     @Override
-    public void invoke(FeatureResult result, Context context) throws Exception {
+    public void invoke(FeatureResult result, Context context) {
+        log.info("RedisSink 处理 FeatureResult: {}", result);
         try (Jedis jedis = jedisPool.getResource()) {
             String key = result.getMetricCode() + ":" + result.getUid();
             String value = String.valueOf(result.getValue());
-            System.out.println("存入redis的value：" + value);
             jedis.set(key, value);
             jedis.expire(key, result.getWindowSizeSeconds()); // 设置过期时间
+            log.info("RedisSink 存入 Redis: key={}, value={}", key, value);
         } catch (Exception e) {
             // 建议记录日志
-            System.err.println("RedisSink error: " + e.getMessage());
+            log.error("RedisSink 写入失败: {}", e.getMessage(), e);
             // 可以加重试、报警、降级逻辑
         }
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         if (jedisPool != null) {
             jedisPool.close();
         }

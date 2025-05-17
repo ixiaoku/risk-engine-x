@@ -9,7 +9,7 @@
     </appender>
 
     <!-- 设置根日志级别为 WARN，避免 DEBUG/INFO 级别的噪音 -->
-    <root level="WARN">
+    <root level="INFO">
         <appender-ref ref="CONSOLE" />
     </root>
 
