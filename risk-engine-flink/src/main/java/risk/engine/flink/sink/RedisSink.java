@@ -48,6 +48,7 @@ public class RedisSink extends RichSinkFunction<FeatureResult> {
         try (Jedis jedis = jedisPool.getResource()) {
             String key = result.getMetricCode() + ":" + result.getUid();
             String value = String.valueOf(result.getValue());
+            System.out.println("存入redis的value：" + value);
             jedis.set(key, value);
             jedis.expire(key, result.getWindowSizeSeconds()); // 设置过期时间
         } catch (Exception e) {

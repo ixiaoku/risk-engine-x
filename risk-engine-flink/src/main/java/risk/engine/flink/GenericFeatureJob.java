@@ -70,6 +70,7 @@ public class GenericFeatureJob {
         DataStream<FeatureResult> resultStream = eventStream
                 .flatMap((event, collector) -> {
                     List<CounterMetricConfig> configs = configLoader.getConfigsByMetricCodes(event.getMetricCodes());
+                    System.out.println("计数器特征配置：" + configs);
                     for (CounterMetricConfig config : configs) {
                         if (!config.getIncidentCode().equals(event.getIncidentCode())) {
                             continue;
@@ -102,7 +103,6 @@ public class GenericFeatureJob {
                         result.getValue(),
                         result.getWindowSizeSeconds()
                 ));
-        resultStream.addSink(new RedisSink("redis", 6379, "dcr"));
         resultStream.addSink(new RedisSink("redis", 6379, "dcr"));
         env.execute("Generic Feature Computation Job");
         LOG.info("Flink job started successfully");

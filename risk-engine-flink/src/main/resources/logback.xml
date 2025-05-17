@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- 控制台输出 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 设置根日志级别为 WARN，避免 DEBUG/INFO 级别的噪音 -->
+    <root level="WARN">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+    <!-- 单独控制某些类库的日志级别（可选） -->
+    <logger name="org.apache.flink.runtime.io.disk" level="ERROR"/>
+    <logger name="org.apache.flink.runtime.blob" level="ERROR"/>
+    <logger name="org.apache.flink.runtime.state" level="ERROR"/>
+    <logger name="org.apache.flink.runtime.filecache" level="ERROR"/>
+
+</configuration>
