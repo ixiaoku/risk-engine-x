@@ -2,7 +2,6 @@ package risk.engine.flink;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
-import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.common.typeinfo.TypeHint;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
@@ -39,7 +38,7 @@ public class GenericFeatureJob {
         env.setParallelism(2);
         env.enableCheckpointing(60000);
         env.getCheckpointConfig().setCheckpointStorage("file:///Users/dongchunrong/Documents/data/flink/checkpoints");
-        env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, 10000));
+        //env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, 10000));
         env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
 
         KafkaSource<String> source = KafkaSource.<String>builder()
@@ -54,6 +53,7 @@ public class GenericFeatureJob {
                 .fromSource(source, WatermarkStrategy.noWatermarks(), "KafkaSource")
                 .map(json -> {
                     try {
+                        System.out.println("报文信息：" + json);
                         return mapper.readValue(json, FeatureEvent.class);
                     } catch (Exception e) {
                         LOG.error("Failed to parse JSON: {}", json, e);
@@ -105,6 +105,7 @@ public class GenericFeatureJob {
         resultStream.addSink(new RedisSink("redis", 6379, "dcr"));
         resultStream.addSink(new RedisSink("redis", 6379, "dcr"));
         env.execute("Generic Feature Computation Job");
+        LOG.info("Flink job started successfully");
     }
 
     private static long getWindowSizeSeconds(String windowSize) {
