@@ -42,7 +42,7 @@ public class FeatureAggregator implements AggregateFunction<IntermediateResult, 
         long newCount = acc.getCount() + 1;
         double newValue = strategy.aggregate(acc.getValue(), value.getValue(), acc.getCount(), value.getValue());
 
-        FeatureResult result = new FeatureResult(
+        return new FeatureResult(
                 value.getMetricCode(),
                 value.getUid(),
                 newValue,
@@ -50,7 +50,6 @@ public class FeatureAggregator implements AggregateFunction<IntermediateResult, 
                 value.getWindowSizeSeconds(),
                 value.getAggregationType()
         );
-        return result;
     }
 
     @Override

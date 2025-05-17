@@ -63,8 +63,9 @@ public class GenericFeatureJob {
                 .assignTimestampsAndWatermarks(
                         WatermarkStrategy
                                 .<FeatureEvent>forBoundedOutOfOrderness(Duration.ofSeconds(10))
-                                .withTimestampAssigner((event, timestamp) -> {
-                                    log.info("assignTimestampsAndWatermarks Event: {}", event);
+                                .withTimestampAssigner((event, timestamp) ->
+                                {
+                                    log.info("timestamp:{}", event.getAttributes().get("timestamp"));
                                     return (Long) event.getAttributes().get("timestamp");
                                 })
                 );
@@ -97,7 +98,8 @@ public class GenericFeatureJob {
                     }
                 }, TypeInformation.of(new TypeHint<IntermediateResult>() {}))
                 .keyBy(result -> result.getUid() + ":" + result.getMetricCode())
-                .window(SlidingEventTimeWindows.of(Time.hours(24), Time.minutes(5))) // 需改进为动态窗口
+                //.window(SlidingEventTimeWindows.of(Time.hours(24), Time.minutes(5))) // 需改进为动态窗口
+                .window(SlidingEventTimeWindows.of(Time.minutes(1), Time.seconds(30)))
                 .aggregate(new FeatureAggregator())
                 .map(result -> {
                     log.info("聚合结果：{}", result);
@@ -109,9 +111,9 @@ public class GenericFeatureJob {
                             result.getCount(),
                             result.getAggregationType());
                 });
-        resultStream.addSink(new RedisSink("redis", 6379, "dcr"));
-        env.execute("Generic Feature Computation Job");
+        resultStream.addSink(new RedisSink("43.163.107.28", 6379, "dcr"));
         log.info("Flink job started successfully");
+        env.execute("Generic Feature Computation Job");
     }
 
     private static long getWindowSizeSeconds(String windowSize) {

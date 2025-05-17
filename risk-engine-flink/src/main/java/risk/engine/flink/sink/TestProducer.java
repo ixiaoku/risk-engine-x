@@ -23,9 +23,9 @@ public class TestProducer {
         KafkaProducer<String, String> producer = new KafkaProducer<>(props);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("incident_code", "TradeQuantData");
-        jsonObject.put("uid", "BTCUSDT");
+        jsonObject.put("uid", "ETHUSDT");
         jsonObject.put("attributes", new JSONObject()
-                .put("close", 76662.35000000)
+                .put("close", 2662.35000000)
                 .put("timestamp", System.currentTimeMillis()));
         jsonObject.put("metric_codes", List.of("close-price-btcusdt-sum", "close-price-btcusdt-avg"));
         String message = jsonObject.toString();
