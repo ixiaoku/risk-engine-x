@@ -62,7 +62,7 @@ public class GenericFeatureJob {
                 .filter(Objects::nonNull)
                 .assignTimestampsAndWatermarks(
                         WatermarkStrategy
-                                .<FeatureEvent>forBoundedOutOfOrderness(Duration.ofSeconds(10))
+                                .<FeatureEvent>forBoundedOutOfOrderness(Duration.ofSeconds(5))
                                 .withTimestampAssigner((event, timestamp) ->
                                 {
                                     log.info("timestamp:{}", event.getAttributes().get("timestamp"));
@@ -99,10 +99,10 @@ public class GenericFeatureJob {
                 }, TypeInformation.of(new TypeHint<IntermediateResult>() {}))
                 .keyBy(result -> result.getUid() + ":" + result.getMetricCode())
                 //.window(SlidingEventTimeWindows.of(Time.hours(24), Time.minutes(5))) // 需改进为动态窗口
-                .window(SlidingEventTimeWindows.of(Time.minutes(1), Time.seconds(30)))
+                .window(SlidingEventTimeWindows.of(Time.seconds(5), Time.seconds(1)))
                 .aggregate(new FeatureAggregator())
                 .map(result -> {
-                    log.info("聚合结果：{}", result);
+                    log.info("输出前的特征值：{}", result);
                     return new FeatureResult(
                             result.getMetricCode(),
                             result.getUid(),

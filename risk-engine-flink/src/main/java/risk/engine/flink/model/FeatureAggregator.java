@@ -54,6 +54,7 @@ public class FeatureAggregator implements AggregateFunction<IntermediateResult, 
 
     @Override
     public FeatureResult getResult(FeatureResult acc) {
+        log.info("【RESULT】{}", acc);
         return acc;
     }
 
