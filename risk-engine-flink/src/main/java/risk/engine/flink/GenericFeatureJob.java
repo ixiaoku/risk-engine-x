@@ -37,7 +37,6 @@ public class GenericFeatureJob {
         env.setParallelism(2);
         env.enableCheckpointing(60000);
         env.getCheckpointConfig().setCheckpointStorage("file:///Users/dongchunrong/Documents/data/flink/checkpoints");
-        //env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, 10000));
         env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
 
         KafkaSource<String> source = KafkaSource.<String>builder()
@@ -63,24 +62,29 @@ public class GenericFeatureJob {
                 .assignTimestampsAndWatermarks(
                         WatermarkStrategy
                                 .<FeatureEvent>forBoundedOutOfOrderness(Duration.ofSeconds(5))
-                                .withTimestampAssigner((event, timestamp) ->
-                                {
-                                    log.info("timestamp:{}", event.getAttributes().get("timestamp"));
-                                    return (Long) event.getAttributes().get("timestamp");
+                                .withTimestampAssigner((event, timestamp) -> {
+                                    Long ts = (Long) event.getAttributes().get("timestamp");
+                                    log.info("Assigning timestamp: {}, watermark: {}", ts, ts - 5000);
+                                    return ts;
                                 })
+                                .withWatermarkAlignment("group1", Duration.ofSeconds(10), Duration.ofSeconds(2))
                 );
 
         DataStream<FeatureResult> resultStream = eventStream
                 .flatMap((event, collector) -> {
                     List<CounterMetricConfig> configs = configLoader.getConfigsByMetricCodes(event.getMetricCodes());
                     log.info("计数器特征配置：{}", configs);
+                    if (configs.isEmpty()) {
+                        log.warn("No configs found for metricCodes: {}", event.getMetricCodes());
+                    }
                     for (CounterMetricConfig config : configs) {
                         if (!config.getIncidentCode().equals(event.getIncidentCode())) {
+                            log.info("Skipping config with mismatched incidentCode: {}", config);
                             continue;
                         }
                         Object attributeValue = event.getAttributes().get(config.getAttributeKey());
                         double value;
-                        if (config.getAggregationType().equals("counter")) {
+                        if (config.getAggregationType().equalsIgnoreCase("counter")) {
                             value = 1.0;
                         } else if (attributeValue instanceof Number) {
                             value = ((Number) attributeValue).doubleValue();
@@ -98,19 +102,13 @@ public class GenericFeatureJob {
                     }
                 }, TypeInformation.of(new TypeHint<IntermediateResult>() {}))
                 .keyBy(result -> result.getUid() + ":" + result.getMetricCode())
-                //.window(SlidingEventTimeWindows.of(Time.hours(24), Time.minutes(5))) // 需改进为动态窗口
                 .window(SlidingEventTimeWindows.of(Time.seconds(5), Time.seconds(1)))
                 .aggregate(new FeatureAggregator())
                 .map(result -> {
                     log.info("输出前的特征值：{}", result);
-                    return new FeatureResult(
-                            result.getMetricCode(),
-                            result.getUid(),
-                            result.getValue(),
-                            result.getWindowSizeSeconds(),
-                            result.getCount(),
-                            result.getAggregationType());
+                    return result;
                 });
+
         resultStream.addSink(new RedisSink("43.163.107.28", 6379, "dcr"));
         log.info("Flink job started successfully");
         env.execute("Generic Feature Computation Job");
@@ -129,4 +127,3 @@ public class GenericFeatureJob {
         }
     }
 }
-

@@ -13,7 +13,6 @@ import java.util.Map;
  */
 @Slf4j
 public class FeatureAggregator implements AggregateFunction<IntermediateResult, FeatureResult, FeatureResult> {
-
     private static final Map<String, AggregationStrategy> STRATEGY_MAP = new HashMap<>();
 
     static {
@@ -26,16 +25,18 @@ public class FeatureAggregator implements AggregateFunction<IntermediateResult, 
 
     @Override
     public FeatureResult createAccumulator() {
-        return new FeatureResult("", "", 0.0, 0L, 0L, "unknown"); // 添加 aggregationType 字段
+        return new FeatureResult("", "", 0.0, 0L, 86400L, "unknown");
     }
 
     @Override
     public FeatureResult add(IntermediateResult value, FeatureResult acc) {
-        log.info("【ADD】uid={}, metric={}, value={}, accBefore={}", value.getUid(), value.getMetricCode(), value.getValue(), acc);
+        String aggType = value.getAggregationType().toLowerCase();
+        log.info("【ADD】uid={}, metric={}, value={}, aggType={}, accBefore={}",
+                value.getUid(), value.getMetricCode(), value.getValue(), aggType, acc);
 
-        AggregationStrategy strategy = STRATEGY_MAP.get(value.getAggregationType());
+        AggregationStrategy strategy = STRATEGY_MAP.get(aggType);
         if (strategy == null) {
-            log.warn("未知聚合类型：{}", value.getAggregationType());
+            log.warn("Unknown aggregation type: {}", aggType);
             return acc;
         }
 
@@ -48,7 +49,7 @@ public class FeatureAggregator implements AggregateFunction<IntermediateResult, 
                 newValue,
                 newCount,
                 value.getWindowSizeSeconds(),
-                value.getAggregationType()
+                aggType
         );
     }
 
@@ -60,11 +61,12 @@ public class FeatureAggregator implements AggregateFunction<IntermediateResult, 
 
     @Override
     public FeatureResult merge(FeatureResult a, FeatureResult b) {
+        String aggType = a.getAggregationType().toLowerCase();
         log.info("【MERGE】uid={}, metric={}, a={}, b={}", a.getUid(), a.getMetricCode(), a, b);
 
-        AggregationStrategy strategy = STRATEGY_MAP.get(a.getAggregationType());
+        AggregationStrategy strategy = STRATEGY_MAP.get(aggType);
         if (strategy == null) {
-            log.warn("未知聚合类型（merge）：{}", a.getAggregationType());
+            log.warn("Unknown aggregation type (merge): {}", aggType);
             return a;
         }
 
@@ -77,11 +79,10 @@ public class FeatureAggregator implements AggregateFunction<IntermediateResult, 
                 mergedValue,
                 mergedCount,
                 a.getWindowSizeSeconds(),
-                a.getAggregationType()
+                aggType
         );
     }
 
-    // -------- 聚合策略定义 --------
     interface AggregationStrategy {
         double aggregate(double accValue, double newValue, long accCount, double rawNewValue);
     }
