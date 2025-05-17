@@ -21,6 +21,7 @@
     <module>risk-engine-components</module>
     <module>risk-engine-metric</module>
     <module>risk-engine-third</module>
+    <module>risk-engine-flink</module>
   </modules>
 
   <parent>

@@ -37,16 +37,12 @@ public class MetricCounterHandler {
     private static final long EXPIRE_SECONDS = 30 * 60; // 过期时间30分钟
     private static final DateTimeFormatter WINDOW_KEY_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
 
-
     // 存储指标数据
     public void storeMetric(String incidentCode, String metricCode, BigDecimal value, long timestamp) {
         // 1. 获取指标元信息（这里假设已存储，可以从 Redis 或数据库获取）
-        List<CounterMetricDTO> counterMetricDTOList = counterMetricCache.getMetricCache("counter:" + incidentCode);
-        if (CollectionUtils.isEmpty(counterMetricDTOList)) return;
-        CounterMetricDTO counterMetricDTO = counterMetricDTOList.stream().filter(e -> StringUtils.equals(e.getAttributeKey(), metricCode)).findFirst().orElse(null);
+        CounterMetricDTO counterMetricDTO = getCounterMetricDTO();
         if (counterMetricDTO == null) return;
         String windowSize = counterMetricDTO.getWindowSize();
-        String aggregationType = counterMetricDTO.getAggregationType();
 
         // 2. 计算时间窗口标识
         long windowSizeMs = parseWindowSize(windowSize); // 解析时间窗口（例如 15m -> 900000ms）
@@ -63,11 +59,19 @@ public class MetricCounterHandler {
         redisTemplate.expire(dataKey, EXPIRE_SECONDS, TimeUnit.SECONDS);
     }
 
+    /**
+     * 获取指标元信息
+     * @return 结果
+     */
+    private CounterMetricDTO getCounterMetricDTO() {
+        List<CounterMetricDTO> counterMetricDTOList = counterMetricCache.getMetricCache("counter:incidentCode");
+        if (CollectionUtils.isEmpty(counterMetricDTOList)) return null;
+        return counterMetricDTOList.stream().filter(e -> StringUtils.equals(e.getAttributeKey(), "metricCode")).findFirst().orElse(null);
+    }
+
     public Pair<String, Set<String>> getZSetMetric(String incidentCode, String metricCode, long timestamp) {
         // 1. 获取指标元信息
-        List<CounterMetricDTO> counterMetricDTOList = counterMetricCache.getMetricCache("counter:" + incidentCode);
-        if (CollectionUtils.isEmpty(counterMetricDTOList)) return null;
-        CounterMetricDTO counterMetricDTO = counterMetricDTOList.stream().filter(e -> StringUtils.equals(e.getAttributeKey(), metricCode)).findFirst().orElse(null);
+        CounterMetricDTO counterMetricDTO = getCounterMetricDTO();
         if (counterMetricDTO == null) return null;
         String windowSize = counterMetricDTO.getWindowSize();
         String aggregationType = counterMetricDTO.getAggregationType();
@@ -82,8 +86,14 @@ public class MetricCounterHandler {
         return Pair.of(aggregationType, values);
     }
 
-    // 计算平均价格
-    public BigDecimal getCounterMetric(String incidentCode, String metricCode, long timestamp) {
+    /**
+     * 获取计数器指标的值
+     * @param incidentCode 事件code
+     * @param metricCode 指标code
+     * @param timestamp 时间戳
+     * @return 结果
+     */
+    public BigDecimal getCounterMetricValue(String incidentCode, String metricCode, long timestamp) {
         Pair<String, Set<String>> pair = getZSetMetric(incidentCode, metricCode, timestamp);
         if (Objects.isNull(pair)) return BigDecimal.ZERO;
         return aggregationType(pair.getLeft(), pair.getRight());
