@@ -25,7 +25,7 @@ public class FeatureAggregator implements AggregateFunction<IntermediateResult, 
 
     @Override
     public FeatureResult createAccumulator() {
-        return new FeatureResult("", "", 0.0, 0L, 86400L, "unknown");
+        return new FeatureResult("", "", 0.0, 0L, 5*1000, "unknown");
     }
 
     @Override
@@ -55,7 +55,7 @@ public class FeatureAggregator implements AggregateFunction<IntermediateResult, 
 
     @Override
     public FeatureResult getResult(FeatureResult acc) {
-        log.info("【RESULT】{}", acc);
+        log.info("FeatureAggregator【RESULT】{}", acc);
         return acc;
     }
 

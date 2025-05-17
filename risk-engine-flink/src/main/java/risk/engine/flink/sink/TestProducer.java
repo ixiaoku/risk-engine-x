@@ -23,19 +23,18 @@ public class TestProducer {
         KafkaProducer<String, String> producer = new KafkaProducer<>(props);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("incident_code", "TradeQuantData");
-        jsonObject.put("uid", "ETHUSDT");
-
+        jsonObject.put("uid", "BTCUSDT");
         jsonObject.put("metric_codes", List.of("close-price-btcusdt-sum", "close-price-btcusdt-avg"));
 
-        while (true) {
+        for (int i = 0; i < 20; i++) {
             try {
-                Thread.sleep(2000);
+                long timestamp = System.currentTimeMillis() - 10_000 + i * 1000L; // 10 秒前开始
                 jsonObject.put("attributes", new JSONObject()
-                        .put("close", new Random().nextDouble() * 2000)
-                        .put("timestamp", System.currentTimeMillis()));
+                        .put("close", new Random().nextDouble() * 200)
+                        .put("timestamp", timestamp));
                 String message = jsonObject.toString();
                 producer.send(new ProducerRecord<>("risk_feature_events", message));
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 Thread.currentThread().interrupt();
                 break;
             }

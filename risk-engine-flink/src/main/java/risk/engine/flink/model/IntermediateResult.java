@@ -13,7 +13,6 @@ public class IntermediateResult {
     private final String uid;
     private final double value;
     private final long windowSizeSeconds;
-    private long count;
     private final String aggregationType;
 
     public IntermediateResult(String metricCode, String uid, double value, long windowSizeSeconds, String aggregationType) {

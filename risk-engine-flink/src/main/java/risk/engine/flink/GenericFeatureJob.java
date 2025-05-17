@@ -61,13 +61,13 @@ public class GenericFeatureJob {
                 .filter(Objects::nonNull)
                 .assignTimestampsAndWatermarks(
                         WatermarkStrategy
-                                .<FeatureEvent>forBoundedOutOfOrderness(Duration.ofSeconds(5))
+                                .<FeatureEvent>forBoundedOutOfOrderness(Duration.ofSeconds(1))
                                 .withTimestampAssigner((event, timestamp) -> {
                                     Long ts = (Long) event.getAttributes().get("timestamp");
-                                    log.info("Assigning timestamp: {}, watermark: {}", ts, ts - 5000);
+                                    log.info("Assigning timestamp: {}, watermark: {}", ts, ts - 1000);
                                     return ts;
                                 })
-                                .withWatermarkAlignment("group1", Duration.ofSeconds(10), Duration.ofSeconds(2))
+                                //.withWatermarkAlignment("group1", Duration.ofSeconds(10), Duration.ofSeconds(2))
                 );
 
         DataStream<FeatureResult> resultStream = eventStream
@@ -103,7 +103,7 @@ public class GenericFeatureJob {
                 }, TypeInformation.of(new TypeHint<IntermediateResult>() {}))
                 .keyBy(result -> result.getUid() + ":" + result.getMetricCode())
                 .window(SlidingEventTimeWindows.of(Time.seconds(5), Time.seconds(1)))
-                .aggregate(new FeatureAggregator())
+                .aggregate(new FeatureAggregator(), new FeatureWindowFunction())
                 .map(result -> {
                     log.info("输出前的特征值：{}", result);
                     return result;

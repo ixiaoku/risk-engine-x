@@ -23,6 +23,7 @@ public class RedisSink extends RichSinkFunction<FeatureResult> {
     private transient JedisPool jedisPool;
 
     public RedisSink(String redisHost, int redisPort, String redisPassword) {
+        System.out.println("RedisSink:host: " + redisHost);
         this.redisHost = redisHost;
         this.redisPort = redisPort;
         this.redisPassword = redisPassword;
@@ -39,7 +40,7 @@ public class RedisSink extends RichSinkFunction<FeatureResult> {
         poolConfig.setTestWhileIdle(true);
 
         if (redisPassword != null && !redisPassword.isEmpty()) {
-            jedisPool = new JedisPool(poolConfig, redisHost, redisPort, 2000, redisPassword);
+            jedisPool = new JedisPool(poolConfig, redisHost, redisPort, 5000, redisPassword);
         } else {
             jedisPool = new JedisPool(poolConfig, redisHost, redisPort);
         }
