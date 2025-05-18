@@ -2,6 +2,7 @@ package risk.engine.flink;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.common.typeinfo.TypeHint;
@@ -11,7 +12,7 @@ import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsIni
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import risk.engine.flink.model.*;
 import risk.engine.flink.sink.RedisSink;
@@ -51,20 +52,19 @@ public class GenericFeatureJob {
                 .fromSource(source, WatermarkStrategy.noWatermarks(), "KafkaSource")
                 .map(json -> {
                     try {
-                        log.info("报文信息：{}", json);
                         return mapper.readValue(json, FeatureEvent.class);
                     } catch (Exception e) {
                         log.error("Failed to parse JSON: {}", json, e);
                         return null;
                     }
                 })
-                .filter(Objects::nonNull)
+                .filter(e -> Objects.nonNull(e) && e.getUid() != null && e.getMetricCodes() != null)
                 .assignTimestampsAndWatermarks(
                         WatermarkStrategy
                                 .<FeatureEvent>forBoundedOutOfOrderness(Duration.ofSeconds(1))
                                 .withTimestampAssigner((event, timestamp) -> {
                                     long ts = (long) event.getAttributes().get("timestamp");
-                                    log.info("Assigning timestamp: {}, watermark: {}", ts, ts - 1000);
+                                    log.info("Assigning timestamp: {}", ts);
                                     return ts;
                                 })
                 );
@@ -72,8 +72,7 @@ public class GenericFeatureJob {
         DataStream<FeatureResult> resultStream = eventStream
                 .flatMap((event, collector) -> {
                     List<CounterMetricConfig> configs = configLoader.getConfigsByMetricCodes(event.getMetricCodes());
-                    log.info("计数器特征配置：{}", configs);
-                    if (configs.isEmpty()) {
+                    if (CollectionUtils.isEmpty(configs)) {
                         log.warn("No configs found for metricCodes: {}", event.getMetricCodes());
                     }
                     for (CounterMetricConfig config : configs) {
@@ -101,8 +100,9 @@ public class GenericFeatureJob {
                     }
                 }, TypeInformation.of(new TypeHint<IntermediateResult>() {}))
                 .keyBy(result -> result.getUid() + ":" + result.getMetricCode())
-                .window(SlidingEventTimeWindows.of(Time.seconds(10), Time.seconds(5)))
-                .aggregate(new FeatureAggregator(), new FeatureWindowFunction())
+                //.window(SlidingEventTimeWindows.of(Time.seconds(10), Time.seconds(5)))
+                .window(TumblingEventTimeWindows.of(Time.seconds(10)))
+                .aggregate(new FeatureAggregator())
                 .map(result -> {
                     log.info("输出前的特征值：{}", result);
                     return result;
@@ -115,6 +115,8 @@ public class GenericFeatureJob {
 
     private static long getWindowSizeSeconds(String windowSize) {
         switch (windowSize) {
+            case "10s": return 10;
+            case "1min": return TimeUnit.MINUTES.toSeconds(1);
             case "5min": return TimeUnit.MINUTES.toSeconds(5);
             case "15min": return TimeUnit.MINUTES.toSeconds(15);
             case "30min": return TimeUnit.MINUTES.toSeconds(30);

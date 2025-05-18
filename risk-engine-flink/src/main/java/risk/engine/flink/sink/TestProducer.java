@@ -23,8 +23,8 @@ public class TestProducer {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("incident_code", "TradeQuantData");
         jsonObject.put("uid", "BTCUSDT");
-        jsonObject.put("metric_codes", List.of("close-price-btcusdt-sum", "close-price-btcusdt-avg"));
-
+        jsonObject.put("metric_codes", List.of("close-price-btcusdt-sum"));
+        int total = 0;
         for (int i = 0; i < 10; i++) {
             try {
                 long timestamp = System.currentTimeMillis() + i * 1000; // 10 秒前开始
@@ -32,12 +32,14 @@ public class TestProducer {
                         .put("close", i * 1000)
                         .put("timestamp", timestamp));
                 String message = jsonObject.toString();
+                total += i * 1000;
                 producer.send(new ProducerRecord<>("risk_feature_events", message));
             } catch (Exception e) {
                 Thread.currentThread().interrupt();
                 break;
             }
         }
+        System.out.println("计算总的价格：" + total);
         producer.close();
     }
 }
