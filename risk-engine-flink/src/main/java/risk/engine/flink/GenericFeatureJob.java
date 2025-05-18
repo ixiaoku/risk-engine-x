@@ -63,11 +63,10 @@ public class GenericFeatureJob {
                         WatermarkStrategy
                                 .<FeatureEvent>forBoundedOutOfOrderness(Duration.ofSeconds(1))
                                 .withTimestampAssigner((event, timestamp) -> {
-                                    Long ts = (Long) event.getAttributes().get("timestamp");
+                                    long ts = (long) event.getAttributes().get("timestamp");
                                     log.info("Assigning timestamp: {}, watermark: {}", ts, ts - 1000);
                                     return ts;
                                 })
-                                //.withWatermarkAlignment("group1", Duration.ofSeconds(10), Duration.ofSeconds(2))
                 );
 
         DataStream<FeatureResult> resultStream = eventStream
@@ -102,7 +101,7 @@ public class GenericFeatureJob {
                     }
                 }, TypeInformation.of(new TypeHint<IntermediateResult>() {}))
                 .keyBy(result -> result.getUid() + ":" + result.getMetricCode())
-                .window(SlidingEventTimeWindows.of(Time.seconds(5), Time.seconds(1)))
+                .window(SlidingEventTimeWindows.of(Time.seconds(10), Time.seconds(5)))
                 .aggregate(new FeatureAggregator(), new FeatureWindowFunction())
                 .map(result -> {
                     log.info("输出前的特征值：{}", result);

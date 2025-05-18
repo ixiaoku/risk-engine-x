@@ -12,7 +12,6 @@ import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.Random;
 
 public class TestProducer {
     public static void main(String[] args) {
@@ -26,11 +25,11 @@ public class TestProducer {
         jsonObject.put("uid", "BTCUSDT");
         jsonObject.put("metric_codes", List.of("close-price-btcusdt-sum", "close-price-btcusdt-avg"));
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
             try {
-                long timestamp = System.currentTimeMillis() - 10_000 + i * 1000L; // 10 秒前开始
+                long timestamp = System.currentTimeMillis() + i * 1000; // 10 秒前开始
                 jsonObject.put("attributes", new JSONObject()
-                        .put("close", new Random().nextDouble() * 200)
+                        .put("close", i * 1000)
                         .put("timestamp", timestamp));
                 String message = jsonObject.toString();
                 producer.send(new ProducerRecord<>("risk_feature_events", message));
