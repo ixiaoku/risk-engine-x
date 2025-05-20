@@ -12,8 +12,8 @@ import java.util.Objects;
 @Getter
 public enum CounterStatusEnum {
 
-    ONLINE(0,"启用"),
-    OFFLINE(1,"禁用"),
+    ONLINE(1,"启用"),
+    OFFLINE(0,"禁用"),
     ;
 
     /**

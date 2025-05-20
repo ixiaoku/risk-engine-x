@@ -1,6 +1,7 @@
 package risk.engine.rest.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +44,7 @@ public class CounterMetricController {
                 || StringUtils.isEmpty(param.getWindowSize())
                 || StringUtils.isEmpty(param.getAggregationType())
                 || Objects.isNull(param.getStatus())
-                || StringUtils.isEmpty(param.getAttributeKey())
+                || CollectionUtils.isEmpty(param.getAttributeKey())
                 || Objects.isNull(param.getMetricType())
         );
         return ResponseVO.success(counterMetricService.insert(param));
