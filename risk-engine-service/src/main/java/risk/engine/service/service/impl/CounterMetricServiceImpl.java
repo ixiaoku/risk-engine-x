@@ -1,5 +1,6 @@
 package risk.engine.service.service.impl;
 
+import com.alibaba.fastjson2.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.page.PageMethod;
 import org.apache.commons.collections4.CollectionUtils;
@@ -39,9 +40,11 @@ public class CounterMetricServiceImpl implements ICounterMetricService {
         counterMetric.setMetricName(param.getMetricName());
         counterMetric.setMetricType(param.getMetricType());
         counterMetric.setIncidentCode(param.getIncidentCode());
-        counterMetric.setAttributeKey(param.getAttributeKey());
+        counterMetric.setAttributeKey(JSON.toJSONString(param.getAttributeKey()));
         counterMetric.setWindowSize(param.getWindowSize());
         counterMetric.setAggregationType(param.getAggregationType());
+        counterMetric.setWindowType(param.getWindowType());
+        counterMetric.setGroovyScript(param.getGroovyScript());
         counterMetric.setStatus(param.getStatus());
         counterMetric.setDescription(param.getDescription());
         counterMetric.setOperator(param.getOperator());
@@ -73,6 +76,11 @@ public class CounterMetricServiceImpl implements ICounterMetricService {
     }
 
     @Override
+    public List<CounterMetricPO> selectExample(CounterMetricPO param) {
+        return counterMetricMapper.selectByExample(param);
+    }
+
+    @Override
     public boolean updateByPrimaryKey(CounterMetricParam param) {
         CounterMetricPO counterMetric = new CounterMetricPO();
         counterMetric.setId(param.getId());
@@ -80,6 +88,8 @@ public class CounterMetricServiceImpl implements ICounterMetricService {
         counterMetric.setMetricType(param.getMetricType());
         counterMetric.setWindowSize(param.getWindowSize());
         counterMetric.setAggregationType(param.getAggregationType());
+        counterMetric.setAggregationType(param.getAggregationType());
+        counterMetric.setWindowType(param.getWindowType());
         counterMetric.setStatus(param.getStatus());
         counterMetric.setDescription(param.getDescription());
         counterMetric.setOperator(param.getOperator());
@@ -108,9 +118,13 @@ public class CounterMetricServiceImpl implements ICounterMetricService {
         counterMetricVO.setMetricName(counterMetric.getMetricName());
         counterMetricVO.setMetricType(counterMetric.getMetricType());
         counterMetricVO.setIncidentCode(counterMetric.getIncidentCode());
-        counterMetricVO.setAttributeKey(counterMetric.getAttributeKey());
+        if (Objects.nonNull(counterMetric.getAttributeKey())) {
+            counterMetricVO.setAttributeKey(JSON.parseArray(counterMetric.getAttributeKey(), String.class));
+        }
         counterMetricVO.setWindowSize(counterMetric.getWindowSize());
         counterMetricVO.setAggregationType(counterMetric.getAggregationType());
+        counterMetricVO.setAggregationType(counterMetric.getAggregationType());
+        counterMetricVO.setWindowType(counterMetric.getWindowType());
         counterMetricVO.setStatus(counterMetric.getStatus());
         counterMetricVO.setDescription(counterMetric.getDescription());
         counterMetricVO.setCreateTime(DateTimeUtil.getTimeByLocalDateTime(counterMetric.getCreateTime()));

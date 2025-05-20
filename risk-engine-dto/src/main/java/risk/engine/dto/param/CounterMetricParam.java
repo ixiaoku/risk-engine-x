@@ -3,6 +3,7 @@ package risk.engine.dto.param;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @Author: X
@@ -39,7 +40,7 @@ public class CounterMetricParam extends PageHelperQuery {
     /**
      * 属性指标key
      */
-    private String attributeKey;
+    private List<String> attributeKey;
 
     /**
      * 时间滑动窗口 CounterWindowSizeEnum
@@ -50,6 +51,17 @@ public class CounterMetricParam extends PageHelperQuery {
      * 聚合方式 AggregationTypeEnum
      */
     private String aggregationType;
+
+    /**
+     * 窗口类型 tumbling sliding session
+     * WindowTypeEnum
+     */
+    private String windowType;
+
+    /**
+     * groovy表达式
+     */
+    private String groovyScript;
 
     /**
      * 状态：1启用，0禁用

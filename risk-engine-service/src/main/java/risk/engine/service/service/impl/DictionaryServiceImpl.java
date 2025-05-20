@@ -3,11 +3,10 @@ package risk.engine.service.service.impl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import risk.engine.db.entity.IncidentPO;
-import risk.engine.db.entity.MetricPO;
-import risk.engine.db.entity.PenaltyActionPO;
-import risk.engine.db.entity.RulePO;
+import risk.engine.db.entity.*;
 import risk.engine.db.entity.example.RuleExample;
+import risk.engine.dto.dto.rule.MetricDTO;
+import risk.engine.dto.enums.CounterStatusEnum;
 import risk.engine.dto.enums.IncidentStatusEnum;
 import risk.engine.dto.enums.MetricTypeEnum;
 import risk.engine.dto.enums.RuleStatusEnum;
@@ -17,10 +16,7 @@ import risk.engine.service.common.dict.OptionsEnumFunction;
 import risk.engine.service.service.*;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -45,6 +41,9 @@ public class DictionaryServiceImpl implements IDictionaryService {
 
     @Resource
     private IMetricService metricService;
+
+    @Resource
+    private ICounterMetricService counterMetricService;
 
     @Override
     public Map<String, Object> getList(String[] keys) {
@@ -141,13 +140,42 @@ public class DictionaryServiceImpl implements IDictionaryService {
     }
 
     public List<Map<String, Object>> metricList(String incidentCode) {
+        List<MetricDTO> metricDTOList = new ArrayList<>();
+        //事件属性特征 业务方传入
         MetricPO metricQuery = new MetricPO();
         metricQuery.setIncidentCode(incidentCode);
         List<MetricPO> metricList = metricService.selectByExample(metricQuery);
-        if (CollectionUtils.isEmpty(metricList)) {
+        if (CollectionUtils.isNotEmpty(metricList)) {
+            List<MetricDTO> metricDTOList1  = metricList.stream().map(metricPO -> {
+                MetricDTO metricDTO = new MetricDTO();
+                metricDTO.setIncidentCode(metricPO.getIncidentCode());
+                metricDTO.setMetricCode(metricPO.getMetricCode());
+                metricDTO.setMetricName(metricPO.getMetricName());
+                metricDTO.setMetricType(metricPO.getMetricType());
+                return metricDTO;
+            }).collect(Collectors.toList());
+            metricDTOList.addAll(metricDTOList1);
+        }
+        //计数器指标
+        CounterMetricPO counterQuery = new CounterMetricPO();
+        counterQuery.setIncidentCode(incidentCode);
+        counterQuery.setStatus(CounterStatusEnum.ONLINE.getCode());
+        List<CounterMetricPO> counterMetricPOS = counterMetricService.selectExample(counterQuery);
+        if (CollectionUtils.isNotEmpty(counterMetricPOS)) {
+            List<MetricDTO> metricDTOList2 = counterMetricPOS.stream().map(metricPO -> {
+                MetricDTO metricDTO = new MetricDTO();
+                metricDTO.setIncidentCode(metricPO.getIncidentCode());
+                metricDTO.setMetricCode(metricPO.getMetricCode());
+                metricDTO.setMetricName(metricPO.getMetricName());
+                metricDTO.setMetricType(metricPO.getMetricType());
+                return metricDTO;
+            }).collect(Collectors.toList());
+            metricDTOList.addAll(metricDTOList2);
+        }
+        if(CollectionUtils.isEmpty(metricDTOList)) {
             return List.of();
         }
-        return metricList.stream()
+        return metricDTOList.stream()
                 .map(e -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("code", e.getMetricCode());
