@@ -69,7 +69,6 @@ public class GuavaIncidentRuleCache implements ApplicationRunner {
      * 加载规则到缓存
      */
     private void loadRulesToCache() {
-        long start = System.currentTimeMillis();
         IncidentPO query = new IncidentPO();
         query.setStatus(IncidentStatusEnum.ONLINE.getCode());
         List<IncidentPO> incidentList = incidentMapper.selectByExample(query);

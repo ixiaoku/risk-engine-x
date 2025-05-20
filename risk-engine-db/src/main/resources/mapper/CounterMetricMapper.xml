@@ -12,6 +12,8 @@
         <result column="attribute_key" jdbcType="VARCHAR" property="attributeKey" />
         <result column="window_size" jdbcType="VARCHAR" property="windowSize" />
         <result column="aggregation_type" jdbcType="VARCHAR" property="aggregationType" />
+        <result column="window_type" jdbcType="VARCHAR" property="windowType" />
+        <result column="groovy_script" jdbcType="VARCHAR" property="groovyScript" />
         <result column="status" jdbcType="TINYINT" property="status" />
         <result column="description" jdbcType="VARCHAR" property="description" />
         <result column="operator" jdbcType="VARCHAR" property="operator" />
@@ -20,8 +22,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, metric_code, metric_name, metric_type, incident_code, attribute_key,
-        window_size, aggregation_type, status, description, operator, create_time, update_time
+        id, metric_code, metric_name, metric_type, incident_code, attribute_key, window_size, aggregation_type,
+        window_type, groovy_script, status, description, operator, create_time, update_time
     </sql>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -53,12 +55,12 @@
 
     <insert id="insert" parameterType="risk.engine.db.entity.CounterMetricPO">
         insert into counter_metric (
-            metric_code, metric_name, metric_type,
-            incident_code, attribute_key, window_size, aggregation_type,
+            metric_code, metric_name, metric_type,incident_code, attribute_key,
+            window_size, aggregation_type, window_type, groovy_script,
             status, description, operator, create_time, update_time
         ) values (
-                     #{metricCode,jdbcType=VARCHAR}, #{metricName,jdbcType=VARCHAR}, #{metricType,jdbcType=TINYINT},
-                     #{incidentCode,jdbcType=VARCHAR}, #{attributeKey,jdbcType=VARCHAR}, #{windowSize,jdbcType=VARCHAR}, #{aggregationType,jdbcType=VARCHAR},
+                     #{metricCode,jdbcType=VARCHAR}, #{metricName,jdbcType=VARCHAR}, #{metricType,jdbcType=TINYINT}, #{incidentCode,jdbcType=VARCHAR},
+                     #{attributeKey,jdbcType=VARCHAR}, #{windowSize,jdbcType=VARCHAR}, #{aggregationType,jdbcType=VARCHAR}, #{windowType,jdbcType=VARCHAR}, #{groovyScript,jdbcType=VARCHAR},
                      #{status,jdbcType=TINYINT}, #{description,jdbcType=VARCHAR},  #{operator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
                  )
     </insert>
@@ -69,6 +71,8 @@
             metric_name = #{metricName,jdbcType=VARCHAR},
             window_size = #{windowSize,jdbcType=VARCHAR},
             aggregation_type = #{aggregationType,jdbcType=VARCHAR},
+            window_type = #{windowType,jdbcType=VARCHAR},
+            groovy_script = #{groovyScript,jdbcType=VARCHAR},
             status = #{status,jdbcType=TINYINT},
             description = #{description,jdbcType=VARCHAR},
             operator = #{operator,jdbcType=VARCHAR},

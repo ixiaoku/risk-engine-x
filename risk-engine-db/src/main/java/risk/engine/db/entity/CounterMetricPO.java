@@ -36,7 +36,8 @@ public class CounterMetricPO {
     private String incidentCode;
 
     /**
-     * 属性指标key
+     * 属性指标key/分组key
+     * 数组形式 多个指标作为分组条件
      */
     private String attributeKey;
 
@@ -49,6 +50,17 @@ public class CounterMetricPO {
      * 聚合方式 AggregationTypeEnum
      */
     private String aggregationType;
+
+    /**
+     * 窗口类型 tumbling sliding session
+     * WindowTypeEnum
+     */
+    private String windowType;
+
+    /**
+     * groovy表达式
+     */
+    private String groovyScript;
 
     /**
      * 状态：1启用，0禁用
