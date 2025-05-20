@@ -19,6 +19,9 @@ public class FeatureEvent {
     @JsonProperty("uid")
     private String uid;
 
+    @JsonProperty("condition_script")
+    private String conditionScript;
+
     @JsonProperty("attributes")
     private Map<String, Object> attributes;
 

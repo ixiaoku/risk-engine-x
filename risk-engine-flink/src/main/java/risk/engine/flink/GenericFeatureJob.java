@@ -52,6 +52,7 @@ public class GenericFeatureJob {
                 .fromSource(source, WatermarkStrategy.noWatermarks(), "KafkaSource")
                 .map(json -> {
                     try {
+                        log.info("请求报文json：{}", json);
                         return mapper.readValue(json, FeatureEvent.class);
                     } catch (Exception e) {
                         log.error("Failed to parse JSON: {}", json, e);
