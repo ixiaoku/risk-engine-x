@@ -36,6 +36,11 @@ public class CounterMetricPO {
     private String incidentCode;
 
     /**
+     * 应用事件code
+     */
+    private String incidentCodeList;
+
+    /**
      * 属性指标key/分组key
      * 数组形式 多个指标作为分组条件
      */

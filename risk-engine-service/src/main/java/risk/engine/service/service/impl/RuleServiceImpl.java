@@ -16,6 +16,7 @@ import risk.engine.db.dao.RuleMapper;
 import risk.engine.db.entity.*;
 import risk.engine.db.entity.example.RuleExample;
 import risk.engine.dto.PageResult;
+import risk.engine.dto.dto.rule.MetricDTO;
 import risk.engine.dto.dto.rule.RuleMetricDTO;
 import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.enums.RuleStatusEnum;
@@ -94,11 +95,11 @@ public class RuleServiceImpl implements IRuleService {
         //获取完整的特征类型和名称
         MetricPO metricQuery = new MetricPO();
         metricQuery.setIncidentCode(incidentCode);
-        List<MetricPO> metricList = metricService.selectByExample(metricQuery);
-        if (CollectionUtils.isEmpty(metricList)) {
+        List<MetricDTO> metricDTOList = metricService.selectByIncidentCode(incidentCode);
+        if (CollectionUtils.isEmpty(metricDTOList)) {
             throw new RuntimeException();
         }
-        Map<String, MetricPO> resultMap = metricList.stream().collect(Collectors.toMap(MetricPO::getMetricCode, Function.identity()));
+        Map<String, MetricDTO> resultMap = metricDTOList.stream().collect(Collectors.toMap(MetricDTO::getMetricCode, Function.identity()));
         List<RuleMetricDTO> conditions = new Gson().fromJson(jsonScript, new TypeToken<List<RuleMetricDTO>>(){}.getType());
         return conditions.stream()
                 .filter(i -> Objects.nonNull(resultMap.get(i.getMetricCode())))
@@ -107,7 +108,7 @@ public class RuleServiceImpl implements IRuleService {
                     ruleMetricDTO.setMetricCode(metricDTO.getMetricCode());
                     ruleMetricDTO.setOperationSymbol(metricDTO.getOperationSymbol());
                     ruleMetricDTO.setSerialNumber(metricDTO.getSerialNumber());
-                    MetricPO metric = resultMap.get(metricDTO.getMetricCode());
+                    MetricDTO metric = resultMap.get(metricDTO.getMetricCode());
                     ruleMetricDTO.setMetricType(metric.getMetricType());
                     ruleMetricDTO.setMetricName(metric.getMetricName());
                     ruleMetricDTO.setMetricSource(metric.getMetricSource());
@@ -116,7 +117,7 @@ public class RuleServiceImpl implements IRuleService {
                         ruleMetricDTO.setMetricValue(metricDTO.getMetricValue());
                         return ruleMetricDTO;
                     } else if (StringUtils.equals("metric", metricDTO.getMetricValueType())) {
-                        MetricPO metricPO = resultMap.get(metricDTO.getMetricValue());
+                        MetricDTO metricPO = resultMap.get(metricDTO.getMetricValue());
                         ruleMetricDTO.setMetricValue(metricDTO.getMetricValue());
                         ruleMetricDTO.setRightMetricCode(metricPO.getMetricCode());
                         ruleMetricDTO.setRightMetricName(metricPO.getMetricName());

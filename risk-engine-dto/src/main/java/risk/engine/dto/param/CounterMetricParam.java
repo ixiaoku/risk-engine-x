@@ -38,6 +38,11 @@ public class CounterMetricParam extends PageHelperQuery {
     private String incidentCode;
 
     /**
+     * 应用事件code
+     */
+    private List<String> incidentCodeList;
+
+    /**
      * 属性指标key
      */
     private List<String> attributeKey;
