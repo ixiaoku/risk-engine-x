@@ -1,9 +1,11 @@
 package risk.engine.common.grovvy;
 
 import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,6 +32,20 @@ public class GroovyShellUtil {
             log.error("表达式执行失败: {}, 错误: {}", groovyScript, e.getMessage(), e);
             throw new RuntimeException("表达式执行失败: " + groovyScript + ", 错误: " + e.getMessage(), e);
         }
+    }
+
+    public static void main(String[] args) {
+        String expression = "amount1 < amount2 || fromAddress == toAddress";
+        Map<String, Object> map = new HashMap<>();
+        map.put("amount1", 1);
+        map.put("amount2", 2);
+        map.put("fromAddress", "from");
+        map.put("toAddress", "to");
+        Binding binding = new Binding();
+        map.forEach(binding::setVariable);
+        GroovyShell groovyShell = new GroovyShell(binding);
+        boolean flag = (boolean) groovyShell.evaluate(expression);;
+        System.out.println(flag);
     }
 
 }

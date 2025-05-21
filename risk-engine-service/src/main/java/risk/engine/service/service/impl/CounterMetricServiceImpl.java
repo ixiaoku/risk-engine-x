@@ -40,6 +40,7 @@ public class CounterMetricServiceImpl implements ICounterMetricService {
         counterMetric.setMetricName(param.getMetricName());
         counterMetric.setMetricType(param.getMetricType());
         counterMetric.setIncidentCode(param.getIncidentCode());
+        counterMetric.setIncidentCodeList(JSON.toJSONString(param.getIncidentCodeList()));
         counterMetric.setAttributeKey(JSON.toJSONString(param.getAttributeKey()));
         counterMetric.setWindowSize(param.getWindowSize());
         counterMetric.setAggregationType(param.getAggregationType());
@@ -84,6 +85,7 @@ public class CounterMetricServiceImpl implements ICounterMetricService {
     public boolean updateByPrimaryKey(CounterMetricParam param) {
         CounterMetricPO counterMetric = new CounterMetricPO();
         counterMetric.setId(param.getId());
+        counterMetric.setIncidentCodeList(JSON.toJSONString(param.getIncidentCodeList()));
         counterMetric.setMetricName(param.getMetricName());
         counterMetric.setMetricType(param.getMetricType());
         counterMetric.setWindowSize(param.getWindowSize());
@@ -118,6 +120,9 @@ public class CounterMetricServiceImpl implements ICounterMetricService {
         counterMetricVO.setMetricName(counterMetric.getMetricName());
         counterMetricVO.setMetricType(counterMetric.getMetricType());
         counterMetricVO.setIncidentCode(counterMetric.getIncidentCode());
+        if (Objects.nonNull(counterMetric.getIncidentCodeList())) {
+            counterMetricVO.setIncidentCodeList(JSON.parseArray(counterMetric.getIncidentCodeList(), String.class));
+        }
         if (Objects.nonNull(counterMetric.getAttributeKey())) {
             counterMetricVO.setAttributeKey(JSON.parseArray(counterMetric.getAttributeKey(), String.class));
         }

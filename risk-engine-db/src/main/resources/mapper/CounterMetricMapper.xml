@@ -9,6 +9,7 @@
         <result column="metric_name" jdbcType="VARCHAR" property="metricName" />
         <result column="metric_type" jdbcType="TINYINT" property="metricType" />
         <result column="incident_code" jdbcType="VARCHAR" property="incidentCode" />
+        <result column="incident_code_list" jdbcType="VARCHAR" property="incidentCodeList" />
         <result column="attribute_key" jdbcType="VARCHAR" property="attributeKey" />
         <result column="window_size" jdbcType="VARCHAR" property="windowSize" />
         <result column="aggregation_type" jdbcType="VARCHAR" property="aggregationType" />
@@ -22,7 +23,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, metric_code, metric_name, metric_type, incident_code, attribute_key, window_size, aggregation_type,
+        id, metric_code, metric_name, metric_type, incident_code, incident_code_list, attribute_key, window_size, aggregation_type,
         window_type, groovy_script, status, description, operator, create_time, update_time
     </sql>
 
@@ -55,11 +56,11 @@
 
     <insert id="insert" parameterType="risk.engine.db.entity.CounterMetricPO">
         insert into counter_metric (
-            metric_code, metric_name, metric_type,incident_code, attribute_key,
+            metric_code, metric_name, metric_type,incident_code, incident_code_list, attribute_key,
             window_size, aggregation_type, window_type, groovy_script,
             status, description, operator, create_time, update_time
         ) values (
-                     #{metricCode,jdbcType=VARCHAR}, #{metricName,jdbcType=VARCHAR}, #{metricType,jdbcType=TINYINT}, #{incidentCode,jdbcType=VARCHAR},
+                     #{metricCode,jdbcType=VARCHAR}, #{metricName,jdbcType=VARCHAR}, #{metricType,jdbcType=TINYINT}, #{incidentCode,jdbcType=VARCHAR}, #{incidentCodeList,jdbcType=VARCHAR},
                      #{attributeKey,jdbcType=VARCHAR}, #{windowSize,jdbcType=VARCHAR}, #{aggregationType,jdbcType=VARCHAR}, #{windowType,jdbcType=VARCHAR}, #{groovyScript,jdbcType=VARCHAR},
                      #{status,jdbcType=TINYINT}, #{description,jdbcType=VARCHAR},  #{operator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
                  )
