@@ -55,7 +55,15 @@
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
+
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/ixiaoku/risk-engine-rest</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <plugins>
