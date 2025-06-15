@@ -1,17 +1,17 @@
-package risk.engine.db.entity;
+package risk.engine.db.entity.example;
 
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 /**
- * 名单数据
+ * 名单库
  * @Author: X
  * @Date: 2025/3/12 19:35
  * @Version: 1.0
  */
 @Data
-public class ListDataPO {
+public class ListLibraryExample {
 
     /**
      * 主键id
@@ -26,27 +26,15 @@ public class ListDataPO {
      */
     private String listLibraryName;
     /**
-     * 名单名称
-     */
-    private String listName;
-    /**
-     * 名单编码
-      */
-    private String listCode;
-    /**
-     * 名单值
-     */
-    private String listValue;
-    /**
-     * 名单值类型
+     * 状态
      */
     private Integer status;
     /**
-     * 名单类型
+     * 名单库类别
      */
-    private Integer listType;
+    private Integer listCategory;
     /**
-     * 名单分类
+     * 操作人
      */
     private String operator;
     /**
@@ -57,9 +45,6 @@ public class ListDataPO {
      * 更新时间
      */
     private LocalDateTime updateTime;
-    /**
-     * 名单描述
-     */
-    private String listDesc;
+
 
 }

@@ -1,17 +1,15 @@
-package risk.engine.db.entity;
+package risk.engine.dto.vo;
 
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 /**
  * 名单库
  * @Author: X
- * @Date: 2025/3/12 19:35
+ * @Date: 2025/6/15 19:26
  * @Version: 1.0
  */
 @Data
-public class ListLibraryPO {
+public class ListLibraryVO {
 
     /**
      * 主键id
@@ -40,11 +38,11 @@ public class ListLibraryPO {
     /**
      * 创建时间
      */
-    private LocalDateTime createTime;
+    private String createTime;
     /**
      * 更新时间
      */
-    private LocalDateTime updateTime;
+    private String updateTime;
     /**
      * 名单库描述
      */
