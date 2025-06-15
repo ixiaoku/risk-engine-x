@@ -11,7 +11,7 @@ import risk.engine.dto.vo.ListLibraryVO;
  * @Date: 2025/6/15 20:38
  * @Version: 1.0
  */
-@FeignClient(name = "${spring.application.name}", url = "${risk.rest.feignClient.url}")
+@FeignClient(name = "${spring.application.name}", url = "${risk.rest.feignClient.url}", contextId = "ListLibraryClient", path = "/list/library")
 public interface ListLibraryClient {
 
     @PostMapping("/insert")
