@@ -45,7 +45,7 @@
     <distributionManagement>
         <repository>
             <id>github</id>
-            <url>https://maven.pkg.github.com/ixiaoku/risk-engine-rest</url>
+            <url>https://maven.pkg.github.com/ixiaoku/risk-engine-x</url>
         </repository>
     </distributionManagement>
 </project>
