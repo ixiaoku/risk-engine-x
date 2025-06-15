@@ -1,4 +1,4 @@
-package risk.engine.rest.client;
+package risk.engine.client.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

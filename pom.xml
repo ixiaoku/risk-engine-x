@@ -22,6 +22,7 @@
     <module>risk-engine-metric</module>
     <module>risk-engine-third</module>
     <module>risk-engine-flink</module>
+    <module>risk-engine-client</module>
   </modules>
 
   <parent>
@@ -107,6 +108,12 @@
       </dependency>
 
       <dependency>
+        <groupId>risk.engine.client</groupId>
+        <artifactId>risk-engine-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-dependencies</artifactId>
         <version>2021.0.9</version>
@@ -169,13 +176,6 @@
         <artifactId>spring-boot-starter-data-redis</artifactId>
         <version>${springboot.version}</version>
       </dependency>
-
-      <!-- Redisson -->
-<!--      <dependency>-->
-<!--        <groupId>org.redisson</groupId>-->
-<!--        <artifactId>redisson-spring-boot-starter</artifactId>-->
-<!--        <version>3.17.7</version>-->
-<!--      </dependency>-->
 
       <dependency>
         <groupId>mysql</groupId>

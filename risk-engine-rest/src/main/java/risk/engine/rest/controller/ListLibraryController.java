@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import risk.engine.client.feign.ListLibraryClient;
 import risk.engine.common.function.ValidatorHandler;
 import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.param.ListLibraryParam;
@@ -21,7 +22,7 @@ import java.util.Objects;
 @Slf4j
 @RestController
 @RequestMapping("/list/library")
-public class ListLibraryController {
+public class ListLibraryController implements ListLibraryClient {
 
     @Resource
     private IListLibraryService listLibraryService;

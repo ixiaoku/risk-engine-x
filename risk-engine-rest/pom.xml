@@ -19,6 +19,17 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>risk.engine.service</groupId>
+            <artifactId>risk-engine-service</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>risk.engine.client</groupId>
+            <artifactId>risk-engine-client</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -45,25 +56,7 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>risk.engine.service</groupId>
-            <artifactId>risk-engine-service</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-
-
     </dependencies>
-
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/ixiaoku/risk-engine-rest</url>
-        </repository>
-    </distributionManagement>
 
     <build>
         <plugins>
