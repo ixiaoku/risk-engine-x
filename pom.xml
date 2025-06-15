@@ -14,7 +14,7 @@
     <module>risk-engine-common</module>
     <module>risk-engine-db</module>
     <module>risk-engine-crawler</module>
-    <module>risk-control-analysis</module>
+    <module>risk-engine-admin</module>
     <module>risk-engine-service</module>
     <module>risk-engine-dto</module>
     <module>risk-engine-job</module>
@@ -104,6 +104,14 @@
         <groupId>risk.engine.third</groupId>
         <artifactId>risk-engine-third</artifactId>
         <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>2021.0.9</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
 
       <dependency>

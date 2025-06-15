@@ -1,0 +1,7 @@
+host:
+  ip: 43.163.107.28
+spring:
+  datasource:
+    url: jdbc:mysql://${host.ip}:3306/risk?allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&useSSL=false
+    username: dcr
+    password: dcr

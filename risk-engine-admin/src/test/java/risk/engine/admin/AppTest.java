@@ -1,4 +1,4 @@
-package risk.engine.analysis;
+package risk.engine.admin;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
