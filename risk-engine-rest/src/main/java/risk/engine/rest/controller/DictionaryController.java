@@ -4,13 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import risk.engine.client.feign.DictionaryClient;
 import risk.engine.common.function.ValidatorHandler;
 import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.param.DictionaryParam;
-import risk.engine.dto.vo.ResponseVO;
 import risk.engine.service.service.IDictionaryService;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * @Author: X
@@ -20,7 +21,7 @@ import javax.annotation.Resource;
 @Slf4j
 @RestController
 @RequestMapping("/dict")
-public class DictionaryController {
+public class DictionaryController implements DictionaryClient {
 
 
     @Resource
@@ -32,12 +33,13 @@ public class DictionaryController {
      * @return 结果
      */
     @GetMapping("/options/parameter")
-    public ResponseVO indicatorOptions(@ModelAttribute DictionaryParam dictionaryParam) {
+    @Override
+    public Map<String, Object> getDictByParameter(@ModelAttribute DictionaryParam dictionaryParam) {
         log.info("detail indicator: {}", dictionaryParam);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(ObjectUtils.isEmpty(dictionaryParam.getDictKeyList())
                         || StringUtils.isEmpty(dictionaryParam.getQueryCode()));
-        return ResponseVO.success(dictionaryService.getList(dictionaryParam.getDictKeyList(), dictionaryParam.getQueryCode()));
+        return dictionaryService.getList(dictionaryParam.getDictKeyList(), dictionaryParam.getQueryCode());
     }
 
     /**
@@ -46,10 +48,11 @@ public class DictionaryController {
      * @return 结果
      */
     @GetMapping("/options")
-    public ResponseVO operationOptions(@RequestParam("dictKeyList") String[] dictKeyList) {
+    @Override
+    public Map<String, Object> getDict(@RequestParam("dictKeyList") String[] dictKeyList) {
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(ObjectUtils.isEmpty(dictKeyList));
-        return ResponseVO.success(dictionaryService.getList(dictKeyList));
+        return dictionaryService.getList(dictKeyList);
     }
 
     /**
@@ -58,9 +61,10 @@ public class DictionaryController {
      * @return 结果
      */
     @GetMapping("/options/db")
-    public ResponseVO getDictIncidents(@ModelAttribute DictionaryParam dictionaryParam) {
+    @Override
+    public Map<String, Object> getDictByDb(@ModelAttribute DictionaryParam dictionaryParam) {
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(ObjectUtils.isEmpty(dictionaryParam.getDictKeyList()));
-        return ResponseVO.success(dictionaryService.getDictByDB(dictionaryParam));
+        return dictionaryService.getDictByDB(dictionaryParam);
     }
 }

@@ -29,7 +29,7 @@ public class ListLibraryController implements ListLibraryClient {
     private IListLibraryService listLibraryService;
 
     @PostMapping("/insert")
-    public boolean insert(@RequestBody ListLibraryParam param) {
+    public Boolean insert(@RequestBody ListLibraryParam param) {
         log.info("insert listLibrary: {}", param);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(StringUtils.isEmpty(param.getListLibraryCode())
@@ -41,7 +41,7 @@ public class ListLibraryController implements ListLibraryClient {
     }
 
     @PostMapping("/delete")
-    public boolean delete(@RequestBody ListLibraryParam param) {
+    public Boolean delete(@RequestBody ListLibraryParam param) {
         log.info("delete listLibrary: {}", param);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(Objects.isNull(param.getId())
@@ -50,7 +50,7 @@ public class ListLibraryController implements ListLibraryClient {
     }
 
     @PostMapping("/update")
-    public boolean update(@RequestBody ListLibraryParam param) {
+    public Boolean update(@RequestBody ListLibraryParam param) {
         log.info("update listLibrary: {}", param);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(StringUtils.isEmpty(param.getListLibraryCode())

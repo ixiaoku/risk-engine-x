@@ -15,13 +15,13 @@ import risk.engine.dto.vo.ListLibraryVO;
 public interface ListLibraryClient {
 
     @PostMapping("/insert")
-    boolean insert(@RequestBody ListLibraryParam param);
+    Boolean insert(@RequestBody ListLibraryParam param);
 
     @PostMapping("/delete")
-    boolean delete(@RequestBody ListLibraryParam param);
+    Boolean delete(@RequestBody ListLibraryParam param);
 
     @PostMapping("/update")
-    boolean update(@RequestBody ListLibraryParam param);
+    Boolean update(@RequestBody ListLibraryParam param);
 
     @GetMapping("/list")
     PageResult<ListLibraryVO> list(@ModelAttribute ListLibraryParam param);
