@@ -5,7 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import risk.engine.client.feign.CounterMetricClient;
+import risk.engine.client.feign.CounterMetricFeignClient;
 import risk.engine.common.function.ValidatorHandler;
 import risk.engine.dto.PageResult;
 import risk.engine.dto.enums.ErrorCodeEnum;
@@ -25,7 +25,7 @@ import java.util.Objects;
 @Slf4j
 @RestController
 @RequestMapping("/metric/counter")
-public class CounterMetricController implements CounterMetricClient {
+public class CounterMetricFeignController implements CounterMetricFeignClient {
 
     @Resource
     private ICounterMetricService counterMetricService;

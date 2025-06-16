@@ -5,10 +5,12 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import risk.engine.client.feign.RuleFeignClient;
 import risk.engine.common.function.ValidatorHandler;
+import risk.engine.dto.PageResult;
 import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.param.RuleParam;
-import risk.engine.dto.vo.ResponseVO;
+import risk.engine.dto.vo.RuleVO;
 import risk.engine.service.service.IRuleService;
 
 import javax.annotation.Resource;
@@ -21,13 +23,14 @@ import javax.annotation.Resource;
 @Slf4j
 @RestController
 @RequestMapping("/rule")
-public class RuleController {
+public class RuleController implements RuleFeignClient {
 
     @Resource
     private IRuleService ruleService;
 
     @PostMapping("/insert")
-    public ResponseVO insert(@RequestBody RuleParam ruleParam) throws Exception {
+    @Override
+    public Boolean insert(@RequestBody RuleParam ruleParam) {
         log.info("Inserting rule: {}", ruleParam);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(StringUtils.isEmpty(ruleParam.getIncidentCode())
                 || StringUtils.isEmpty(ruleParam.getIncidentCode())
@@ -39,24 +42,27 @@ public class RuleController {
                 || CollectionUtils.isEmpty(ruleParam.getMetrics())
                 || StringUtils.isEmpty(ruleParam.getResponsiblePerson())
         );
-        return ResponseVO.success(ruleService.insert(ruleParam));
+        return ruleService.insert(ruleParam);
     }
 
-    @PostMapping("/list")
-    public ResponseVO list(@RequestBody RuleParam ruleParam) {
+    @GetMapping("/list")
+    @Override
+    public PageResult<RuleVO> list(@ModelAttribute RuleParam ruleParam) {
         log.info("list rules: {}", ruleParam);
-        return ResponseVO.success(ruleService.list(ruleParam));
+        return ruleService.list(ruleParam);
     }
 
     @PostMapping("/delete")
-    public ResponseVO delete(@RequestBody RuleParam ruleParam) {
+    @Override
+    public Boolean delete(@RequestBody RuleParam ruleParam) {
         log.info("delete rules: {}", ruleParam);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ObjectUtils.isEmpty(ruleParam.getId()));
-        return ResponseVO.success(ruleService.delete(ruleParam));
+        return ruleService.delete(ruleParam);
     }
 
     @PostMapping("/update")
-    public ResponseVO update(@RequestBody RuleParam ruleParam) {
+    @Override
+    public Boolean update(@RequestBody RuleParam ruleParam) {
         log.info("update rules: {}", ruleParam);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(ObjectUtils.isEmpty(ruleParam.getId())
@@ -67,14 +73,15 @@ public class RuleController {
                 || CollectionUtils.isEmpty(ruleParam.getMetrics())
                 || StringUtils.isEmpty(ruleParam.getResponsiblePerson())
         );
-        return ResponseVO.success(ruleService.update(ruleParam));
+        return ruleService.update(ruleParam);
     }
 
     @GetMapping("/detail")
-    public ResponseVO detail(@RequestParam("id") Long id) {
+    @Override
+    public RuleVO detail(@RequestParam("id") Long id) {
         log.info("detail rules: {}", id);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(ObjectUtils.isEmpty(id));
-        return ResponseVO.success(ruleService.detail(id));
+        return ruleService.detail(id);
     }
 
 }

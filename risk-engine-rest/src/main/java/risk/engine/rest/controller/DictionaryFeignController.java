@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import risk.engine.client.feign.DictionaryClient;
+import risk.engine.client.feign.DictionaryFeignClient;
 import risk.engine.common.function.ValidatorHandler;
 import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.param.DictionaryParam;
@@ -21,7 +21,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/dict")
-public class DictionaryController implements DictionaryClient {
+public class DictionaryFeignController implements DictionaryFeignClient {
 
 
     @Resource

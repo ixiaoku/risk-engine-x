@@ -10,8 +10,8 @@ import lombok.Data;
 @Data
 public class PageHelperQuery {
 
-    private int pageSize;
+    private int pageSize = 10;
 
-    private int pageNum;
+    private int pageNum = 1;
 
 }

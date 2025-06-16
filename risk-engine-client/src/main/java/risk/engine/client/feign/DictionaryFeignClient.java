@@ -13,8 +13,8 @@ import java.util.Map;
  * @Date: 2025/6/16 12:41
  * @Version: 1.0
  */
-@FeignClient(name = "${spring.application.name}", url = "${risk.rest.feignClient.url}", contextId = "DictionaryClient", path = "/dict")
-public interface DictionaryClient {
+@FeignClient(name = "${spring.application.name}", url = "${risk.rest.feignClient.url}", contextId = "DictionaryFeignClient", path = "/dict")
+public interface DictionaryFeignClient {
 
     @GetMapping("/options/parameter")
     Map<String, Object> getDictByParameter(@ModelAttribute DictionaryParam dictionaryParam);
