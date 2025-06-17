@@ -169,5 +169,34 @@ public class OptionsHandler {
                 }).collect(Collectors.toList());
     }
 
+    /**
+     * 名单库类别
+     * @return 结果
+     */
+    @Bean("listLibraryCategoryList")
+    public OptionsEnumFunction listLibraryCategory() {
+        return () -> Arrays.stream(ListLibraryCategoryEnum.values())
+                .map(e -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("code", e.getCode());
+                    options.put("msg", e.getDesc());
+                    return options;
+                }).collect(Collectors.toList());
+    }
+
+    /**
+     * 名单库状态
+     * @return 结果
+     */
+    @Bean("listLibraryStatusList")
+    public OptionsEnumFunction listLibraryStatus() {
+        return () -> Arrays.stream(ListLibraryStatusEnum.values())
+                .map(e -> {
+                    Map<String, Object> options = new HashMap<>();
+                    options.put("code", e.getCode());
+                    options.put("msg", e.getDesc());
+                    return options;
+                }).collect(Collectors.toList());
+    }
 
 }

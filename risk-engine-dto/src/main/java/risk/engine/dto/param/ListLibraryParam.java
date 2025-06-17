@@ -1,6 +1,7 @@
 package risk.engine.dto.param;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
  * @Date: 2025/6/15 19:25
  * @Version: 1.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class ListLibraryParam extends PageHelperQuery {
 
@@ -26,10 +28,12 @@ public class ListLibraryParam extends PageHelperQuery {
     private String listLibraryName;
     /**
      * 状态
+     * @see risk.engine.dto.enums.ListLibraryStatusEnum
      */
     private Integer status;
     /**
      * 名单库类别
+     * @see risk.engine.dto.enums.ListLibraryCategoryEnum
      */
     private Integer listCategory;
     /**
