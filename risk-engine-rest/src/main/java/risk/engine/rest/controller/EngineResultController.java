@@ -3,10 +3,7 @@ package risk.engine.rest.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import risk.engine.client.feign.EngineResultFeignClient;
 import risk.engine.common.function.ValidatorHandler;
 import risk.engine.dto.PageResult;
@@ -35,9 +32,9 @@ public class EngineResultController implements EngineResultFeignClient {
     @Resource
     private IEngineResultService engineResultService;
 
-    @GetMapping("/result/list")
+    @PostMapping("/result/list")
     @Override
-    public PageResult<EngineExecutorVO> list(@ModelAttribute EngineExecutorParam executorParam) {
+    public PageResult<EngineExecutorVO> list(@RequestBody EngineExecutorParam executorParam) {
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(StringUtils.isEmpty(executorParam.getStartTime())
                         || StringUtils.isEmpty(executorParam.getEndTime()));
@@ -50,27 +47,27 @@ public class EngineResultController implements EngineResultFeignClient {
         return pageResult;
     }
 
-    @GetMapping("/result/dashboard")
+    @PostMapping("/result/dashboard")
     @Override
-    public Map<String, BigDecimal> dashboard(@ModelAttribute EngineExecutorParam executorParam) {
+    public Map<String, BigDecimal> dashboard(@RequestBody EngineExecutorParam executorParam) {
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(StringUtils.isEmpty(executorParam.getStartTime())
                         || StringUtils.isEmpty(executorParam.getEndTime()));
         return engineResultService.getDashboard(executorParam);
     }
 
-    @GetMapping("/result/replay")
+    @PostMapping("/result/replay")
     @Override
-    public ReplyRuleVO replay(@ModelAttribute EngineExecutorParam executorParam) {
+    public ReplyRuleVO replay(@RequestBody EngineExecutorParam executorParam) {
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(StringUtils.isEmpty(executorParam.getRiskFlowNo())
                 );
         return engineResultService.replay(executorParam);
     }
 
-    @GetMapping("/result/snapshot")
+    @PostMapping("/result/snapshot")
     @Override
-    public EngineExecutorVO snapshot(@ModelAttribute EngineExecutorParam executorParam) {
+    public EngineExecutorVO snapshot(@RequestBody EngineExecutorParam executorParam) {
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(StringUtils.isEmpty(executorParam.getRiskFlowNo()));
         return engineResultService.getOne(executorParam);

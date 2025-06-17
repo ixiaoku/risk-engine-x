@@ -75,9 +75,9 @@ public class ListLibraryController implements ListLibraryClient {
         return listLibraryService.selectByPrimaryKey(id);
     }
 
-    @GetMapping("/list")
+    @PostMapping("/list")
     @Override
-    public PageResult<ListLibraryVO> list(@ModelAttribute ListLibraryParam param) {
+    public PageResult<ListLibraryVO> list(@RequestBody ListLibraryParam param) {
         log.info("list listLibrary: {}", param);
         return listLibraryService.list(param);
     }

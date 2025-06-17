@@ -3,11 +3,13 @@ package risk.engine.rest.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import risk.engine.client.feign.DictionaryFeignClient;
 import risk.engine.common.function.ValidatorHandler;
 import risk.engine.dto.enums.ErrorCodeEnum;
-import risk.engine.dto.param.DictionaryParam;
 import risk.engine.service.service.IDictionaryService;
 
 import javax.annotation.Resource;
@@ -23,23 +25,23 @@ import java.util.Map;
 @RequestMapping("/dict")
 public class DictionaryFeignController implements DictionaryFeignClient {
 
-
     @Resource
     private IDictionaryService dictionaryService;
 
     /**
      * 字典 带查询参数
-     * @param dictionaryParam 参数
+     * @param dictKeyList 参数
+     * @param queryCode 参数
      * @return 结果
      */
     @GetMapping("/options/parameter")
     @Override
-    public Map<String, Object> getDictByParameter(@ModelAttribute DictionaryParam dictionaryParam) {
-        log.info("detail indicator: {}", dictionaryParam);
+    public Map<String, Object> getDictByParameter(@RequestParam("dictKeyList") String[] dictKeyList, @RequestParam("queryCode") String queryCode) {
+        log.info("detail indicator: {} {}", dictKeyList, queryCode);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
-                .validateException(ObjectUtils.isEmpty(dictionaryParam.getDictKeyList())
-                        || StringUtils.isEmpty(dictionaryParam.getQueryCode()));
-        return dictionaryService.getList(dictionaryParam.getDictKeyList(), dictionaryParam.getQueryCode());
+                .validateException(ObjectUtils.isEmpty(dictKeyList)
+                        || StringUtils.isEmpty(queryCode));
+        return dictionaryService.getList(dictKeyList, queryCode);
     }
 
     /**
@@ -56,15 +58,24 @@ public class DictionaryFeignController implements DictionaryFeignClient {
     }
 
     /**
-     * 字典
-     * @param dictionaryParam 参数
-     * @return 结果
+     * 字典查询
+     * @param dictKeyList 参数
+     * @return 参数
      */
-    @GetMapping("/options/db")
+    @GetMapping("/db")
     @Override
-    public Map<String, Object> getDictByDb(@ModelAttribute DictionaryParam dictionaryParam) {
+    public Map<String, Object> getDictDb(@RequestParam("dictKeyList") String[] dictKeyList) {
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
-                .validateException(ObjectUtils.isEmpty(dictionaryParam.getDictKeyList()));
-        return dictionaryService.getDictByDB(dictionaryParam);
+                .validateException(ObjectUtils.isEmpty(dictKeyList));
+        return dictionaryService.getDictDb(dictKeyList);
     }
+
+    @GetMapping("/db/parameter")
+    @Override
+    public Map<String, Object> getDictDbByParameter(@RequestParam("dictKeyList") String[] dictKeyList, @RequestParam("queryCode") String queryCode) {
+        ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
+                .validateException(ObjectUtils.isEmpty(dictKeyList));
+        return dictionaryService.getDictDbByParameter(dictKeyList, queryCode);
+    }
+
 }

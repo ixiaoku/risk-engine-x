@@ -45,9 +45,9 @@ public class RuleController implements RuleFeignClient {
         return ruleService.insert(ruleParam);
     }
 
-    @GetMapping("/list")
+    @PostMapping("/list")
     @Override
-    public PageResult<RuleVO> list(@ModelAttribute RuleParam ruleParam) {
+    public PageResult<RuleVO> list(@RequestBody RuleParam ruleParam) {
         log.info("list rules: {}", ruleParam);
         return ruleService.list(ruleParam);
     }

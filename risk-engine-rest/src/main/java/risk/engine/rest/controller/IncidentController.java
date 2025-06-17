@@ -34,7 +34,7 @@ public class IncidentController implements IncidentFeignClient {
     @PostMapping("/insert")
     @Override
     public Boolean insert(@RequestBody IncidentParam incidentParam) {
-        log.info("insert incident: {}", incidentParam);
+        log.info("incident insert: {}", incidentParam);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(StringUtils.isEmpty(incidentParam.getIncidentCode())
                 || StringUtils.isEmpty(incidentParam.getIncidentName())
@@ -50,7 +50,7 @@ public class IncidentController implements IncidentFeignClient {
     @PostMapping("/delete")
     @Override
     public Boolean delete(@RequestBody IncidentParam incidentParam) {
-        log.info("delete incident: {}", incidentParam);
+        log.info("incident delete: {}", incidentParam);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(ObjectUtils.isEmpty(incidentParam.getId()));
         return incidentService.deleteByPrimaryKey(incidentParam.getId());
@@ -59,7 +59,7 @@ public class IncidentController implements IncidentFeignClient {
     @PostMapping("/update")
     @Override
     public Boolean update(@RequestBody @Validated IncidentParam incidentParam) {
-        log.info("update incident: {}", incidentParam);
+        log.info("incident update: {}", incidentParam);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(ObjectUtils.isEmpty(incidentParam.getId())
                 || StringUtils.isEmpty(incidentParam.getIncidentName())
@@ -75,7 +75,7 @@ public class IncidentController implements IncidentFeignClient {
     @PostMapping("/parse")
     @Override
     public List<MetricDTO> parseMetric(@RequestBody @Validated IncidentParam incidentParam) {
-        log.info("parse indicator: {}", incidentParam);
+        log.info("incident parse: {}", incidentParam);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(StringUtils.isEmpty(incidentParam.getRequestPayload()));
         return incidentService.parseMetric(incidentParam.getIncidentCode(), incidentParam.getRequestPayload());
@@ -83,17 +83,17 @@ public class IncidentController implements IncidentFeignClient {
 
     @GetMapping("/detail")
     @Override
-    public IncidentVO detail(@ModelAttribute IncidentParam incidentParam) {
-        log.info("detail incident: {}", incidentParam);
+    public IncidentVO detail(@RequestParam("id") Long id) {
+        log.info("incident detail: {}", id);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
-                .validateException(ObjectUtils.isEmpty(incidentParam.getId()));
-        return incidentService.getOne(incidentParam.getId());
+                .validateException(ObjectUtils.isEmpty(id));
+        return incidentService.getOne(id);
     }
 
-    @GetMapping("/list")
+    @PostMapping("/list")
     @Override
-    public PageResult<IncidentVO> list(@ModelAttribute IncidentParam incidentParam) {
-        log.info("list incident: {}", incidentParam);
+    public PageResult<IncidentVO> list(@RequestBody IncidentParam incidentParam) {
+        log.info("incident list: {}", incidentParam);
         PageResult<IncidentVO> pageResult = new PageResult<>();
         List<IncidentVO> incidentList = incidentService.list(incidentParam);
         pageResult.setList(incidentList);

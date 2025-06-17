@@ -15,18 +15,18 @@ import risk.engine.dto.vo.RuleVO;
 public interface RuleFeignClient {
 
     @PostMapping("/insert")
-    public Boolean insert(@RequestBody RuleParam ruleParam);
+    Boolean insert(@RequestBody RuleParam ruleParam);
 
     @PostMapping("/delete")
-    public Boolean delete(@RequestBody RuleParam ruleParam);
+    Boolean delete(@RequestBody RuleParam ruleParam);
 
     @PostMapping("/update")
-    public Boolean update(@RequestBody RuleParam ruleParam);
+    Boolean update(@RequestBody RuleParam ruleParam);
 
-    @GetMapping("/list")
-    public PageResult<RuleVO> list(@ModelAttribute RuleParam ruleParam);
+    @PostMapping("/list")
+    PageResult<RuleVO> list(@RequestBody RuleParam ruleParam);
 
     @GetMapping("/detail")
-    public RuleVO detail(@RequestParam("id") Long id);
+    RuleVO detail(@RequestParam("id") Long id);
 
 }

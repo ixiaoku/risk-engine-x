@@ -2,9 +2,7 @@ package risk.engine.client.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
-import risk.engine.dto.param.DictionaryParam;
 
 import java.util.Map;
 
@@ -17,12 +15,14 @@ import java.util.Map;
 public interface DictionaryFeignClient {
 
     @GetMapping("/options/parameter")
-    Map<String, Object> getDictByParameter(@ModelAttribute DictionaryParam dictionaryParam);
+    Map<String, Object> getDictByParameter(@RequestParam("dictKeyList") String[] dictKeyList, @RequestParam("queryCode") String queryCode);
 
     @GetMapping("/options")
     Map<String, Object> getDict(@RequestParam("dictKeyList") String[] dictKeyList);
 
-    @GetMapping("/options/db")
-    Map<String, Object> getDictByDb(@ModelAttribute DictionaryParam dictionaryParam);
+    @GetMapping("/db")
+    Map<String, Object> getDictDb(@RequestParam("dictKeyList") String[] dictKeyList);
 
+    @GetMapping("/db/parameter")
+    Map<String, Object> getDictDbByParameter(@RequestParam("dictKeyList") String[] dictKeyList, @RequestParam("queryCode") String queryCode);
 }

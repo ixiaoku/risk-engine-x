@@ -15,8 +15,8 @@ import risk.engine.dto.vo.CounterMetricVO;
 @FeignClient(name = "${spring.application.name}", url = "${risk.rest.feignClient.url}", contextId = "CounterMetricFeignClient", path = "/metric/counter")
 public interface CounterMetricFeignClient {
 
-    @GetMapping("/list")
-    PageResult<CounterMetricVO> list(@ModelAttribute CounterMetricParam param);
+    @PostMapping("/list")
+    PageResult<CounterMetricVO> list(@RequestBody CounterMetricParam param);
 
     @PostMapping("/insert")
     Boolean insert(@RequestBody CounterMetricParam param);
@@ -28,6 +28,6 @@ public interface CounterMetricFeignClient {
     Boolean update(@RequestBody CounterMetricParam param);
 
     @GetMapping("/detail")
-    CounterMetricVO detail(@RequestParam("id") Long id);
+    CounterMetricVO getOne(@RequestParam("id") Long id);
 
 }

@@ -30,9 +30,9 @@ public class CounterMetricFeignController implements CounterMetricFeignClient {
     @Resource
     private ICounterMetricService counterMetricService;
 
-    @GetMapping("/list")
+    @PostMapping("/list")
     @Override
-    public PageResult<CounterMetricVO> list(@ModelAttribute CounterMetricParam param) {
+    public PageResult<CounterMetricVO> list(@RequestBody CounterMetricParam param) {
         log.info("List CounterMetric: {}", param);
         return counterMetricService.list(param);
     }
@@ -80,7 +80,7 @@ public class CounterMetricFeignController implements CounterMetricFeignClient {
 
     @GetMapping("/detail")
     @Override
-    public CounterMetricVO detail(@RequestParam("id") Long id) {
+    public CounterMetricVO getOne(@RequestParam("id") Long id) {
         log.info("Detail CounterMetric: {}", id);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(Objects.isNull(id));

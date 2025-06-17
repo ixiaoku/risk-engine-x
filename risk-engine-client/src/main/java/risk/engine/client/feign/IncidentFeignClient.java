@@ -2,10 +2,7 @@ package risk.engine.client.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import risk.engine.dto.PageResult;
 import risk.engine.dto.dto.rule.MetricDTO;
 import risk.engine.dto.param.IncidentParam;
@@ -34,9 +31,9 @@ public interface IncidentFeignClient {
     List<MetricDTO> parseMetric(@RequestBody @Validated IncidentParam incidentParam);
 
     @GetMapping("/detail")
-    IncidentVO detail(@ModelAttribute IncidentParam incidentParam);
+    IncidentVO detail(@RequestParam("id") Long id);
 
-    @GetMapping("/list")
-    PageResult<IncidentVO> list(@ModelAttribute IncidentParam incidentParam);
+    @PostMapping("/list")
+    PageResult<IncidentVO> list(@RequestBody IncidentParam incidentParam);
     
 }

@@ -1,8 +1,8 @@
 package risk.engine.client.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import risk.engine.dto.PageResult;
 import risk.engine.dto.param.EngineExecutorParam;
 import risk.engine.dto.vo.EngineExecutorVO;
@@ -20,16 +20,16 @@ import java.util.Map;
 @FeignClient(name = "${spring.application.name}", url = "${risk.rest.feignClient.url}", contextId = "EngineResultFeignClient", path = "/engine")
 public interface EngineResultFeignClient {
 
-    @GetMapping("/result/list")
-    PageResult<EngineExecutorVO> list(@ModelAttribute EngineExecutorParam executorParam);
+    @PostMapping("/result/list")
+    PageResult<EngineExecutorVO> list(@RequestBody EngineExecutorParam executorParam);
 
-    @GetMapping("/result/dashboard")
-    Map<String, BigDecimal> dashboard(@ModelAttribute EngineExecutorParam executorParam);
+    @PostMapping("/result/dashboard")
+    Map<String, BigDecimal> dashboard(@RequestBody EngineExecutorParam executorParam);
 
-    @GetMapping("/result/replay")
-    ReplyRuleVO replay(@ModelAttribute EngineExecutorParam executorParam);
+    @PostMapping("/result/replay")
+    ReplyRuleVO replay(@RequestBody EngineExecutorParam executorParam);
 
-    @GetMapping("/result/snapshot")
-    EngineExecutorVO snapshot(@ModelAttribute EngineExecutorParam executorParam);
+    @PostMapping("/result/snapshot")
+    EngineExecutorVO snapshot(@RequestBody EngineExecutorParam executorParam);
 
 }

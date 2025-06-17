@@ -1,7 +1,5 @@
 package risk.engine.service.service;
 
-import risk.engine.dto.param.DictionaryParam;
-
 import java.util.Map;
 
 /**
@@ -11,9 +9,11 @@ import java.util.Map;
  */
 public interface IDictionaryService {
 
-    Map<String, Object> getList(String[] keys);
+    Map<String, Object> getList(String[] dictKeyList);
 
-    Map<String, Object> getList(String[] keys, String queryCode);
+    Map<String, Object> getList(String[] dictKeyList, String queryCode);
 
-    Map<String, Object> getDictByDB(DictionaryParam dictionaryParam);
+    Map<String, Object> getDictDb(String[] dictKeyList);
+
+    Map<String, Object> getDictDbByParameter(String[] dictKeyList, String queryCode);
 }

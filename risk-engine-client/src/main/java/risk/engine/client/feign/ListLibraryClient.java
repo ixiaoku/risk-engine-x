@@ -23,10 +23,10 @@ public interface ListLibraryClient {
     @PostMapping("/update")
     Boolean update(@RequestBody ListLibraryParam param);
 
-    @GetMapping("/list")
-    PageResult<ListLibraryVO> list(@ModelAttribute ListLibraryParam param);
+    @PostMapping("/list")
+    PageResult<ListLibraryVO> list(@RequestParam ListLibraryParam param);
 
     @GetMapping("/detail")
-    ListLibraryVO detail(@RequestParam Long id);
+    ListLibraryVO detail(@RequestParam("id") Long id);
 
 }
