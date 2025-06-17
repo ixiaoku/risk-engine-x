@@ -2,7 +2,6 @@ package risk.engine.dto.param;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -82,15 +81,4 @@ public class CounterMetricParam extends PageHelperQuery {
      * 操作人
      */
     private String operator;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
-
 }

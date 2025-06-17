@@ -23,9 +23,7 @@ public class ResponseBodyAdvisorConfig implements ResponseBodyAdvice<Object> {
     @Override
     public boolean supports(MethodParameter returnType, @NotNull Class<? extends HttpMessageConverter<?>> converterType) {
         Class<?> returnTypeClass = returnType.getParameterType();
-        boolean shouldWrap = !(Boolean.class.equals(returnTypeClass) || boolean.class.equals(returnTypeClass));
-        log.info("ResponseBodyAdvice called for: {}, wrap: {}", returnTypeClass.getSimpleName(), shouldWrap);
-        return shouldWrap;
+        return !(Boolean.class.equals(returnTypeClass) || boolean.class.equals(returnTypeClass));
     }
 
     @Override

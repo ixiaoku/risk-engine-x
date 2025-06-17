@@ -3,8 +3,6 @@ package risk.engine.dto.param;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.LocalDateTime;
-
 /**
  * @Author: X
  * @Date: 2025/6/15 19:25
@@ -40,14 +38,6 @@ public class ListLibraryParam extends PageHelperQuery {
      * 操作人
      */
     private String operator;
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
     /**
      * 名单库描述
      */
