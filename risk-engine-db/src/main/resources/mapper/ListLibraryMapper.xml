@@ -37,8 +37,8 @@
       <if test="listLibraryName != null and listLibraryName != '' ">
         and list_library_name = #{listLibraryName,jdbcType=VARCHAR}
       </if>
-      <if test="listCategory != null
-        and list_category = #{listCategory,jdbcType=TINYINT}">
+      <if test="listCategory != null">
+        and list_category = #{listCategory,jdbcType=TINYINT}>
       </if>
       <if test="status != null">
         and status = #{status,jdbcType=TINYINT}

@@ -11,13 +11,13 @@ import risk.engine.dto.vo.ListLibraryVO;
  */
 public interface IListLibraryService {
 
-    boolean deleteByPrimaryKey(Long id);
+    Boolean deleteByPrimaryKey(Long id);
 
-    boolean insert(ListLibraryParam param);
+    Boolean insert(ListLibraryParam param);
 
     ListLibraryVO selectByPrimaryKey(Long id);
 
-    boolean updateByPrimaryKey(ListLibraryParam param);
+    Boolean updateByPrimaryKey(ListLibraryParam param);
 
     PageResult<ListLibraryVO> list(ListLibraryParam param);
 

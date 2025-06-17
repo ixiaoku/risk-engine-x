@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import risk.engine.dto.exception.RiskException;
-import risk.engine.dto.vo.ResponseVO;
+import risk.engine.dto.vo.ResponseResult;
 
 /**
  * @Author: X
@@ -15,15 +15,17 @@ import risk.engine.dto.vo.ResponseVO;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // 业务异常
     @ExceptionHandler(RiskException.class)
-    public ResponseVO handleBizException(RiskException ex) {
-        log.error("错误信息：{}", ex.getMessage(), ex);
-        return ResponseVO.fail(ex.getCode(), ex.getMessage());
+    public ResponseResult<?> handleBizException(RiskException ex) {
+        log.error("业务异常：{}", ex.getMessage(), ex);
+        return ResponseResult.fail(ex.getCode(), ex.getMessage());
     }
 
+    // 全局异常
     @ExceptionHandler(Exception.class)
-    public ResponseVO handleException(Exception ex) {
-        log.error("错误信息：{}", ex.getMessage(), ex);
-        return ResponseVO.fail("系统异常：" + ex.getMessage());
+    public ResponseResult<?> handleException(Exception ex) {
+        log.error("系统异常：{}", ex.getMessage(), ex);
+        return ResponseResult.fail(500, "系统内部错误，请联系管理员");
     }
 }

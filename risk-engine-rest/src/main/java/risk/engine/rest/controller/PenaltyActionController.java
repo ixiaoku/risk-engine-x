@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import risk.engine.common.function.ValidatorHandler;
 import risk.engine.dto.enums.ErrorCodeEnum;
 import risk.engine.dto.param.PenaltyActionParam;
-import risk.engine.dto.vo.ResponseVO;
+import risk.engine.dto.vo.ResponseResult;
 import risk.engine.service.service.IPenaltyActionService;
 
 import javax.annotation.Resource;
@@ -28,10 +28,10 @@ public class PenaltyActionController {
     private IPenaltyActionService penaltyActionService;
 
     @PostMapping("/fields")
-    public ResponseVO getFields(@RequestBody PenaltyActionParam penaltyActionParam) throws Exception {
+    public ResponseResult getFields(@RequestBody PenaltyActionParam penaltyActionParam) throws Exception {
         log.info("get fields: {}", penaltyActionParam);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL).validateException(StringUtils.isEmpty(penaltyActionParam.getPenaltyCode()));
-        return ResponseVO.success(penaltyActionService.getPenaltyFields(penaltyActionParam));
+        return ResponseResult.success(penaltyActionService.getPenaltyFields(penaltyActionParam));
     }
 
 }

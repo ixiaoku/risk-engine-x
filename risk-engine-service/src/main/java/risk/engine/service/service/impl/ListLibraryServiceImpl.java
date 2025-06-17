@@ -15,6 +15,7 @@ import risk.engine.service.service.IListLibraryService;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -30,12 +31,18 @@ public class ListLibraryServiceImpl implements IListLibraryService {
     private ListLibraryMapper listLibraryMapper;
 
     @Override
-    public boolean deleteByPrimaryKey(Long id) {
+    public Boolean deleteByPrimaryKey(Long id) {
         return listLibraryMapper.deleteByPrimaryKey(id) > 0;
     }
 
     @Override
-    public boolean insert(ListLibraryParam param) {
+    public Boolean insert(ListLibraryParam param) {
+        ListLibraryExample example = new ListLibraryExample();
+        example.setListLibraryCode(param.getListLibraryCode());
+        List<ListLibraryPO> listLibraryPOList = listLibraryMapper.selectByExample(example);
+        if (CollectionUtils.isNotEmpty(listLibraryPOList)) {
+            return  Boolean.FALSE;
+        }
         ListLibraryPO listLibraryPO = new ListLibraryPO();
         listLibraryPO.setListLibraryCode(param.getListLibraryCode());
         listLibraryPO.setListLibraryName(param.getListLibraryName());
@@ -59,7 +66,7 @@ public class ListLibraryServiceImpl implements IListLibraryService {
     }
 
     @Override
-    public boolean updateByPrimaryKey(ListLibraryParam param) {
+    public Boolean updateByPrimaryKey(ListLibraryParam param) {
         ListLibraryPO listLibraryPO = new ListLibraryPO();
         listLibraryPO.setId(param.getId());
         listLibraryPO.setListLibraryName(param.getListLibraryName());
