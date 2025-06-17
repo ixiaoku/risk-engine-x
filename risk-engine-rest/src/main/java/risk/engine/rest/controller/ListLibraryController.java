@@ -31,7 +31,7 @@ public class ListLibraryController implements ListLibraryClient {
     @PostMapping("/insert")
     @Override
     public Boolean insert(@RequestBody ListLibraryParam param) {
-        log.info("insert listLibrary: {}", param);
+        log.info("listLibrary insert: {}", param);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(StringUtils.isEmpty(param.getListLibraryCode())
                         || StringUtils.isEmpty(param.getListLibraryName())
@@ -44,7 +44,7 @@ public class ListLibraryController implements ListLibraryClient {
     @PostMapping("/delete")
     @Override
     public Boolean delete(@RequestBody ListLibraryParam param) {
-        log.info("delete listLibrary: {}", param);
+        log.info("listLibrary delete: {}", param);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(Objects.isNull(param.getId())
                         || StringUtils.isEmpty(param.getOperator()));
@@ -54,7 +54,7 @@ public class ListLibraryController implements ListLibraryClient {
     @PostMapping("/update")
     @Override
     public Boolean update(@RequestBody ListLibraryParam param) {
-        log.info("update listLibrary: {}", param);
+        log.info("listLibrary update: {}", param);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(StringUtils.isEmpty(param.getListLibraryCode())
                         || StringUtils.isEmpty(param.getListLibraryName())
@@ -68,8 +68,8 @@ public class ListLibraryController implements ListLibraryClient {
 
     @GetMapping("/detail")
     @Override
-    public ListLibraryVO detail(@RequestParam Long id) {
-        log.info("detail listLibrary: {}", id);
+    public ListLibraryVO getOne(@RequestParam Long id) {
+        log.info("listLibrary detail: {}", id);
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
                 .validateException(ObjectUtils.isEmpty(id));
         return listLibraryService.selectByPrimaryKey(id);
@@ -78,7 +78,7 @@ public class ListLibraryController implements ListLibraryClient {
     @PostMapping("/list")
     @Override
     public PageResult<ListLibraryVO> list(@RequestBody ListLibraryParam param) {
-        log.info("list listLibrary: {}", param);
+        log.info("listLibrary list: {}", param);
         return listLibraryService.list(param);
     }
 }

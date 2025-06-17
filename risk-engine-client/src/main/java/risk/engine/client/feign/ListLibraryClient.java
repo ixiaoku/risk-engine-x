@@ -24,9 +24,9 @@ public interface ListLibraryClient {
     Boolean update(@RequestBody ListLibraryParam param);
 
     @PostMapping("/list")
-    PageResult<ListLibraryVO> list(@RequestParam ListLibraryParam param);
+    PageResult<ListLibraryVO> list(@RequestBody ListLibraryParam param);
 
     @GetMapping("/detail")
-    ListLibraryVO detail(@RequestParam("id") Long id);
+    ListLibraryVO getOne(@RequestParam("id") Long id);
 
 }
