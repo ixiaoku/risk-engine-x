@@ -31,7 +31,7 @@
         select
         <include refid="Base_Column_List" />
         from counter_metric
-        id = #{id,jdbcType=BIGINT}
+        where id = #{id,jdbcType=BIGINT}
     </select>
 
     <select id="selectByExample" parameterType="risk.engine.db.entity.CounterMetricPO" resultMap="BaseResultMap">

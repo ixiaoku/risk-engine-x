@@ -90,13 +90,13 @@ public class CounterMetricServiceImpl implements ICounterMetricService {
         counterMetric.setMetricType(param.getMetricType());
         counterMetric.setWindowSize(param.getWindowSize());
         counterMetric.setAggregationType(param.getAggregationType());
-        counterMetric.setAggregationType(param.getAggregationType());
         counterMetric.setWindowType(param.getWindowType());
         counterMetric.setStatus(param.getStatus());
         counterMetric.setDescription(param.getDescription());
         counterMetric.setOperator(param.getOperator());
+        counterMetric.setGroovyScript(param.getGroovyScript());
         counterMetric.setUpdateTime(LocalDateTime.now());
-        return false;
+        return counterMetricMapper.updateByPrimaryKey(counterMetric) > 0;
     }
 
     @Override
@@ -132,6 +132,8 @@ public class CounterMetricServiceImpl implements ICounterMetricService {
         counterMetricVO.setWindowType(counterMetric.getWindowType());
         counterMetricVO.setStatus(counterMetric.getStatus());
         counterMetricVO.setDescription(counterMetric.getDescription());
+        counterMetricVO.setOperator(counterMetric.getOperator());
+        counterMetricVO.setGroovyScript(counterMetric.getGroovyScript());
         counterMetricVO.setCreateTime(DateTimeUtil.getTimeByLocalDateTime(counterMetric.getCreateTime()));
         counterMetricVO.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(counterMetric.getUpdateTime()));
         return counterMetricVO;
