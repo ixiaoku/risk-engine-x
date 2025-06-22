@@ -4,7 +4,7 @@
     <parent>
         <groupId>risk.engine.x</groupId>
         <artifactId>risk-engine-x</artifactId>
-        <version>1.0.0.5-RELEASE</version>
+        <version>1.0.0.6-RELEASE</version>
     </parent>
 
     <groupId>risk.engine.flink</groupId>
