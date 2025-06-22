@@ -86,7 +86,6 @@ public class ListLibraryServiceImpl implements IListLibraryService {
         listLibraryQuery.setListLibraryName(param.getListLibraryName());
         listLibraryQuery.setStatus(param.getStatus());
         listLibraryQuery.setCategory(param.getCategory());
-        listLibraryQuery.setStatus(param.getStatus());
 
         Page<ListLibraryPO> listLibraryPage = PageMethod.startPage(param.getPageNum(), param.getPageSize())
                 .doSelectPage(() -> listLibraryMapper.selectByExample(listLibraryQuery));
