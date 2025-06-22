@@ -2,7 +2,6 @@ package risk.engine.rest.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,21 +27,6 @@ public class DictionaryFeignController implements DictionaryFeignClient {
     @Resource
     private IDictionaryService dictionaryService;
 
-    /**
-     * 字典 带查询参数
-     * @param dictKeyList 参数
-     * @param queryCode 参数
-     * @return 结果
-     */
-    @GetMapping("/options/parameter")
-    @Override
-    public Map<String, Object> getDictByParameter(@RequestParam("dictKeyList") String[] dictKeyList, @RequestParam("queryCode") String queryCode) {
-        log.info("detail indicator: {} {}", dictKeyList, queryCode);
-        ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
-                .validateException(ObjectUtils.isEmpty(dictKeyList)
-                        || StringUtils.isEmpty(queryCode));
-        return dictionaryService.getList(dictKeyList, queryCode);
-    }
 
     /**
      * 字典 不带查询条件
@@ -64,18 +48,11 @@ public class DictionaryFeignController implements DictionaryFeignClient {
      */
     @GetMapping("/db")
     @Override
-    public Map<String, Object> getDictDb(@RequestParam("dictKeyList") String[] dictKeyList) {
+    public Map<String, Object> getDictDb(@RequestParam("dictKeyList") String[] dictKeyList, @RequestParam("queryCode") String queryCode) {
         ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
-                .validateException(ObjectUtils.isEmpty(dictKeyList));
-        return dictionaryService.getDictDb(dictKeyList);
-    }
-
-    @GetMapping("/db/parameter")
-    @Override
-    public Map<String, Object> getDictDbByParameter(@RequestParam("dictKeyList") String[] dictKeyList, @RequestParam("queryCode") String queryCode) {
-        ValidatorHandler.verify(ErrorCodeEnum.PARAMETER_IS_NULL)
-                .validateException(ObjectUtils.isEmpty(dictKeyList));
-        return dictionaryService.getDictDbByParameter(dictKeyList, queryCode);
+                .validateException(ObjectUtils.isEmpty(dictKeyList)
+                );
+        return dictionaryService.getDictDb(dictKeyList, queryCode);
     }
 
 }

@@ -10,7 +10,6 @@ import risk.engine.dto.enums.CounterStatusEnum;
 import risk.engine.dto.enums.IncidentStatusEnum;
 import risk.engine.dto.enums.MetricTypeEnum;
 import risk.engine.dto.enums.RuleStatusEnum;
-import risk.engine.service.common.dict.OptionsDbFunction;
 import risk.engine.service.common.dict.OptionsEnumFunction;
 import risk.engine.service.service.*;
 
@@ -56,18 +55,7 @@ public class DictionaryServiceImpl implements IDictionaryService {
     }
 
     @Override
-    public Map<String, Object> getList(String[] keys, String queryCode) {
-        Map<String, Object> result = new HashMap<>();
-        for (String keyStr : keys) {
-            String beanName = keyStr + "List";
-            OptionsDbFunction<String> optionsDbFunction = (OptionsDbFunction<String>) applicationContext.getBean(beanName);
-            result.put(keyStr, optionsDbFunction.getDictionary(queryCode));
-        }
-        return result;
-    }
-
-    @Override
-    public Map<String, Object> getDictDb(String[] dictKeyList) {
+    public Map<String, Object> getDictDb(String[] dictKeyList, String queryCode) {
         Map<String, Object> result = new HashMap<>();
         for (String keyStr : dictKeyList) {
             switch (keyStr) {
@@ -80,19 +68,11 @@ public class DictionaryServiceImpl implements IDictionaryService {
                 case "rule":
                     result.put(keyStr, ruleList());
                     break;
+                case "metric":
+                    result.put(keyStr, metricList(queryCode));
+                    break;
                 default:
                     break;
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public Map<String, Object> getDictDbByParameter(String[] dictKeyList, String queryCode) {
-        Map<String, Object> result = new HashMap<>();
-        for (String keyStr : dictKeyList) {
-            if (keyStr.equals("metric")) {
-                result.put(keyStr, metricList(queryCode));
             }
         }
         return result;

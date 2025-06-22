@@ -14,15 +14,10 @@ import java.util.Map;
 @FeignClient(name = "${spring.application.name}", url = "${risk.rest.feignClient.url}", contextId = "DictionaryFeignClient", path = "/dict")
 public interface DictionaryFeignClient {
 
-    @GetMapping("/options/parameter")
-    Map<String, Object> getDictByParameter(@RequestParam("dictKeyList") String[] dictKeyList, @RequestParam("queryCode") String queryCode);
-
     @GetMapping("/options")
     Map<String, Object> getDict(@RequestParam("dictKeyList") String[] dictKeyList);
 
     @GetMapping("/db")
-    Map<String, Object> getDictDb(@RequestParam("dictKeyList") String[] dictKeyList);
+    Map<String, Object> getDictDb(@RequestParam("dictKeyList") String[] dictKeyList, String queryCode);
 
-    @GetMapping("/db/parameter")
-    Map<String, Object> getDictDbByParameter(@RequestParam("dictKeyList") String[] dictKeyList, @RequestParam("queryCode") String queryCode);
 }

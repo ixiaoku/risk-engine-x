@@ -11,9 +11,6 @@ public interface IDictionaryService {
 
     Map<String, Object> getList(String[] dictKeyList);
 
-    Map<String, Object> getList(String[] dictKeyList, String queryCode);
+    Map<String, Object> getDictDb(String[] dictKeyList, String queryCode);
 
-    Map<String, Object> getDictDb(String[] dictKeyList);
-
-    Map<String, Object> getDictDbByParameter(String[] dictKeyList, String queryCode);
 }
