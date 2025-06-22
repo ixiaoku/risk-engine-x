@@ -36,7 +36,7 @@ public class ListLibraryController implements ListLibraryClient {
                 .validateException(StringUtils.isEmpty(param.getListLibraryCode())
                         || StringUtils.isEmpty(param.getListLibraryName())
                         || ObjectUtils.isEmpty(param.getStatus())
-                        || ObjectUtils.isEmpty(param.getListCategory())
+                        || ObjectUtils.isEmpty(param.getCategory())
                 );
         return listLibraryService.insert(param);
     }
@@ -59,7 +59,7 @@ public class ListLibraryController implements ListLibraryClient {
                 .validateException(StringUtils.isEmpty(param.getListLibraryCode())
                         || StringUtils.isEmpty(param.getListLibraryName())
                         || ObjectUtils.isEmpty(param.getStatus())
-                        || ObjectUtils.isEmpty(param.getListCategory())
+                        || ObjectUtils.isEmpty(param.getCategory())
                         || StringUtils.isEmpty(param.getOperator())
                         || Objects.isNull(param.getId())
                 );

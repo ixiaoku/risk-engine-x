@@ -32,7 +32,7 @@ public class ListLibraryExample {
     /**
      * 名单库类别
      */
-    private Integer listCategory;
+    private String category;
     /**
      * 操作人
      */

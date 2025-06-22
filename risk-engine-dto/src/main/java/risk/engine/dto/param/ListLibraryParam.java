@@ -33,7 +33,7 @@ public class ListLibraryParam extends PageHelperQuery {
      * 名单库类别
      * @see risk.engine.dto.enums.ListLibraryCategoryEnum
      */
-    private Integer listCategory;
+    private String category;
     /**
      * 操作人
      */
@@ -41,6 +41,6 @@ public class ListLibraryParam extends PageHelperQuery {
     /**
      * 名单库描述
      */
-    private String listLibraryDesc;
+    private String remark;
 
 }

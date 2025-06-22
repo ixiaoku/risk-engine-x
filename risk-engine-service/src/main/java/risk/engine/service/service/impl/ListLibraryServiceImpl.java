@@ -47,8 +47,8 @@ public class ListLibraryServiceImpl implements IListLibraryService {
         listLibraryPO.setListLibraryCode(param.getListLibraryCode());
         listLibraryPO.setListLibraryName(param.getListLibraryName());
         listLibraryPO.setStatus(param.getStatus());
-        listLibraryPO.setListCategory(param.getListCategory());
-        listLibraryPO.setListLibraryDesc(param.getListLibraryDesc());
+        listLibraryPO.setCategory(param.getCategory());
+        listLibraryPO.setRemark(param.getRemark());
         listLibraryPO.setOperator(param.getOperator());
         listLibraryPO.setCreateTime(LocalDateTime.now());
         listLibraryPO.setUpdateTime(LocalDateTime.now());
@@ -71,8 +71,8 @@ public class ListLibraryServiceImpl implements IListLibraryService {
         listLibraryPO.setId(param.getId());
         listLibraryPO.setListLibraryName(param.getListLibraryName());
         listLibraryPO.setStatus(param.getStatus());
-        listLibraryPO.setListCategory(param.getListCategory());
-        listLibraryPO.setListLibraryDesc(param.getListLibraryDesc());
+        listLibraryPO.setCategory(param.getCategory());
+        listLibraryPO.setRemark(param.getRemark());
         listLibraryPO.setOperator(param.getOperator());
         listLibraryPO.setUpdateTime(LocalDateTime.now());
         return listLibraryMapper.updateByPrimaryKey(listLibraryPO) > 0;
@@ -85,7 +85,7 @@ public class ListLibraryServiceImpl implements IListLibraryService {
         listLibraryQuery.setListLibraryCode(param.getListLibraryCode());
         listLibraryQuery.setListLibraryName(param.getListLibraryName());
         listLibraryQuery.setStatus(param.getStatus());
-        listLibraryQuery.setListCategory(param.getListCategory());
+        listLibraryQuery.setCategory(param.getCategory());
         listLibraryQuery.setStatus(param.getStatus());
 
         Page<ListLibraryPO> listLibraryPage = PageMethod.startPage(param.getPageNum(), param.getPageSize())
@@ -113,11 +113,11 @@ public class ListLibraryServiceImpl implements IListLibraryService {
         listLibraryVO.setListLibraryCode(listLibraryPO.getListLibraryCode());
         listLibraryVO.setListLibraryName(listLibraryPO.getListLibraryName());
         listLibraryVO.setStatus(listLibraryPO.getStatus());
-        listLibraryVO.setListCategory(listLibraryPO.getListCategory());
+        listLibraryVO.setCategory(listLibraryPO.getCategory());
         listLibraryVO.setOperator(listLibraryPO.getOperator());
         listLibraryVO.setCreateTime(DateTimeUtil.getTimeByLocalDateTime(listLibraryPO.getCreateTime()));
         listLibraryVO.setUpdateTime(DateTimeUtil.getTimeByLocalDateTime(listLibraryPO.getUpdateTime()));
-        listLibraryVO.setListLibraryDesc(listLibraryPO.getListLibraryDesc());
+        listLibraryVO.setListLibraryDesc(listLibraryPO.getRemark());
         return listLibraryVO;
 
     }

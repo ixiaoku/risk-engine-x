@@ -32,7 +32,7 @@ public class ListLibraryPO {
     /**
      * 名单库类别
      */
-    private Integer listCategory;
+    private String category;
     /**
      * 操作人
      */
@@ -48,6 +48,6 @@ public class ListLibraryPO {
     /**
      * 名单库描述
      */
-    private String listLibraryDesc;
+    private String remark;
 
 }
