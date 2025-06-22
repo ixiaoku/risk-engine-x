@@ -4,7 +4,7 @@
 
   <groupId>risk.engine.x</groupId>
   <artifactId>risk-engine-x</artifactId>
-  <version>1.0.0.6-RELEASE</version>
+  <version>1.0.0.7-RELEASE</version>
   <packaging>pom</packaging>
 
   <name>risk-engine-x</name>
@@ -36,7 +36,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.version>1.0.0.6-RELEASE</project.version>
+    <project.version>1.0.0.7-RELEASE</project.version>
     <springboot.version>2.7.18</springboot.version>
     <mapper.version>4.0.0</mapper.version>
     <mysql.version>8.0.28</mysql.version>
