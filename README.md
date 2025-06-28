@@ -1,66 +1,82 @@
+好的！以下是你的项目 README 的英文版，我已经忠实保留了中文结构和内容，确保语义准确且专业。你可以将其保存为 README.md，并把原中文版本改名为 README.zh-CN.md：
+
+⸻
+
 
 # risk-engine-x
 
-**risk-engine-x** 是一个基于 Java 的实时风控引擎，旨在提供高效、可扩展的风控解决方案。  
-该项目结合了作者在信贷风控和币圈交易所风控领域的多年经验，融合了链上数据分析、实时监控、智能告警、量化交易等功能，适用于反欺诈、信用评估、风险决策等多种场景。
+**risk-engine-x** is a real-time risk control engine based on Java, designed to provide efficient and scalable risk management solutions.  
+This project integrates years of experience in credit risk and crypto exchange risk control, combining on-chain data analysis, real-time monitoring, smart alerting, and quantitative trading support. It's suitable for anti-fraud, credit assessment, risk decision-making, and other scenarios.
 
 ---
 
-## 📌 项目背景
+## 📌 Project Background
 
-随着区块链技术的发展和数字资产的普及，交易所作为币圈的重要载体，承载着众多用户的交易需求。  
-为了有效监控链上数据、识别潜在风险、保障交易安全，开发一个高效的风控引擎显得尤为重要。  
-本项目旨在通过分析链上数据（如筹码分布、活跃地址、聪明钱地址的盈利能力等）， 交易所K线数据分析（对交易指标RSI、KDJ、MACD、BOLL、MA、EMA量化分析），币圈新闻实时抓取和推送等事件，实现对市场行情的实时监控和风险预警，后续还可以拓展优化升级迭代。
+With the rise of blockchain technology and the popularization of digital assets, crypto exchanges play a critical role in the ecosystem by handling massive trading volumes.  
+To effectively monitor on-chain activity, identify potential risks, and ensure transaction security, a high-performance risk engine is essential.  
+This project aims to provide real-time market monitoring and risk alerts by analyzing:
 
----
+- On-chain data (e.g., token distribution, active addresses, smart money profitability),
+- Exchange K-line data using quantitative indicators (RSI, KDJ, MACD, BOLL, MA, EMA),
+- Real-time news crawling and push notifications.
 
-## 🧩 功能模块
-
-本项目采用模块化设计，主要包括以下子模块：
-
-- `risk-engine-crawler`：爬虫模块，用于抓取链上信息。
-- `risk-engine-components`: 中间件模块，用于es、mq。
-- `risk-control-analysis`：分析模块，负责清洗和分析爬虫数据。
-- `risk-engine-common`：公共模块，包含项目通用的工具类和配置。
-- `risk-engine-service`：业务模块，处理核心业务逻辑。
-- `risk-engine-db`：数据访问模块，负责数据库的持久化操作。
-- `risk-engine-metric`：特征服务模块，用于计算各类特征值。
-- `risk-engine-rest`：RESTFUL 接口服务，提供对外的 API 服务。
-- `risk-engine-job`：任务调度服务，处理消息消费和定时任务。
+The engine is designed for future extension and iterative upgrades.
 
 ---
 
-## 🚀 快速开始
+## 🧩 Modules
 
-### ✅ 环境要求
+The project is modularized and includes the following submodules:
 
-- Java 11 或更高版本
-- Maven 3.9 或更高版本
-- Docker docker部署xxl-job-admin、 xxl-job-executor、redis6.0、mysql8.0、jdk11、kibana-7.17.4、elasticsearch-7.17.4、apache/rocketmq:4.9.4
-- Ubuntu22.04-Docker26
-- CPU - 2核 内存 - 4GB
-  系统盘 - SSD云硬盘 60GB
-  流量包 - 1536GB/月（峰值带宽 30Mbps）
+- `risk-engine-crawler`: Web crawler for collecting on-chain information.
+- `risk-engine-components`: Middleware support module (e.g., Elasticsearch, MQ).
+- `risk-control-analysis`: Analysis module responsible for data cleansing and risk analysis.
+- `risk-engine-common`: Shared utilities and configuration module.
+- `risk-engine-service`: Core business logic.
+- `risk-engine-db`: Database access and persistence logic.
+- `risk-engine-metric`: Feature service module for calculating various risk features.
+- `risk-engine-rest`: RESTful API service for external access.
+- `risk-engine-job`: Task scheduling service (e.g., message consumption, cron jobs).
 
-### 🔧 克隆项目
+---
 
-bash
-```
+## 🚀 Quick Start
+
+### ✅ Prerequisites
+
+- Java 11 or higher
+- Maven 3.9 or higher
+- Docker environment with the following components:
+  - xxl-job-admin, xxl-job-executor
+  - Redis 6.0
+  - MySQL 8.0
+  - JDK 11
+  - Kibana 7.17.4
+  - Elasticsearch 7.17.4
+  - apache/rocketmq:4.9.4
+- Ubuntu 22.04 with Docker 26
+- Minimum system requirements:
+  - CPU: 2 cores, Memory: 4 GB
+  - SSD disk: 60 GB
+  - Monthly Bandwidth: 1536 GB (Peak: 30 Mbps)
+
+### 🔧 Clone the Project
+
+```bash
 git clone https://github.com/ixiaoku/risk-engine-x.git
 cd risk-engine-x
-```
 
-🔨 构建项目
+🔨 Build the Project
 
-`mvn clean install -DskipTests`
+mvn clean install -DskipTests
 
-▶️ 运行服务
+▶️ Run the Services
 
-目前是通过配置推送到github的action打包编译生成docker镜像，推送到docket hub
-然后在服务器拉取最新镜像，启动服务
+The project uses GitHub Actions to build and push Docker images to Docker Hub.
+On the server, simply pull the latest image and launch the services.
 
-## 服务器启动脚本
-```
+🖥️ Server Deployment Script
+
 #!/bin/bash
 
 cd /opt/risk-engine-x
@@ -88,67 +104,70 @@ echo "Disk usage after deployment:"
 df -h
 
 echo "Deployment completed!"
-```
-您可以根据需要启动其他模块，如 risk-engine-job等。
+
+You can also start other modules as needed, such as risk-engine-job.
 
 ⸻
 
-### sql脚本目录
-- ./risk-engine-db/src/main/resources/db.sql
-
-🧱 架构图
-
-![架构图](./doc/img.png)
+📂 SQL Scripts
+	•	Located at: ./risk-engine-db/src/main/resources/db.sql
 
 ⸻
 
-📍 使用示例
+🧱 Architecture Diagram
 
-以下是一个使用 RESTFUL 接口进行风险评估的示例：
-```
+
+⸻
+
+📍 Usage Example
+
+Sample API request to evaluate a risk scenario:
+
 curl -X POST http://localhost:8088/api/risk/engine \
 -H "Content-Type: application/json" \
 -d '{
-"flowNo": "BTCUSDT1744306200000",
-"incidentCode": "TradeQuantData",
-"requestPayload": "{\"announcement\":{\"content\":\"5min内，币种交易对：BTCUSDT, 开盘价: 79182.00000000, 收盘价：79238.20000000, 涨跌幅：0.07\",\"createdAt\":\"2025-04-11 01:44:59\",\"title\":\"涨跌幅提醒\"},\"close\":79238.20000000,\"closeTime\":1744307099999,\"downChangePercent\":0,\"high\":79441.39000000,\"interval\":\"15m\",\"low\":79055.25000000,\"open\":79182.00000000,\"openTime\":1744306200000,\"quoteVolume\":22141752.22314620,\"symbol\":\"BTCUSDT\",\"takerBuyQuoteVolume\":10012098.84158940,\"takerBuyVolume\":126.31532000,\"tradeCount\":56258,\"upChangePercent\":0.07,\"volume\":279.40449000}"
+  "flowNo": "BTCUSDT1744306200000",
+  "incidentCode": "TradeQuantData",
+  "requestPayload": "{\"announcement\":{\"content\":\"5min内，币种交易对：BTCUSDT, 开盘价: 79182.00000000, 收盘价：79238.20000000, 涨跌幅：0.07\",\"createdAt\":\"2025-04-11 01:44:59\",\"title\":\"涨跌幅提醒\"},\"close\":79238.20000000,\"closeTime\":1744307099999,\"downChangePercent\":0,\"high\":79441.39000000,\"interval\":\"15m\",\"low\":79055.25000000,\"open\":79182.00000000,\"openTime\":1744306200000,\"quoteVolume\":22141752.22314620,\"symbol\":\"BTCUSDT\",\"takerBuyQuoteVolume\":10012098.84158940,\"takerBuyVolume\":126.31532000,\"tradeCount\":56258,\"upChangePercent\":0.07,\"volume\":279.40449000}"
 }'
 
-```
-响应示例：
-```
+Sample response:
+
 {
-    "decisionResult": "1"//1通过 0拒绝
+  "decisionResult": "1" // 1 = Approved, 0 = Rejected
 }
-```
 
 
 ⸻
 
-🤝 贡献指南
+🤝 Contributing
 
-欢迎对本项目感兴趣的开发者提出建议、报告问题或提交代码。请参考以下步骤参与贡献：
--	Fork 本仓库
--	创建您的特性分支：git checkout -b feature/YourFeature
--	提交您的更改：git commit -m 'Add YourFeature'
--	推送到分支：git push origin feature/YourFeature
--	创建一个新的 Pull Request
+We welcome all developers interested in the project to contribute! You can:
+	•	Fork the repository
+	•	Create a new feature branch: git checkout -b feature/YourFeature
+	•	Commit your changes: git commit -m 'Add YourFeature'
+	•	Push to your branch: git push origin feature/YourFeature
+	•	Open a Pull Request
 
-在提交代码前，请确保遵循项目的代码规范，并通过所有测试用例。
-
-⸻
-
-📄 许可证
-
-本项目采用 Apache License 2.0 许可证。
-您可以自由地使用、修改和分发本项目的代码，但请保留原始许可证声明。
+Please ensure your code follows the project style and passes all tests before submitting.
 
 ⸻
 
-📬 联系方式
+📄 License
 
-如果您有任何问题或建议，欢迎通过以下方式与我联系： 
-- GitHub Issues: https://github.com/ixiaoku/risk-engine-x/issues
-- 邮件: djm88dcr@gmail.com
+This project is licensed under the Apache License 2.0.
+You are free to use, modify, and distribute the code, but please retain the original license notice.
+
+⸻
+
+📬 Contact
+
+For any questions or suggestions, feel free to reach out via:
+	•	GitHub Issues: https://github.com/ixiaoku/risk-engine-x/issues
+	•	Email: djm88dcr@gmail.com
+
+⸻
+
+🌐 简体中文
 
 ---
